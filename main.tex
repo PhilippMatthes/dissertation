@@ -1,0 +1,233 @@
+\documentclass[
+  ngerman,english, % change to ngerman for german theses
+  BCOR=0mm,cdgeometry=no,DIV=13, % use two-side for booklike layouts
+  cdfont=false, % modify this to use the TUD font (Open Sans)
+  numbers=noenddot % remove trailing dots in chapter/section/... enumeration
+]{tudscrmanual}
+% use a custom serif font
+\usepackage[bitstream-charter]{mathdesign}
+
+\usepackage[hyphens]{url}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[
+  english % change to ngerman for german theses
+]{babel}
+\usepackage{isodate}
+\usepackage{pdfpages}
+\usepackage{listings}
+\usepackage[toc, page]{appendix}
+\usepackage{hyphenat}
+
+\usepackage[
+  style=ieee,
+  backend=biber,
+  url=false,
+  doi=false,
+  isbn=false,
+  hyperref,
+]{biblatex}
+% configure the location of the biblatex file
+\addbibresource{students.bib}
+\addbibresource{papers.bib}
+\addbibresource{bibliography.bib}
+\AtEveryBibitem{%
+  \clearfield{note}%
+}
+
+\usepackage{graphicx}
+\graphicspath{ {./} }
+\usepackage{svg}
+
+\usepackage{caption}
+\captionsetup{font={footnotesize},labelsep=colon,justification=centering,format=plain}
+\usepackage{floatrow}
+\floatsetup{font=normalfont}
+\floatsetup[table]{style=plaintop}
+\DeclareCaptionSubType[alph]{figure}
+\DeclareCaptionSubType[alph]{table}
+
+\usepackage{booktabs}
+
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep}
+\setlist{parsep=0pt,listparindent=\parindent}
+
+\usepackage{float}
+\usepackage{subfigure}
+\usepackage{pgf}
+
+% configure the name of your appendix
+\renewcommand\appendixtocname{Appendix}
+\renewcommand\appendixpagename{Appendix}
+
+% use \tocless before a chapter/section/... in the
+% appendix to hide it from the toc
+\newcommand{\nocontentsline}[3]{}
+\newcommand{\tocless}[2]{
+  \bgroup\let\addcontentsline=\nocontentsline#1{#2}\egroup
+}
+
+% https://github.com/priobike/priobike-flutter-app/blob/dev/lib/common/layout/ci.dart
+\definecolor{ciblue}{HTML}{0073ff}
+\definecolor{cidarkblue}{HTML}{003064}
+\usepackage[colorlinks=true,allcolors=ciblue]{hyperref}%
+\usepackage[capitalise,nameinlink,noabbrev]{cleveref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  filecolor=ciblue,
+  citecolor=ciblue,      
+  urlcolor=ciblue,
+}
+
+\usepackage{listings}
+\definecolor{background}{HTML}{F6F6FE}
+\usepackage[scaled=0.85]{beramono}
+\lstdefinelanguage{json}{
+    basicstyle=\ttfamily\footnotesize,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{cidarkblue}0}}}{1}
+      {1}{{{\color{cidarkblue}1}}}{1}
+      {2}{{{\color{cidarkblue}2}}}{1}
+      {3}{{{\color{cidarkblue}3}}}{1}
+      {4}{{{\color{cidarkblue}4}}}{1}
+      {5}{{{\color{cidarkblue}5}}}{1}
+      {6}{{{\color{cidarkblue}6}}}{1}
+      {7}{{{\color{cidarkblue}7}}}{1}
+      {8}{{{\color{cidarkblue}8}}}{1}
+      {9}{{{\color{cidarkblue}9}}}{1}
+      {:}{{{\color{cidarkblue}{:}}}}{1}
+      {,}{{{\color{cidarkblue}{,}}}}{1}
+      {\{}{{{\color{cidarkblue}{\{}}}}{1}
+      {\}}{{{\color{cidarkblue}{\}}}}}{1}
+      {[}{{{\color{cidarkblue}{[}}}}{1}
+      {]}{{{\color{cidarkblue}{]}}}}{1},
+}
+
+\usepackage[framemethod=tikz]{mdframed}
+\newcounter{Summary}[section]
+\newenvironment{Summary}[1][]{%
+\stepcounter{Summary}%
+\ifstrempty{#1}%
+{\mdfsetup{%
+frametitle={%
+\tikz[baseline=(current bounding box.east)]
+% Theorem
+\node[anchor=east,rectangle,fill=blue!20]
+{\strut};}}
+}%
+{\mdfsetup{%
+frametitle={%
+{\strut \color{cidarkblue}\textsf{#1}}}}%
+}%
+\mdfsetup{innertopmargin=0pt,innerbottommargin=0pt,innerrightmargin=16pt,innerleftmargin=0pt,linecolor=cidarkblue,linewidth=2pt,topline=false,bottomline=false,leftline=false,}
+\begin{mdframed}[]\relax%
+}{\end{mdframed}}
+
+% use this custom theorem for research questions
+\newtheorem{researchquestion}{Research Question}
+\crefname{researchquestion}{Research Question}{Research Questions}
+
+\renewcommand{\floatpagefraction}{.8}% Avoid pages that only contain one image, but no text
+\usepackage[all]{nowidow}% Avoid orphaned lines on new pages
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.3cm plus 1mm minus 1mm}
+\setlength{\intextsep}{0.6cm}
+
+\usepackage{amsmath}
+
+\begin{document}
+
+  % use uppercase roman letters for all pages until the introduction
+  % this way, it is easier to identify how many pages the thesis has
+  \pagenumbering{Roman}
+
+  \faculty{Faculty of Computer Science}
+  \department{}
+  \institute{Institute of Systems Architecture}
+  \chair{Chair of Distributed and Networked Systems}
+  % PrioBike: A Comprehensive Approach to Practical Bike-GLOSA Implementation on the City Scale
+  \title{Green Light Optimal Speed Advisory for Bikes}
+
+  \thesis{phd} % the type of thesis you want to write
+  \graduation[Dr.-Ing.]{Doktoringenieur}
+
+  \author{Philipp Matthes}
+  \dateofbirth{12.3.1997}
+  \placeofbirth{Chemnitz}
+
+  \referee{Prof. Dr. Christoph Sommer \and TBA}
+  \advisor{Dr.-Ing. Thomas Springer}
+  \date{} % the date of submission
+  \maketitle
+  
+  \TUDoption{abstract}{section,multiple}
+  \begin{abstract}[pagestyle=empty.tudheadings]
+Promoting cycling is a crucial solution to improve the livability of urban environments. One non-invasive way to promote cycling is enhancing the overall ride experience by implementing Green Light Optimal Speed Advisory for bikes (bike-GLOSA). Through signal predictions, users are given the chance to adapt their ride speed to catch the next green light. The potential of bike-GLOSA to improve rides has been underlined by previous studies in simulation and controlled test-track environments. However, significant knowledge gaps must be addressed to make bike-GLOSA practical in real-world urban environments. Here, this work makes the following contributions. (1) A signal data and prediction infrastructure is proposed that scales towards multiple thousand signals based on existing traffic computers. (2) Trustworthy speed advisory user interfaces are presented that convey signal data outages and prediction uncertainties due to traffic-adaptive signal timing. (3) Accurate distance-to-signal estimation and signal matching are achieved through methods that compare lane geometries to the user-defined route. (4) A precise bike routing foundation is proposed to enhance signal matching and distance estimation. (5) An end-to-end integration is presented that incorporates a mobile application, "PrioBike," and a backend service infrastructure. Each component is evaluated independently. Based on collected data from the mobile app, thorough studies are conducted on the effectiveness of bike-GLOSA in a real-world urban environment. Finally, this study draws conclusions and new perspectives for future applications.
+  \end{abstract}
+
+  % \newpage
+  % \confirmation
+
+  \tableofcontents
+
+  % \listoffigures
+  % \addcontentsline{toc}{chapter}{\listfigurename}
+
+  % \listoftables
+  % \addcontentsline{toc}{chapter}{\listtablename}
+
+  % this is where your thesis lives
+
+  \pagenumbering{arabic}
+  
+  % \input{sections/introduction.tex}
+  \input{sections/prediction.tex}
+  % \input{sections/matching.tex}
+  % \input{sections/routing.tex}
+  % \input{sections/app.tex}
+  % \input{sections/impacts.tex}
+  % \input{sections/conclusions.tex}
+
+  \newpage
+
+  % use lowercased roman page numbers for the appendix and the bibliography
+  \pagenumbering{roman}
+
+  \emergencystretch=2em
+
+  \nocite{*}
+
+  \chapter{\bibname}
+
+  \section*{Published Research Papers}
+  This thesis is based on the following peer-reviewed research papers in which the author was the principal investigator:
+  \printbibliography[heading=none,nottype=student,keyword={ownpaper,related}]
+  \printbibliography[heading=none,nottype=student,keyword={ownpaper,notrelated}]
+  \pagebreak
+  
+  \section*{Supervised Student Theses}
+  The author of this thesis identified several topics for student theses and was involved as supervisor:
+  \printbibliography[heading=none,type=student,notkeyword={ownpaper}]
+  \pagebreak
+
+  \section*{References}
+  \printbibliography[heading=none,nottype=student,notkeyword={ownpaper,notrelated},notkeyword={ownpaper,related}]
+  \pagebreak
+  
+  % \begin{appendices}
+  %   \input{sections/appendix.tex}
+  % \end{appendices}
+
+\end{document}
