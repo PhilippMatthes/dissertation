@@ -177,21 +177,11 @@ The designed prediction infrastructure makes use of Hamburg's centralized Traffi
 
 \section{Results}
 
-- Die Evaluation der Prognoseinfrastruktur ist zweigeteilt: die Auswertung des Prognoseverfahrens und die Auswertung der Verkehrsadaptivität von Ampeln in Hamburg.
+The evaluation of the prediction infrastructure is divided into two parts: the assessment of the forecasting process and the evaluation of traffic adaptability at traffic lights in Hamburg.
 
-- Als erstes betrachten wir, wie gut das Prognosesystem im Zusammenspiel mit der Hamburger Ampeldatenplattform funktioniert, und wo mögliche Schwachstellen sind.
-- Dazu schauen wir uns die räumliche Abdeckung und den Verlauf der Ampelprognosen über einen längern Zeitraum an. Die Grundlage dafür bilden die Aufgezeichneten Metriken des umgesetzten Monitoring-Systems
-- Wir schauen uns den zeitlichen Verlauf der Prognoseverfügbarkeit an. Dies gibt uns Aufschlüsse darüber, an wievielen Ampeln in Hamburg Geschwindigkeitsempfehlungen zu erwarten sind, und dass dies deutlich weniger sind als gewünscht
-- Um genauer nachzuvollziehen, warum die Prognoseverfügbarkeit niedriger als gewünscht ist, schauen wir auf die aufgezeichneten Metriken des umgesetzten Monitoring-Tools
-- Wir identifizieren bestimmte wiederkehrende Fehlermuster, die auf systematische Fehler in der Hamburger Dateninfrastruktur hinweisen
-- Gemeinsam mit den Betreibern der Datenplattform ziehen wir Rückschlüsse auf die Problemursachen und beschreiben mögliche Lösungsansätze
-- Um die Skalierbarkeit des Prognosealgorithmus nochmals zu zeigen schauen wir uns noch kurz die CPU, RAM und Netzwerkauslastung des Prognosedienstes an
+Firstly, we examine how well the prediction system interacts with the Hamburg Traffic Light Data platform and identify potential weaknesses. This involves analyzing the spatial coverage and trends of traffic light predictions over an extended period, utilizing recorded metrics from the implemented monitoring system. We investigate the temporal availability of predictions to understand the number of traffic lights in Hamburg where speed recommendations can be expected. Our findings indicate that the availability is significantly lower than desired. To delve deeper into the reasons for this, we examine the recorded metrics from the implemented monitoring tool, identifying recurring error patterns that suggest systematic issues in the Hamburg data infrastructure. Collaborating with the data platform operators, we draw conclusions about the root causes of these problems and propose potential solutions. To further demonstrate the scalability of the prediction algorithm, we briefly examine the CPU, RAM, and network usage of the prediction service.
 
-- Der zweite Teil der Evaluation bezieht sich auf die Untersuchung der Verkehrsadaptivität über die Echtzeitdaten
-- Wir betrachten den Tag-Nacht Zyklus der Verkehrsabhängigkeit von Wochentag zu Wochentag und schauen uns an, wie stark die Grünphase der Ampeln in einem Zyklus nach vorn und hinten schwankt. Grundlage hierfür ist die entwickelte Distance metrik
-- Außerdem schauen wir uns an, ob die Grünphasen tendenziell gleichverteilt innerhalb des Zyklus nach vorn oder hinten streuen, oder ob es Ampeln mit Stufenmustern gibt, bei denen die Grünphase nur nach vorn oder nur nach hinten streut
-- Anhand einer Karte betrachten wir, ob die Verkehrsabhängigkeit wie erwartet immer ganze Knoten mit mehreren Ampeln betrifft, oder auch einzelne Ampeln
-- Diese drei Analysen helfen uns, genauer einzuschätzen, an wie vielen Kreuzungen das gestaltete Prognoseverfahren geeignet ist
+The second part of the evaluation focuses on studying traffic adaptability through real-time data. We analyze the day-night cycle of traffic adaptiveness from weekday to weekday, examining how much the green phase of traffic lights fluctuates forward and backward in a cycle, utilizing the developed Distance metric. Additionally, we investigate whether green phases tend to distribute evenly within the cycle or if there are traffic lights with step patterns where the green phase only fluctuates forward or backward. Using a map, we assess whether traffic dependence affects entire intersections with multiple traffic lights as expected or if it also impacts individual traffic lights. These analyses provide insights into estimating the suitability of the designed prediction process for how many intersections.
 
 \subsection{Long-Term Study of Prediction Availability, Quality, and Scalability}
 
@@ -213,17 +203,16 @@ The designed prediction infrastructure makes use of Hamburg's centralized Traffi
     \label{tab:tld-number-of-things}
 \end{table}
 
-- Bei der Betrachtung des zeitlichen Verlauf der Prognose muss zunächst beachtet werden: Die Anzahl Ampeln in der Traffic Lights Data plattform nimmt stetig zu
-- Wir können die ID der individuellen Ampeln (connections) nutzen um die Anzahl Kreuzungen zu bestimmen, wie z.B. \texttt{353\_12} für Kreuzungsknoten 353 und Connection 12
-- Siehe \Cref{tab:tld-number-of-things}: Zum Stand Dezember 2023 befanden sich 19951 ampeln (connections) verteilt über 791 kreuzungsknoten im System. Dies ergibt eine Abdeckung von 45.7\% (von 1731) der signalisierten Kreuzungen
-- Bei der Sichtung der Ampeln wurden zwei kleine Fehler festgestellt:
-- Bei einer der Ampeln (132\_22) wurde ein doppelter cycle\_second Datastream festgestellt
-- Außerdem wurden bei den 2 Connections 240\_1 und 240\_2 fälschlicherweise der laneType "16371" angegeben, der eigentlich die Meldepunktnummer darstellt. Diese sind in \Cref{tab:tld-number-of-things} nicht mit aufgeführt, da sie nicht zugeordnet werden können
-- Beide Probleme konnten durch Kommunikation mit den Betreibern auf Fehler in der Dateneinpflegung zurückgeführt werden. Die Behebung der Fehler wurde eingeleitet.
+When examining the temporal progression of the prediction, it is crucial to note the continuous increase in the number of traffic lights in the Traffic Lights Data platform. The ID of individual traffic lights (connections) can be utilized to determine the number of intersections, such as \texttt{353\_12} for intersection node 353 and Connection 12. Referring to \Cref{tab:tld-number-of-things}, as of December 2023, there are 19,951 connections distributed across 791 intersection nodes in the system. This constitutes a coverage of 45.7\% (of 1,731) of signalized intersections. During a preliminary examination of traffic lights, two minor errors were identified:
 
-- Stand Dec 4, 2023 sind von den 19951 Ampeln 5477 für die Benutzung durch Radfahrer markiert und damit relevant für unser bike-GLOSA System. Auch eine Mischbenutzung durch ÖPNV, Fußgänger, und Autos zusammen mit Fahrrädern ist hierbei mit einbezogen
-- Die aufgezeichneten Daten für diese Ampeln ergeben, gemessen über einen Zeitraum von 365 Tagen (Dec 4, 2022 -- Dec 4, 2023), im Durchschnitt 8532 primary\_signal Observations, 3318 cycle\_second Observations, und 27.7 program\_change Observations pro Minute die über MQTT empfangen und verarbeitet werden
-- In dieser Zeit war der Prediction Service 75h wegen geplanten Wartungsarbeiten oder technischen Problemen offline und 8680h online (99.14\% uptime). Für 5h ist der Status unklar, da die gesamte VM oder nur das Monitoring offline war. Mit 80h angenommer Downtime kommen wir auf 99.08\% uptime. Daher sollte beachtet werden, wenn die nachfolgenden Metriken interpretiert werden, dass nicht 100\% des Zeitraums abgedeckt sind
+\begin{enumerate}
+    \item One of the traffic lights (132\_22) exhibited a duplicated \texttt{cycle\_second} data stream.
+    \item Additionally, \texttt{laneType} "16371" was mistakenly assigned to connections 240\_1 and 240\_2. These are not included in \Cref{tab:tld-number-of-things} as they cannot be accurately assigned.
+\end{enumerate}
+
+Both issues were traced back to data input errors through communication with operators, and corrective measures have been initiated.
+
+As of December 4, 2023, out of the 19,951 traffic lights, 5,477 are designated for use by cyclists and are thus relevant to our bike-GLOSA system. This also includes mixed usage by public transportation, pedestrians, and cars, along with bicycles. Recorded data for these traffic lights, measured over a period of 365 days (December 4, 2022 - December 4, 2023), show an average of 8,532 \texttt{primary\_signal} observations, 3,318 \texttt{cycle\_second} observations, and 27.7 \texttt{program\_change} observations per minute received and processed via MQTT. During this time, the Prediction Service was offline for 75 hours due to planned maintenance or technical issues and online for 8,680 hours, resulting in a calculated 99.14\% uptime. For 5 hours, the status is unclear as the entire VM or only the monitoring was offline. Assuming 80 hours of downtime, we have a 99.08\% uptime. Therefore, it should be noted when interpreting the following metrics that not 100\% of the time period is covered.
 
 \begin{figure}[t]
     \centering
@@ -231,20 +220,15 @@ The designed prediction infrastructure makes use of Hamburg's centralized Traffi
     \caption{Long-term development of prediction availability.}\label{fig:monitoring-availability}
 \end{figure}
 
-- Den Langzeit-Datenverlauf sowie die Prognoseverfügbarkeit ist in  \Cref{fig:monitoring-availability} gezeigt.
-- Die Prognoseverfügbarkeit errechnet sich hierbei einfach aus der Anzahl Prognosen für Ampeln, die minütlich vom Prognosedienst erzeugt werden, durch die Anzahl verfügbarer Connections
-- Im oberen Teil der Abbildung sehen wir, dass die Prognoseverfügbarkeit sich im Normalfall zwischen 40\% und 80\% bewegt. 100\% werden nie erreicht.
-- Die Prognoseverfügbarkeit schwankt im Tagesverlauf, aber auch im längeren Verlauf der Aufzeichnung
-- Betrachten wir den längeren Verlauf, sehen wir, dass nach einer initialen Zeit mit relativ stabiler Prognoseverfügbarkeit im Sommer 2023 vermehrt Einbrüche zu beobachten sind. Diese stabilisieren sich gegen Oktober 2023 wieder, kommen aber nicht wieder auf das Niveau vom Frühjahr 2023.
-- Die Einbrüche im Sommer 2023 sind hauptsächlich dadurch zu erklären, dass während dieser Zeit vermehrt Wartungsarbeiten am Traffic Lights Data System stattfanden. Es wurden wiederholt Updates durchgeführt, die zu einer Verschlechterung der Datensituation führten
+The long-term data trend and prediction availability are depicted in \Cref{fig:monitoring-availability}. The prediction availability is calculated by dividing the number of predictions generated per minute by the total number of available connections. In the upper part of the figure, we observe that prediction availability typically fluctuates between 40\% and 80\%, with 100\% never being reached.
 
-- An den Tagen um den 11. Juli 2023 (1) kam es beispielsweise zu dem Problem, dass alle Observations doppelt geschickt wurden. Dies hatte zur Folge, dass die Prognoseverfügbarkeit für diesen Zeitraum fast auf 0\% zurück ging. Dies ist bisher der größte beobachtete Einbruch. Eine Vermutung, warum hierbei die Prognoseverfügbarkeit so stark einbrach, ist, dass die Duplikate der Nachrichten von einem gespiegelten System mit anderer Latenz kamen, und somit zu einer unterschiedlichen Zeit als die originale eintrafen.
-- An den Tagen um den 23. November 2023 (2) wurde ein Feature für den Prognosedienst getestet, welches nicht funktionierende Ampeln aus dem System ausschließt. Daher ist die relative Verfügbarkeit in dieser Zeit kurz gestiegen trotz fallender Anzahl von Observations. 
-- Abgesehen von diesen zwei besonderen Situationen ist aber klar sichtbar, dass die Prognoseverfügbarkeit stark mit der absoluten Anzahl der Nachrichten korelliert
-- Ebenfalls ungeklärt ist der Abfall der signal\_program observations im Dezember 2022. Ob zum jetzigen Zeitpunkt nur ein Bruchteil der eigentlichen Programm-Observations kommen, oder im Dezember 2022 zu viele dieser Observations gesendet wurden, kann mangels einer Ground-Truth und einer Aufzeichnung genauerer Metriken für diesen Zeitraum nicht nachvollzogen werden
+The prediction availability varies throughout the day and over the longer recording period. Examining the long-term trend, we notice increased disruptions in prediction availability in the summer of 2023, following an initial period of relatively stable availability. These disruptions stabilize around October 2023 but do not return to the levels seen in the spring of 2023. The disruptions in summer 2023 are primarily attributed to increased maintenance activities on the Traffic Lights Data System. Repeated updates during this period led to a deterioration in data quality. 
 
-- Was bei der Betrachtung der Prognoseverfügbarkeit in \Cref{fig:monitoring-availability} nicht eingerechnet ist, ist die Qualität der Prognose. 
-- Ein Teil der Prognosen wird zwar erstellt, hat jedoch eine niedrige Qualität. Da bei einer Prognosequalität niedriger als 50\% keine Geschwindigkeitsempfehlung dargestellt wird, ist die tatsächliche Verfügbarkeit von Geschwindigkeitsempfehlungen immer niedriger als die Prognoseverfügbarkeit
+For instance, around July 11, 2023 (1), all observations were accidentally sent twice, causing prediction availability to nearly drop to 0\%. This incident represents the most significant observed disruption. One hypothesis for the drastic decline is that the duplicate messages originated from a mirrored system with different latency, arriving at a different time than the originals, invalidating the recorded traffic light switching history. Around November 23, 2023 (2), a feature was tested to exclude malfunctioning traffic lights from the prediction system, leading to a brief increase in relative availability despite a decrease in observations.
+
+Apart from these two exceptional situations, it is evident that prediction availability strongly correlates with the absolute number of messages. The decline in \texttt{signal\_program} observations in December 2022 remains unclear. Without a ground truth and a detailed record of metrics for that period, it is challenging to determine whether only a fraction of the actual program observations arrived at this time or if an excessive number was sent in December 2022.
+
+Furthermore, it is important to note that the analysis in \Cref{fig:monitoring-availability} does not account for the quality of the prediction. Some forecasts are generated and therefore recorded in the displayed availability but have low quality. Since speed recommendations are not displayed to the user when the prediction quality is below 50\%, the actual availability of speed recommendations is always lower than the prediction availability.
 
 \begin{figure}[t]
     \centering
@@ -252,60 +236,49 @@ The designed prediction infrastructure makes use of Hamburg's centralized Traffi
     \caption{Long-term development of prediction quality.}\label{fig:monitoring-long-term-study}
 \end{figure}
 
-- Die Qualität der Prognosen ist in \Cref{fig:monitoring-long-term-study} genauer dargestellt
-- Die Messung der Qualität findet statt durch einen kontinuierlichen Vergleich der Prognose mit den tatsächlich eingehenden Daten
-- Stimmen alle Sekunden in der Prognose mit den aktuellen Daten überein, so errechnet sich eine Prognosequalität von 100\%. Stimmt keine Sekunde überein, so ergibt dies 0\% Prognosequalität. In der aktuellen Implementation des Prognoseverfahrens gibt es noch die Prognosequalität -1, die dann erzeugt wird, wenn nicht mindestens 5 Zyklen in den letzten 30 Minuten zur Validierung vorliegen. In \Cref{fig:monitoring-long-term-study} wird dies als Prognose mit Qualität 0\% gemapped 
-- Im Langzeitverlauf sieht man zunächst einen ähnlichen Verlauf bei der Prognoseverfügbarkeit 100\% im Vergleich zu \Cref{fig:monitoring-availability} - sehr prägnant ist hier auch der Einbruch rund um den 11. Juli 2023 durch die duplizierten Observations, sowie die generell über den Jahresverlauf 2023 eingebrochene Verfügbarkeit
+The quality of the predictions is depicted more precisely in \Cref{fig:monitoring-long-term-study}. It is measured through a continuous comparison of the prediction with the actual incoming data. If every second in the prediction vector aligns with the running cycle, the prediction quality is calculated as 100\%. If no seconds align, this results in 0\% prediction quality. The running cycle is not incorporated into the prediction vector yet at the time of prediction quality calculation, ensuring that no running information sinks into the calculated prediction quality. In the current implementation of the prediction procedure, there is also a prediction quality of -1, generated when real-time validation data is no longer available for an extended period of time. In \Cref{fig:monitoring-long-term-study}, this is mapped as a prediction with 0\% quality.
 
-- Weiterhin sieht man, dass die Prognosequalität sehr zweigespalten ist: nur wenige Prognosen liegen im Bereich 10\% -- 90\% Qualität - wenn man die Prognosequalität als Genauigkeitsmetrik interpretiert, scheinen die meisten Prognosen also auf wenige Sekunden genau zu sein
-- Was man jedoch auch sieht sind die vermehrten Prognosen bei 0\% Qualität Seit ca. Juli 2023. 
-- Da der Prognosealgorithmus nur dann eine Prognose erzeugt, wenn bereits zu einem früheren Zeitpunkt Echtzeitdaten der Ampel vorhanden waren, lässt dies auf zwischenzeitliche Datenausfälle schließen
-- Diese Datenausfälle können normal sein, beispielsweise bei der nächtlichen Abschaltung einer Ampel, oder auch nicht gewollt, wenn dies außerplanmäßig und irregular geschieht. Letzteres würde dann auf ein systematisches Problem in der Dateninfrastruktur hindeuten
-- Also lohnt es sich, nochmal einen genaueren Blick auf die Datenausfälle zu richten
+Examining the long-term trend initially reveals a similar pattern in prediction availability at 100\% quality compared to \Cref{fig:monitoring-availability}. Notably, there is a significant dip around July 11, 2023, due to the duplicated observations issue and a general decrease in availability throughout the year 2023. Furthermore, the prediction quality appears dichotomous: only a few predictions fall within the intermediate 10\% to 90\% quality range. If interpreted as an accuracy metric, most predictions seem to be precise to a few seconds. 
 
-\begin{figure}[htbp]
+Nonetheless, an increase in predictions with 0\% quality has been observed since around July 2023. As the prediction algorithm generates predictions only when real-time traffic light data were available at an earlier time, this suggests intermittent data failures. These failures can be normal, such as during the nightly shutdown of a traffic light, or unintended if they occur irregularly. Since the latter would indicate a systematic issue in the data infrastructure, it is worthwhile to take a closer look at the data failures.
+
+\begin{figure}[t]
     \centering
-    \begin{tabular}{@{}cp{5cm}c@{}}
-    (a) 6:00 UTC & & (b) 7:00 UTC\\
-    \end{tabular}
     \includegraphics[width=\linewidth]{images/monitoring-before-after-failure.png}
-    \caption{Before and after traffic computer failure on Oct 11, 2023. Green to red: 100\% to 0\% prediction quality. Black: no prediction, or quality -1.}\label{fig:monitoring-failure}
+    \caption{Before and after traffic computer failure on Oct 11, 2023.}\label{fig:monitoring-failure}
 \end{figure}
 
-- Ein willkürlich gewähltes Beispiel eines solchen Datenausfalls ist in \Cref{fig:monitoring-failure} gezeigt.
-- Sichtbar sind hierbei zwei Arten von Problemen: Ausfälle vereinzelter Ampeln (links und rechts) und Ausfälle ganzer Stadtteile (nur rechts)
-- Bei Ausfällen einzelner Ampeln 
+An arbitrarily chosen example of such a data failure is illustrated in \Cref{fig:monitoring-failure}. Two distinct error patterns are apparent: failures of individual traffic lights (on the left and right) and failures or impairments affecting entire city districts (on the right only).
 
-- TEST wird dies synchronisiert?
+Let's examine the failures of individual traffic lights more closely. Collaborating with the operators of the Traffic Lights Data platform, our monitoring identified 61 intersections and 80 individual connections experiencing persistent issues, rendering them unable to transmit data. In at least 30 cases, a connection was associated with an unsignaled road crossing, or the connection was no longer present. Among 22 nodes, traffic lights utilized the OCIT protocol, which is currently unsupported by the Traffic Lights Data platform. For 19 nodes, the observed failures are presumed to be construction-related, with this confirmed in three additional cases. In 16 instances, outdated intersection topologies or georeferences were identified. The identified traffic lights were subsequently excluded from the forecasting system using an exclude list, with the option to reintegrate them later.
 
-\begin{figure}[htbp]
+Turning our attention to failures affecting entire city districts, \Cref{fig:monitoring-failure} demonstrates their relatively spontaneous occurrence. This type of failure poses a more significant challenge than individual node or connection failures since thousands of predictions are abruptly invalidated. Therefore, it is crucial to precisely identify the origin of this problem.
+
+\begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-failure.pdf}
     \caption{Monitored metrics during traffic computer failure on Oct 11, 2023.}\label{fig:monitoring-failure}
 \end{figure}
 
-\begin{figure}[htbp]
+To better understand the occurrence of such a failure, let's examine the daily course of the above failure scenario, as depicted in Figure \ref{fig:monitoring-failure}. At 3:00 AM UTC, within the timeline of \texttt{signal\_program} observations, we observe that many traffic lights switch their programs. This could, for instance, represent the morning program of the weekly automation of the traffic lights being scheduled.
+
+Simultaneously, the availability and quality of the predictions briefly decline (1). This can be explained by the fact that the prediction algorithm continues to forecast the old pattern from the previous program for a certain period, only synchronizing with the new program after approximately 15 minutes. This flaw in the implementation of the prediction algorithm is known and should be addressed by incorporating program observations into the prediction.
+
+Following this brief decline, the best prediction quality is achieved around 6:00 AM UTC, just before it suddenly and persistently collapses across multiple districts. The fact that these declines are reflected in specific districts strongly suggests that this issue can be traced back to specific traffic controllers, each generating observations for one or more districts. 
+
+Once this observation was communicated to the operators of the Traffic Lights Data platform, it was identified that this problem is indeed associated with certain traffic controllers. The increasing load throughout the day due to rising traffic triggering more green phases causes the message queues of the MQTT brokers at the traffic controllers to fill up. Ultimately, this results in the traffic controllers either not sending messages at all, dropping individual messages, or transmitting them with significant delays.
+
+\begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-7-days.pdf}
     \caption{Reoccurring traffic computer failures after 6:00 UTC.}\label{fig:monitoring-7-days}
 \end{figure}
 
-Together with the Traffic Light Data system operators (LSBG, HHVA, SWARCO), this monitoring system was utilized to identify multiple problems:
+In the weekly progression illustrated in \Cref{fig:monitoring-7-days}, it is evident that this situation repeats almost daily at the same time. Only on Saturdays and Sundays does the issue manifest later, around 7:00 - 8:00 AM UTC, due to reduced and delayed traffic leading to fewer green phases.
 
-\begin{enumerate}
-    \item It occasionally happens that traffic control centers need to undergo maintenance. During this period, real-time data is usually not available for a particular area of the city.
-    \item During the day, the SensorThings brokers cannot keep up with the incoming number of messages. Consequently, brokers' queues fill up, leading to dropped messages.
-    \item Messages from specific traffic control centers can arrive with significant delays of several minutes. This may prevent the generation of predictions for certain traffic lights, as the constraint for time criticality is violated.
-    \item Some traffic lights were connected to the Traffic Lights Data platform, although their protocol is currently not supported by the protocol adapter. These traffic lights would be offline all the time.
-    \item Due to construction or general changes in intersection layouts, some traffic lights would be associated with the wrong ID or not exist anymore.
-\end{enumerate}
+Upon identifying the root cause, the operators initiated appropriate fixes related to the MQTT queues of the traffic controllers. Simultaneously, an additional exclusion list of intersection nodes was created, preliminarily exempting them from the prediction until the issue was resolved. This involves a total of 584 intersections connected to three specific traffic controllers. The identities of which traffic controllers specifically were affected must remain confidential—refer to \cite{neuner_leitfaden_2020} for more details.
 
-Based on the collected knowledge, these issues could be addressed accordingly. First, the platform operators were able to improve the stability of affected brokers. Then, to address issues 3--5, all traffic nodes associated with the erroneous traffic computers and erroneous traffic lights were excluded based on a list provided by the system's operators. This significantly reduces the number of available traffic lights for the prediction system but ensures that predictions are only provided for functional traffic lights.
-
-Lösungsmöglichkeiten:
-- HTTP-MQTT-Syncing (für Datenaufzeichnung zu Evaluationsteil 2 verwendet, aber für Datenaufzeichnung des Prognosesystems nicht)
-
-- To show the effect of the improvements: rejected cycles metric
+Another analytical approach involves examining how many cycles were discarded due to unauthorized consecutive signal sequences. This analysis provides further insights into whether isolated messages are lost or if observations from operational traffic lights consistently reach their destination.
 
 \begin{figure}
     \centering
@@ -313,16 +286,32 @@ Lösungsmöglichkeiten:
     \caption{Cycles rejected due to out-of-order phase sequence.}\label{fig:monitoring-rejected-cycles}
 \end{figure}
 
+The analysis is depicted in \Cref{fig:monitoring-rejected-cycles}. Due to the delayed implementation of error detection in the prediction system, only recorded data from August 1, 2023, onward is available. Nevertheless, a remarkable improvement is evident. On October 31 at 6:40 AM local time, the number of rejected cycles suddenly dropped to 0, with only sporadic peaks. The specific modification made to the Traffic Lights Data System at that time is unknown.
+
+Previously, between 25 and 125 cycles were rejected every minute. Assuming a cycle length of 90 seconds and considering one cycle per connection, this could affect up to 200 connections. However, this had no noticeable impact on the measured forecast quality, as observed in \Cref{fig:monitoring-long-term-study}. One possible explanation is the resilience of the prediction algorithm to individual missing cycles. Another explanation could be the resolution of specific connections that frequently sent consecutive \texttt{cycle\_second} observations, disproportionately generating faulty cycles. The existence of such traffic lights has been previously confirmed through real-time data observations.
+
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-prediction-service-load.pdf}
     \caption{Cadvisor statistics for prediction service.}\label{fig:monitoring-prediction-service-load}
 \end{figure}
 
+Finally, let's review the scalability of the prediction algorithm. For the prediction service implemented in Java, running as a container on the deployment since December 2022, load metrics have been recorded using Cadvisor. This measurement period progressed until May 2023.
 
+The service was measured on a TU Dresden Enterprise VM with 6 CPU cores. To calculate the percentage utilization of the prediction service on the CPU cores, CPU time was measured. In this context, the service consumes approximately 60\% of the CPU time of a single CPU, translating to around 10\% of the total possible computing capacity when considering 6 CPUs. Both network usage and RAM consumption are also within acceptable limits.
+
+To interpret these numbers, it should be noted that the prediction service encompasses all functionalities required for forecasting, including the handling of all real-time traffic light data ingestion. Particularly because the service is implemented in Java, there is potential to further optimize these metrics. However, optimizations in terms of performance are currently not required, as the service appears to scale well.
 
 \subsection{Study of Traffic-Adaptivity in Hamburg}
 
+- Wir haben ja bereits festgestellt, dass viele Ampeln, wenn sie Daten schicken, nach der Qualitätsmetrik des Algorithmus relativ akkurat prognostiziert werden können
+- Der gewählte Algorithmus scheint also nicht nur gut zu skalieren, sondern auch bisher überraschend gut selbst mit den vielen verkehrsabhängigen Ampelschaltungen in Hamburg zu funktionieren. 
+- Diese Beobachtung steht im Kontrast mit den bisherigen Arbeiten, die eher das Gegenteil haben vermuten lassen
+- Natürlich haben wir bisher nur Fahrradampeln betrachtet, die nur einen Teil des Bildes zeichnen. Daher schauen wir uns als nächstes nochmal die Verkehrsabhängigkeit für alle Ampeln in Hamburg an. Hiermit wollen wir nicht nur tiefergehende Einblicke in die Ampelschaltungen erhalten, sondern auch abschließend klären, an welchen Stellen wir das laufende Prognosesystem noch weiter optimieren können
+
 ...
+
+- HTTP-MQTT-Syncing (für Datenaufzeichnung zu Evaluationsteil 2 verwendet, aber für Datenaufzeichnung des Prognosesystems nicht)
+- Immer rote Ampeln näher betrachten
 
 \section{Conclusions}
