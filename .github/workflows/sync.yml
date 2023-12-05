@@ -1,0 +1,23 @@
+name: Mirror Repo
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  push:
+    branches:
+      - sync # Push empty commit to this branch to trigger sync
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Mirror
+      run: |
+        git clone --mirror "https://git:$OVERLEAF_GIT_PASSWORD@tex.zih.tu-dresden.de/git/$OVERLEAF_GIT_PROJECT"
+        cd $OVERLEAF_GIT_PROJECT.git
+        git branch -m master main
+        git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+        git push --mirror github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        OVERLEAF_GIT_PASSWORD: ${{ secrets.OVERLEAF_GIT_PASSWORD }}
+        OVERLEAF_GIT_PROJECT: ${{ secrets.OVERLEAF_GIT_PROJECT }}
