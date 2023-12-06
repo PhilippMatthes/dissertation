@@ -183,7 +183,6 @@ Firstly, we examine how well the prediction system interacts with the Hamburg Tr
 
 The second part of the evaluation focuses on studying traffic adaptability through real-time data. We analyze the day-night cycle of traffic adaptiveness from weekday to weekday, examining how much the green phase of traffic lights fluctuates forward and backward in a cycle, utilizing the developed Distance metric. Additionally, we investigate whether green phases tend to distribute evenly within the cycle or if there are traffic lights with step patterns where the green phase only fluctuates forward or backward. Using a map, we assess whether traffic dependence affects entire intersections with multiple traffic lights as expected or if it also impacts individual traffic lights. These analyses provide insights into estimating the suitability of the designed prediction process for how many intersections.
 
-\subsection{Long-Term Study of Prediction Availability, Quality, and Scalability}
 
 \begin{table}[b]
     \centering
@@ -203,6 +202,9 @@ The second part of the evaluation focuses on studying traffic adaptability throu
     \label{tab:tld-number-of-things}
 \end{table}
 
+
+\subsection{Long-Term Study of Prediction Availability, Quality, and Scalability}
+
 When examining the temporal progression of the prediction, it is crucial to note the continuous increase in the number of traffic lights in the Traffic Lights Data platform. The ID of individual traffic lights (connections) can be utilized to determine the number of intersections, such as \texttt{353\_12} for intersection node 353 and Connection 12. Referring to \Cref{tab:tld-number-of-things}, as of December 2023, there are 19,951 connections distributed across 791 intersection nodes in the system. This constitutes a coverage of 45.7\% (of 1,731) of signalized intersections. During a preliminary examination of traffic lights, two minor errors were identified:
 
 \begin{enumerate}
@@ -212,13 +214,13 @@ When examining the temporal progression of the prediction, it is crucial to note
 
 Both issues were traced back to data input errors through communication with operators, and corrective measures have been initiated.
 
-As of December 4, 2023, out of the 19,951 traffic lights, 5,477 are designated for use by cyclists and are thus relevant to our bike-GLOSA system. This also includes mixed usage by public transportation, pedestrians, and cars, along with bicycles. Recorded data for these traffic lights, measured over a period of 365 days (December 4, 2022 - December 4, 2023), show an average of 8,532 \texttt{primary\_signal} observations, 3,318 \texttt{cycle\_second} observations, and 27.7 \texttt{program\_change} observations per minute received and processed via MQTT. During this time, the Prediction Service was offline for 75 hours due to planned maintenance or technical issues and online for 8,680 hours, resulting in a calculated 99.14\% uptime. For 5 hours, the status is unclear as the entire VM or only the monitoring was offline. Assuming 80 hours of downtime, we have a 99.08\% uptime. Therefore, it should be noted when interpreting the following metrics that not 100\% of the time period is covered.
-
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-availability.pdf}
     \caption{Long-term development of prediction availability.}\label{fig:monitoring-availability}
 \end{figure}
+
+As of December 4, 2023, out of the 19,951 traffic lights, 5,477 are designated for use by cyclists and are thus relevant to our bike-GLOSA system. This also includes mixed usage by public transportation, pedestrians, and cars, along with bicycles. Recorded data for these traffic lights, measured over a period of 365 days (December 4, 2022 - December 4, 2023), show an average of 8,532 \texttt{primary\_signal} observations, 3,318 \texttt{cycle\_second} observations, and 27.7 \texttt{program\_change} observations per minute received and processed via MQTT. During this time, the Prediction Service was offline for 75 hours due to planned maintenance or technical issues and online for 8,680 hours, resulting in a calculated 99.14\% uptime. For 5 hours, the status is unclear as the entire VM or only the monitoring was offline. Assuming 80 hours of downtime, we have a 99.08\% uptime. Therefore, it should be noted when interpreting the following metrics that not 100\% of the time period is covered.
 
 The long-term data trend and prediction availability are depicted in \Cref{fig:monitoring-availability}. The prediction availability is calculated by dividing the number of predictions generated per minute by the total number of available connections. In the upper part of the figure, we observe that prediction availability typically fluctuates between 40\% and 80\%, with 100\% never being reached.
 
@@ -226,15 +228,15 @@ The prediction availability varies throughout the day and over the longer record
 
 For instance, around July 11, 2023 (1), all observations were accidentally sent twice, causing prediction availability to nearly drop to 0\%. This incident represents the most significant observed disruption. One hypothesis for the drastic decline is that the duplicate messages originated from a mirrored system with different latency, arriving at a different time than the originals, invalidating the recorded traffic light switching history. Around November 23, 2023 (2), a feature was tested to exclude malfunctioning traffic lights from the prediction system, leading to a brief increase in relative availability despite a decrease in observations.
 
-Apart from these two exceptional situations, it is evident that prediction availability strongly correlates with the absolute number of messages. The decline in \texttt{signal\_program} observations in December 2022 remains unclear. Without a ground truth and a detailed record of metrics for that period, it is challenging to determine whether only a fraction of the actual program observations arrived at this time or if an excessive number was sent in December 2022.
-
-Furthermore, it is important to note that the analysis in \Cref{fig:monitoring-availability} does not account for the quality of the prediction. Some forecasts are generated and therefore recorded in the displayed availability but have low quality. Since speed recommendations are not displayed to the user when the prediction quality is below 50\%, the actual availability of speed recommendations is always lower than the prediction availability.
-
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-long-term-study.pdf}
     \caption{Long-term development of prediction quality.}\label{fig:monitoring-long-term-study}
 \end{figure}
+
+Apart from these two exceptional situations, it is evident that prediction availability strongly correlates with the absolute number of messages. The decline in \texttt{signal\_program} observations in December 2022 remains unclear. Without a ground truth and a detailed record of metrics for that period, it is challenging to determine whether only a fraction of the actual program observations arrived at this time or if an excessive number was sent in December 2022.
+
+Furthermore, it is important to note that the analysis in \Cref{fig:monitoring-availability} does not account for the quality of the prediction. Some forecasts are generated and therefore recorded in the displayed availability but have low quality. Since speed recommendations are not displayed to the user when the prediction quality is below 50\%, the actual availability of speed recommendations is always lower than the prediction availability.
 
 The quality of the predictions is depicted more precisely in \Cref{fig:monitoring-long-term-study}. It is measured through a continuous comparison of the prediction with the actual incoming data. If every second in the prediction vector aligns with the running cycle, the prediction quality is calculated as 100\%. If no seconds align, this results in 0\% prediction quality. The running cycle is not incorporated into the prediction vector yet at the time of prediction quality calculation, ensuring that no running information sinks into the calculated prediction quality. In the current implementation of the prediction procedure, there is also a prediction quality of -1, generated when real-time validation data is no longer available for an extended period of time. In \Cref{fig:monitoring-long-term-study}, this is mapped as a prediction with 0\% quality.
 
@@ -290,13 +292,13 @@ The analysis is depicted in \Cref{fig:monitoring-rejected-cycles}. Due to the de
 
 Previously, between 25 and 125 cycles were rejected every minute. Assuming a cycle length of 90 seconds and considering one cycle per connection, this could affect up to 200 connections. However, this had no noticeable impact on the measured forecast quality, as observed in \Cref{fig:monitoring-long-term-study}. One possible explanation is the resilience of the prediction algorithm to individual missing cycles. Another explanation could be the resolution of specific connections that frequently sent consecutive \texttt{cycle\_second} observations, disproportionately generating faulty cycles. The existence of such traffic lights has been previously confirmed through real-time data observations.
 
-\begin{figure}
+Finally, let's review the scalability of the prediction algorithm. For the prediction service implemented in Java, running as a container on the deployment since December 2022, load metrics have been recorded using Cadvisor. This measurement period progressed until May 2023.
+
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-prediction-service-load.pdf}
     \caption{Cadvisor statistics for prediction service.}\label{fig:monitoring-prediction-service-load}
 \end{figure}
-
-Finally, let's review the scalability of the prediction algorithm. For the prediction service implemented in Java, running as a container on the deployment since December 2022, load metrics have been recorded using Cadvisor. This measurement period progressed until May 2023.
 
 The service was measured on a TU Dresden Enterprise VM with 6 CPU cores. To calculate the percentage utilization of the prediction service on the CPU cores, CPU time was measured. In this context, the service consumes approximately 60\% of the CPU time of a single CPU, translating to around 10\% of the total possible computing capacity when considering 6 CPUs. Both network usage and RAM consumption are also within acceptable limits.
 
@@ -309,7 +311,9 @@ To interpret these numbers, it should be noted that the prediction service encom
 - Diese Beobachtung steht im Kontrast mit den bisherigen Arbeiten, die eher das Gegenteil haben vermuten lassen
 - Natürlich haben wir bisher nur Fahrradampeln betrachtet, die nur einen Teil des Bildes zeichnen. Daher schauen wir uns als nächstes nochmal die Verkehrsabhängigkeit für alle Ampeln in Hamburg an. Hiermit wollen wir nicht nur tiefergehende Einblicke in die Ampelschaltungen erhalten, sondern auch abschließend klären, an welchen Stellen wir das laufende Prognosesystem noch weiter optimieren können
 
-...
+% Paper: Out of the six weeks, we apply our method to four weeks starting on 2023-09-23, 0 am and ending on 2023-10-20, 12 pm. During this period, there are $\approx1,2$ billion signal state data points and $\approx1$ billion cycle data points. The remainder of the data points either lie outside of this period or come from other data sources, such as car/bus detectors.
+
+- 
 
 - HTTP-MQTT-Syncing (für Datenaufzeichnung zu Evaluationsteil 2 verwendet, aber für Datenaufzeichnung des Prognosesystems nicht)
 - Immer rote Ampeln näher betrachten
