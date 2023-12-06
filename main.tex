@@ -55,7 +55,6 @@
 \setlist{parsep=0pt,listparindent=\parindent}
 
 \usepackage{float}
-\usepackage{subfigure}
 \usepackage{pgf}
 
 % configure the name of your appendix
@@ -69,11 +68,13 @@
   \bgroup\let\addcontentsline=\nocontentsline#1{#2}\egroup
 }
 
+\usepackage{amsmath}
+
 % https://github.com/priobike/priobike-flutter-app/blob/dev/lib/common/layout/ci.dart
 \definecolor{ciblue}{HTML}{0073ff}
 \definecolor{cidarkblue}{HTML}{003064}
 \usepackage[colorlinks=true,allcolors=ciblue]{hyperref}%
-\usepackage[capitalise,nameinlink,noabbrev]{cleveref}
+\usepackage[capitalise,nameinlink,noabbrev]{cleveref} % Must be loaded after amsmath
 \hypersetup{
   colorlinks=true,
   linkcolor=black,
@@ -144,8 +145,6 @@ frametitle={%
 \setlength{\parindent}{0cm}
 \setlength{\parskip}{0.3cm plus 1mm minus 1mm}
 \setlength{\intextsep}{0.6cm}
-
-\usepackage{amsmath}
 
 \begin{document}
 

@@ -21,3 +21,24 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         OVERLEAF_GIT_PASSWORD: ${{ secrets.OVERLEAF_GIT_PASSWORD }}
         OVERLEAF_GIT_PROJECT: ${{ secrets.OVERLEAF_GIT_PROJECT }}
+  # Make a PDF of the main.tex file
+  pdf:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install LaTeX
+      uses: xu-cheng/latex-action@v2
+      with:
+        root_file: main.tex
+        args: -f -pdf
+    - name: Build
+      run: latexmk -pdf main.tex
+    - name: Upload PDF to releases
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          main.pdf
+        tag_name: ${{ github.sha }}
+        name: ${{ github.sha }}
+        body: ${{ github.sha }}
