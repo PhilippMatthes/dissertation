@@ -1,6 +1,12 @@
 \chapter{Traffic Light Prediction}\label{ch:prediction}
 
- \section{Introduction}
+\begin{Summary}[Bibliographical Notes]
+This chapter is based on the following paper in which the author was the principal investigator alongside Daniel Jeschor:
+
+\cite{jeschor2024cloudy} \fullcite{jeschor2024cloudy}
+\end{Summary}
+
+\section{Introduction}
 
 The lack of awareness among road users about the planned switching of traffic lights leads to a series of well-known problems. Firstly, the issue of unneeded stopping and idling at red lights unnecessarily increases energy expenditure and emissions. In addition, not knowing about the upcoming traffic light's switching behavior also has negative impacts on road safety. There is a so-called dilemma zone when approaching a traffic light, where it unexpectedly turns yellow, and one must decide whether to stop before the light \cite{zhang_yellow_2014}. Often, this can lead to running a red light, speeding, or misunderstandings between drivers, increasing the overall risk of accidents.
 
@@ -306,16 +312,51 @@ To interpret these numbers, it should be noted that the prediction service encom
 
 \subsection{Study of Traffic-Adaptivity in Hamburg}
 
-- Wir haben ja bereits festgestellt, dass viele Ampeln, wenn sie Daten schicken, nach der Qualitätsmetrik des Algorithmus relativ akkurat prognostiziert werden können
-- Der gewählte Algorithmus scheint also nicht nur gut zu skalieren, sondern auch bisher überraschend gut selbst mit den vielen verkehrsabhängigen Ampelschaltungen in Hamburg zu funktionieren. 
-- Diese Beobachtung steht im Kontrast mit den bisherigen Arbeiten, die eher das Gegenteil haben vermuten lassen
-- Natürlich haben wir bisher nur Fahrradampeln betrachtet, die nur einen Teil des Bildes zeichnen. Daher schauen wir uns als nächstes nochmal die Verkehrsabhängigkeit für alle Ampeln in Hamburg an. Hiermit wollen wir nicht nur tiefergehende Einblicke in die Ampelschaltungen erhalten, sondern auch abschließend klären, an welchen Stellen wir das laufende Prognosesystem noch weiter optimieren können
+We have previously established that many traffic lights, in case they send enough data, can be accurately predicted based on the quality metric of the algorithm. The selected algorithm not only appears to scale well but also surprisingly performs effectively with the numerous traffic-dependent traffic light systems in Hamburg. This observation contrasts with previous studies that had suggested the opposite.
 
-% Paper: Out of the six weeks, we apply our method to four weeks starting on 2023-09-23, 0 am and ending on 2023-10-20, 12 pm. During this period, there are $\approx1,2$ billion signal state data points and $\approx1$ billion cycle data points. The remainder of the data points either lie outside of this period or come from other data sources, such as car/bus detectors.
+It's worth noting that our analysis has so far focused only on bicycle traffic lights, providing only a partial picture. Therefore, our next step is to examine the traffic dependence for all traffic lights in Hamburg. This analysis aims to gain deeper insights into traffic light sequences and, ultimately, to identify areas for future optimizations of current prediction systems.
 
-- 
+To conduct these evaluations, real-time data was recorded for approximately four weeks. This encompassed all 18,528 traffic lights available in the Hamburg Traffic Lights Data system at the time of evaluation. In general, we can reuse the existing prediction infrastructure for data collection, including error detection. However, since we are not predicting but only recording the data for analysis, we have to conduct some modifications to the infrastructure. 
 
-- HTTP-MQTT-Syncing (für Datenaufzeichnung zu Evaluationsteil 2 verwendet, aber für Datenaufzeichnung des Prognosesystems nicht)
-- Immer rote Ampeln näher betrachten
+One issue that we aim to minimize is the observed problem of dropped MQTT messages. Since the time criticality of the messages is less important for this experiment, while the completeness of messages is much more important than for the prediction, we can apply a hack to get many more Observations than possible with MQTT only. We query all Datastreams in a round-robin fashion via the HTTP interface of the Traffic Lights Data API and fetch the latest Observations via this web interface. In case we encounter any unseen Observations, we insert them into the database in which our MQTT Observations are located. 
+
+Although theoretically applicable to the prediction service, implementing this process raised concerns. Extensive internal discussions concluded that browsing through data streams via the HTTP interface takes a few minutes, and artificially delaying MQTT observations or adjusting reconstructed cycles retrospectively would not be sensible with the current and future implementation of the prediction service. Therefore, this approach was only applied in the data recording phase, which does not rely on sequential and minimally delayed observations. This also ensures that the Traffic Lights Data does not have to deal with additional load that is induced by the complex queries executed on the web API after our experiment is finished.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{images/adaptiveness-mqtt-http.pdf}
+    \caption{Supplementation of recorded MQTT observations through HTTP interface.}\label{fig:adaptiveness-mqtt-http}
+\end{figure}
+
+\Cref{fig:adaptiveness-mqtt-http} demonstrates that this approach effectively minimizes data losses. On multiple days, approximately half of all recorded observations were supplemented by the HTTP interface because they were lost preliminarily via MQTT. However, in the week around October 2, 2023, another issue arose, reducing the overall quantity of observations despite supplementation via HTTP. Therefore, it must be assumed that at least a small portion of the actual traffic light states could not be recorded.
+
+The detection of faulty cycles, also implemented in the prediction service, was utilized for problem identification. Out of approximately 424 million reconstructed cycles, 13.8 million cycles were discarded. Here, 90\% of faulty cycles are distributed across 10\% of the connections. By examining the faulty connections on the map, one of the known faulty traffic computers could be identified as the cause.
+
+It is possible that not all faulty cycles were detected in this process. 35\% of the available traffic lights in Hamburg, according to recorded data, switch only between red and green, making it impossible to identify missing phases. However, for 42\% of the traffic lights, the detection should have worked well, as it was determined that they switch in the order of green-amber-red-redamber. The remaining traffic lights switch between other colors, such as amber and dark, represented by \texttt{primary\_signal} Observations with \texttt{result = 0}. Despite this, the Distance metric and the Shift metric are calculated normally for these traffic lights.
+
+In conclusion, we cannot completely eliminate all errors, but they seem to be present only to a minor extent. It is expected that isolated recording errors will be overshadowed by the mass of valid data. However, it is important to note for subsequent analyses that recording errors (e.g., missing cycle observation leading to doubled cycle length) may occur. Accordingly, metrics will be chosen to minimize distortion by outliers.
+
+Now, turning our attention to adaptability, we analyze the calculated Distance metric. To provide an overview of the adaptability of all traffic lights, we first calculate the Distance metric between all cycles within each hour distributed across each weekday in the four recorded weeks. The result is a weekly table with hourly cells, mapping each hour for the recorded four weeks. This weekly table forms the basis for examining the weekly trend across all connections. Aggregating in weekly tables is efficient for processing the billions of recorded observation rows. For each cell, a filter query can be used to efficiently extract observations stored as rows in the PostgreSQL database using previously installed indexes.
+
+The following metrics are calculated for each hourly cell in every weekly table. We use the median of the Distance metric instead of the mean because the cycle length and, consequently, the Distance metric are affected by outliers due to missing cycle time observations. The median is more robust against such outliers. Additionally, we calculate the interquartile range (IQR) of the first and third quartiles of the metric distribution. The IQR provides a similar insight into the distribution of adaptability within the respective hour, like the dispersion measure, but is also statistically more robust against outliers.
+
+After calculating these metrics for all cells, the result is shown in figure \ref{fig:adaptiveness-weekdays-distance}. The information is presented along with the normalized frequencies of recorded bus requests (bus observations) as well as cars, bikes, and pedestrians (detector observations) and validated with the frequency of public transit stops according to publicly accessible schedules.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{images/adaptiveness-weekdays-distance.pdf}
+    \caption{Measured traffic light adaptiveness over weekdays based on the Distance metric in relation to the measured traffic volume.}\label{fig:adaptiveness-weekdays-distance}
+\end{figure}
+
+As a result, we observe that adaptiveness (measured by the distance metric) correlates as expected with traffic volume. While adaptiveness is at its lowest during the night, it rises rapidly during the morning traffic surge and then remains relatively constant until the evening before decreasing again.
+
+Measured across all traffic lights, the median of the distance metric ranges between 0 and 3 seconds. Interpreting the interquartile range (IQR): at least 25\% of all traffic lights exhibit no adaptiveness in the median, and at least 75\% of all traffic lights in the median operate with a maximum adaptiveness of 15 seconds.
+
+Was noch fehlt
+- Betrachtung der Grünphasenlänge/Grünphasenüberschneidung und Shift
+- Diskussion der Ergebnisse: speziell auch näher auf immer rote Ampeln eingehen
+- Was bedeuten die Ergebnisse für das Prognoseverfahren und andere Prognoseverfahren?
 
 \section{Conclusions}
+
+- Fehlt noch

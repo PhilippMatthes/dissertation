@@ -1,5 +1,36 @@
 \chapter{Traffic Light Matching}\label{ch:matching}
 
+\begin{Summary}[Bibliographical Notes]
+This chapter is based on the following two papers in which the author was the principal investigator: 
+
+\cite{matthes2022matching} \fullcite{matthes2022matching}
+
+\cite{matthes2023geo} \fullcite{matthes2023geo}
+\end{Summary}
+
+\section{Introduction}
+
+Detecting traffic lights is not only a safety-critical functionality for (semi)autonomous driving systems but is also essential for bridging the gap between traffic light prediction and speed recommendation. In \Cref{ch:prediction}, we addressed the prediction of traffic lights and developed a system that allows us to obtain predictions for a subset of traffic lights in Hamburg over the internet.
+
+We have previously considered that each traffic light has an ID (also referred to as connection). The prediction is obtained through this ID. However, we have not yet explored how to determine which traffic lights are relevant for the user's route. To implement this functionality, we require georeferencing to identify the location of each traffic light with its corresponding ID. Subsequently, this information can be matched with the user's route.
+
+The concept of georeferencing intersections, initially termed Geometric Intersection Description (GID), was introduced relatively early in the USA in 2008 \cite{cicas-v}. Recognizing the importance of georeferencing traffic lights for the implementation of autonomous driving systems or Cooperative Intelligent Transportation Systems (C-ITS), an international standard known as MAP-Message, MAP-Topology, or simply MAP was developed. Both MAP and Signal Phase and Timing (SPaT) are defined by the SAE J2735\footnote{\url{https://www.sae.org/standards/content/j2735_202309/}} standard. A MAP contains the lane geometries of all turns at an intersection and is usually maintained by engineering bureaus tasked with traffic development.
+
+MAPs, like SPaTs, can reach the road user through various channels, encountering similar transmission issues as SPaTs (see \Cref{ch:prediction}). However, since MAPs are less frequently updated, collecting, transferring to a database, and redistributing the lane geometries is relatively straightforward. For instance, Hamburg provides the lane geometry associated with each traffic light (connection) publicly through the Traffic Lights Data platform.
+
+A more significant challenge than the acquisition of intersection topologies is determining which lane on the intersection will be used by a road user approaching it. There are typically multiple individual paths that can be chosen when crossing an intersection. The choice of turn depends on the user's route and mode of transportation. While cars are restricted by available lanes, cyclists or pedestrians often have multiple options to cross an intersection. Moreover, cyclists or pedestrians may approach a traffic light from several directions, leading to no clear entry lane.
+
+Selecting the correct traffic light for a cyclist is, therefore, not a trivial problem. The objectives of this chapter are as follows:
+
+\begin{enumerate}
+    \item Reviewing related work and how they address the problem.
+    \item Identifying three core approaches: vision-based using cameras or similar sensors for traffic light identification, location-based using global navigation and satellite systems (GNSS) for lane positioning, and route-based using semantic information such as turns for lane selection.
+    \item Exploring why route-based approaches are currently the most promising for bicycle applications and developing two novel approaches to implement this as accurately as possible.
+    \item Discussing approaches that did not yield the desired results and the reasons behind them.
+    \item Evaluating the accuracy of the developed approach using multiple ground truths to make well-founded statements about the suitability of the method.
+    \item Providing a critical summary of the state of the art, developed methods, and results to indicate directions for future work.
+\end{enumerate}
+
 \section{Related Work}
 
 The need to address traffic light matching as a problem is determined by the study environment.
@@ -462,16 +493,9 @@ As shown in \Cref{fig:sg-selection-overlap-cleanup}, the utilized traffic light 
 
 Not all intersections have traffic lights connected to Hamburg's data broker. However, this represents a problem for matching traffic lights along a route. If an unconnected intersection lies between the user and the next connected intersection, the user may get a speed advisory for the wrong intersection. Although the traffic light is visualized on the in-app map, this may still lead to confusion for the user. Thus, it is crucial also to identify the unconnected intersections along the bike path. These unconnected intersections are visualized with a unique traffic light symbol in the user interface.
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{images/sg-selection-unconnected-intersections.png}
-\caption{Integration of unconnected intersections through the Lichtsignalanlagen Hamburg dataset.}
-\label{fig:sg-selection-unconnected-intersections}
-\end{figure}
-
 To find out which intersections are not connected to the system (but still signalized), the Lichtsignalanlagen Hamburg\footnote{\url{https://metaver.de/trefferanzeige?docuuid=C498DEED-985C-11D5-889E-000102B6A10E}} dataset is utilized. This dataset is updated periodically every four months and contains single coordinates of each signalized intersection in Hamburg (see \Cref{fig:sg-selection-unconnected-intersections}). Thus, the dataset does not resolve individual traffic light geometries but the center locations of the intersection node. 
 
-To identify which intersections are connected, it is determined which intersections have traffic light geometries within an empirically defined threshold of 50 meters. These intersection nodes from the Lichtsignalanlagen Hamburg dataset are marked as "connected." All other nodes are marked as "unconnected." In case of a traffic light unassigned to any intersection node, it is assumed that this intersection node is missing in the Lichtsignalanlagen Hamburg dataset, and a new intersection node is created. Finally, a list of intersection nodes is matched to the route by a distance threshold of 50 meters. The app then visualizes all "unconnected" nodes as shown in \Cref{fig:sg-selection-unconnected-intersections}. To avoid displaying a speed advisory for a wrong intersection, the app handles each unconnected intersection like a traffic light that doesn't send any data. Once an unconnected intersection is passed before another (connected) signal, the speed advisory is enabled again. This step completes the traffic light matching pipeline.
+To identify which intersections are connected, it is determined which intersections have traffic light geometries within an empirically defined threshold of 50 meters. These intersection nodes from the Lichtsignalanlagen Hamburg dataset are marked as "connected." All other nodes are marked as "unconnected." In case of a traffic light unassigned to any intersection node, it is assumed that this intersection node is missing in the Lichtsignalanlagen Hamburg dataset, and a new intersection node is created. Finally, a list of intersection nodes is matched to the route by a distance threshold of 50 meters. To avoid displaying a speed advisory for a wrong intersection, the app handles each unconnected intersection like a traffic light that doesn't send any data. Once an unconnected intersection is passed before another (connected) signal, the speed advisory is enabled again. This step completes the traffic light matching pipeline.
 
 \subsection{Summary of Methods for Traffic Light Matching}
 
@@ -484,3 +508,53 @@ Multiple methods were tested preliminarily but not investigated further. Nonethe
 To further improve the developed filtering pipeline, it was determined that the geometric features, such as bearing or projection length, could be weighted more dynamically by a machine learning model. The final MLP model utilizes 16 features calculated from the signal's geometry and its projection onto the route to determine if this traffic light matches the route. In case of overlaps, the traffic light predicted to match the route most likely is chosen.
 
 Finally, to avoid speed advisories being given for a traffic light that comes after an unconnected but signalized intersection, the Lichtsignalanlagen Hamburg dataset is utilized. The implemented web service, which incorporates both final models and matches unconnected intersections, is accessible to the app through a web API.
+
+\section{Results}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\linewidth]{images/lane-analysis-lane-lengths.pdf}
+\caption{.}
+\label{fig:}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.75\linewidth]{images/binding-coverage-hamburg.png}
+\caption{.}
+\label{fig:}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\linewidth]{images/coverage-analysis.pdf}
+\caption{.}
+\label{fig:}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\linewidth]{images/coverage-analysis-2.pdf}
+\caption{.}
+\label{fig:}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.75\linewidth]{images/model-analysis.pdf}
+\caption{.}
+\label{fig:}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{tabular}{cc}
+\footnotesize{(a) False matches} & \footnotesize{(b) Correct matches} \\
+\includegraphics[width=0.35\linewidth]{images/error-analysis-constellations-false.pdf} & \includegraphics[width=0.35\linewidth]{images/error-analysis-constellations-right.pdf} \\
+\end{tabular}
+\caption{.}
+\label{fig:}
+\end{figure}
+
+
+\section{Conclusions}
