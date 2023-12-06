@@ -32,8 +32,6 @@ jobs:
       with:
         root_file: main.tex
         args: -f -pdf
-    - name: Build
-      run: latexmk -pdf main.tex
     - name: Upload PDF to releases
       uses: softprops/action-gh-release@v1
       with:
