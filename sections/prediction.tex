@@ -156,7 +156,7 @@ The chosen probabilistic prediction method assumes that the green phases should 
 
 First, it must be determined which metrics are suitable for measuring characteristics of traffic adaptivity. One aspect of traffic adaptivity that can be directly measured from the recorded cycles is the shift of the green phase. We can measure the green phase's start time $g_{start}(L_j)$ and end time $g_{end}(L_j)$ in each cycle $L_j$, and calculate the shift between both:
 
-\[ \text{Shift}(L_1, L_2) = [g_{start}(L_2) - g_{start}(L_1), g_{end}(L_2) - g_{end}(L_1)] \]
+\begin{equation} \text{Shift}(L_1, L_2) = [g_{start}(L_2) - g_{start}(L_1), g_{end}(L_2) - g_{end}(L_1)] \end{equation}
 
 In the example given in \Cref{fig:types-of-adaptiveness}, $\text{Shift}$$(L_1, L_2)$ would be $[-2, -2]$ and $\text{Shift}$$(L_2, L_3) $$= [3, 3]$. While partially adaptive traffic lights, as highlighted in \Cref{fig:types-of-adaptiveness} are assumed to shift the green phase within the cycle, other traffic lights may only insert a green phase once a vehicle is detected. Thus, one problem of this metric is that each cycle may have different numbers of green phases. As a result, we have to discard additional green phases at the end of one cycle that are not seen in the other cycle, potentially leading to some discarded information. 
 
@@ -168,12 +168,12 @@ In the example given in \Cref{fig:types-of-adaptiveness}, $\text{Shift}$$(L_1, L
 
 To account for this loss of information, we calculate another metric to capture the cycles that are not fully considered through the Shift metric. This metric indirectly measures the deviation by the number of seconds in the current cycle that deviate from the previous cycle. We name this metric "Distance" since it calculates the second-wise distance between the cycles. The Distance metric between two cycles $L_1$ and $L_2$, with the lengths $l_1$ and $l_2$ calculated as follows:
 
-\[ \text{Distance}(L_1, L_2) =  \sum_{i=0}^{\max(l_1, l_2)-1} \left\{
+\begin{equation} \text{Distance}(L_1, L_2) =  \sum_{i=0}^{\max(l_1, l_2)-1} \left\{
 \begin{array}{ll}
 1 & \text{if } i \geq l_1 \text{ or } i \geq l_2 \\
 1 & \text{if } L_1[i] \neq L_2[i] \\
 0 & \text{otherwise}
-\end{array} \right.\]
+\end{array} \right.\end{equation}
 
 If we apply this metric to the example in \Cref{fig:types-of-adaptiveness}, we get $\text{Distance}$$(L_1, L_2)$$ = 4$ and $\text{Distance}$$(L_2, L_3)$$ = 6$. This metric captures all second-wise differences but not the directionality of the green phase shifts. This means that traffic lights expressing a "staircase" pattern, in which the green phase is shifted by a constantly increasing factor each cycle, will be measured as highly adaptive, although they express a relatively predictable pattern. As a consequence, both the Distance and Shift metrics are used in conjunction with the recorded traffic light data.
 
