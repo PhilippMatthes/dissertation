@@ -159,13 +159,11 @@ The main limitation of the H3 approach is that it assumes that the route geometr
 
 A potential solution to this problem would be to choose a larger raster, but this would worsen the score even more since many signals' geometries are no longer captured adequately. Instead, they would resemble a circular "blob", as highlighted on the left side of \Cref{fig:sg-selection-h3-example}. The "blob" problem does not only appear when upscaling the raster to H3 level 13. It appears at level 14 as well. Some traffic lights would have such short geometries that only one H3 cell was matched, especially concerning pedestrian traffic lights crossing the road. Since many of these traffic lights are aligned orthogonally to the road's direction, the loss of the signal's direction information in the "blob"-shaped scoring schema would ultimately lead to erroneous matchings. Increasing the resolution level to 15 would mitigate this problem and introduce a more shaped raster around the line geometries, but would again increase the volatility against offset traffic lights along the route.
 
-Due to these issues, the H3-based approach for traffic light matching was discarded. The takeaway from this approach is that close alignment does not sufficiently model matching traffic lights along a route geometry. Instead, sometimes, the traffic light geometries may be offset from the route, especially if the route is snapped onto the car lanes.
+Due to these issues, the H3-based approach for traffic light matching was not further explored. The takeaway from this approach is that close alignment does not sufficiently model matching traffic lights along a route geometry. Instead, sometimes, the traffic light geometries may be offset from the route, especially if the route is snapped onto the car lanes.
 
 \subsubsection{Graph Approach}
 
-The second approach is inspired by the map-matching procedure proposed by Newson and Krumm in 2009 \cite{newson_hidden_2009}. Their proposed method matches GNSS trajectories to the road network by building a transition graph between each GNSS sample and the nearby roads. After the graph is created, each transition is marked with a transition probability. In their approach, the most probable path through the transitions is calculated using the Viterbi algorithm to find the sequence of roads that were taken. 
-
-Similar to the problem of map-matching, the idea is to find the most probable pathway over the traffic light geometries to traverse an intersection from ingress to egress. The traffic light geometries are handled as "road" segments, and the route geometry represents the GNSS trajectory. 
+The second approach is inspired by the map-matching procedure proposed by Newson and Krumm in 2009 \cite{newson_hidden_2009}. Their proposed method matches GNSS trajectories to the road network by building a transition graph between each GNSS sample and the nearby roads. After the graph is created, each transition is marked with a transition probability. In their approach, the most probable path through the transitions is calculated using the Viterbi algorithm to find the most likely sequence of roads that were taken. This approach can be transferred over to traffic light matching, interpreting the route geometry as GNSS trajectory and the traffic light geometries as road segments.
 
 \begin{figure}[htbp]
 \centering
@@ -174,9 +172,11 @@ Similar to the problem of map-matching, the idea is to find the most probable pa
 \label{fig:sg-selection-graph-approach}
 \end{figure}
 
-The proposed approach operates as illustrated in \Cref{fig:sg-selection-graph-approach}. First, traffic lights along the route are prefiltered using a rough distance threshold of 20m. The remaining traffic lights are clustered into intersections based on the intersection ID given in the signal's metadata. Around each of these intersections, the procedure undergoes three steps: (1) A bounding box is calculated with an additional padding. The route enters and exits the bounding box at one point. (2) A fully connected graph is generated between the route's entry and exit points and each traffic light geometry's start and end points. (3) A cost is assigned to each transition in the graph based on the transition's length. Finally, the least costly path is calculated using the Dijkstra pathfinding algorithm. The idea is that the least costly path represents the most likely utilized trajectory over the traffic light geometries.
+The proposed approach operates as illustrated in \Cref{fig:sg-selection-graph-approach}. First, traffic lights along the route are prefiltered using a rough distance threshold of 20m. The remaining traffic lights are clustered into intersections based on the intersection node ID. Around each of these intersections, the procedure undergoes three steps: (1) A bounding box is calculated with an additional padding. The route enters and exits the bounding box at one point. (2) A fully connected graph is generated between the route's entry and exit points and each traffic light geometry's start and end points. (3) A cost is assigned to each transition in the graph based on the transition's length. Finally, the least costly path is calculated using the Dijkstra pathfinding algorithm. The idea is that the least costly path represents the most likely utilized trajectory over the traffic light geometries.
 
-The cost function is defined to penalize traversal between signals, and traversal using the traffic lights is preferred. Otherwise, the most optimal path would always be the direct connection between the entry and exit points. Specifically, every transition in the graph  $(p_{1} \rightarrow p_{2})$ has the cost $dist(p_{1}, p_{2})$, while transitions between traffic lights have the cost $dist(p_{1}, p_{2}) \times \text{penalty}$. Thus, the penalty value represents a hyperparameter of the model together with the dimensions of the intersection padding. The Tree-Structured Parzen Estimator hyperparameter tuning algorithm \cite{ozaki_multiobjective_2020} is utilized to find the best possible configuration. This tuner considers each hyperparameter (intersection padding and penalty) independently from each other. During the tuning, the model undergoes inference for all routes in the dataset (one trial). After each of these trials, the F1 score is evaluated, and the hyperparameters are adjusted by the tuner.
+The cost function is defined to penalize traversal between signals, and traversal using the traffic lights is preferred. Otherwise, the most optimal path would always be the direct connection between the entry and exit points. Specifically, every transition in the graph  $(p_{1} \rightarrow p_{2})$ has the cost $dist(p_{1}, p_{2})$, while transitions between traffic lights have the cost $dist(p_{1}, p_{2}) \times \text{penalty}$. Thus, the penalty value represents a hyperparameter of the model together with the dimensions of the intersection padding. 
+
+Which penalty value and intersection padding to choose may depend on each intersection's characteristics. Thus, defining these hyperparameters by hand would not be the best option. A better option is to utilize a tuning algorithm that automatically approximates the optimal configuration based on the developed ground truth. Specifically, the Tree-Structured Parzen Estimator hyperparameter tuning algorithm \cite{ozaki_multiobjective_2020} is utilized. This tuner considers each hyperparameter (intersection padding and penalty) independently from each other. During the tuning, the model undergoes inference for all routes in the dataset (one trial). After each of these trials, the F1 score is evaluated, and the hyperparameters are adjusted by the tuner into a direction the tuner estimates will result in a better score.
 
 \begin{figure}[htbp]
 \centering
@@ -194,7 +194,7 @@ After tuning the model to the ground truth, the model reached an F1 score of 75.
 \label{fig:sg-selection-graph-fails}
 \end{figure}
 
-However, this result is still not convincing considering that the measured score of 75.4\% represents a training F1 score and was not evaluated on unseen data. By studying many error cases, one particular weakness was identified. As highlighted in \Cref{fig:sg-selection-graph-fails}, the model would struggle especially with right or left turns at intersections. In these cases, the route exits the bounding box on an adjacent edge to the ingress's edge. This means that the direct distance from the ingress point to the egress point is often lower than the path over the correct signals' geometries. As a result, the model tends to shortcut directly to the intersection exit. To cope with these cases, two potential solutions were identified:
+However, the final result is still not convincing, considering that the measured score of 75.4\% represents a training F1 score and was not evaluated on unseen data. By studying many error cases, one particular weakness was identified. As highlighted in \Cref{fig:sg-selection-graph-fails}, the model would struggle particularly with right or left turns at intersections. In these cases, the route exits the bounding box on an adjacent edge to the ingress's edge. This means that the direct distance from the ingress point to the egress point is often lower than the path over the correct signals' geometries. As a result, the model tends to shortcut directly to the intersection exit. To cope with these cases, two potential solutions were identified:
 
 \begin{enumerate}
     \item Increasing the penalty for traveling off a signal's geometry. A separate penalty could be applied in cases where the ingress and egress edges of the bounding box are adjacent to avoid shortcuts.
@@ -212,11 +212,13 @@ Option one initially may seem like a good choice here. However, this strategy wo
 
 Unfortunately, the result of the adjusted graph generation procedure is a worse F1 score after hyperparameter tuning of 60.7\% (penalty = 9.68, intersection padding = 42m). In many cases, the model would now avoid shortcutting as intended, but the model would also be noticeably more strict. The reason is that the signals' geometries are no longer connected to each other but rather through the route (see \Cref{fig:sg-selection-graph-strict}). Jumping on and off the signals' geometries would often be a worse option for the pathfinding algorithm than staying on the route, even with a remarkably higher penalty. 
 
-Although the graph approach initially promised good results, it was ultimately abandoned in favor of other ideas. Even if the graph approach seems less susceptible to offsets and longer traffic light geometries, it clearly falls short when considering the curvature and not only the absolute location of the traffic light geometries. In the end, only each traffic light geometry's start and end points are considered. However, the curvature is similarly important to decide which traffic light could match the associated route. A positive learning of this approach is that the map-matching approach of Newson and Krumm (2009) \cite{newson_hidden_2009} could be in theory a good solution for the traffic light matching problem.
+Another variation of the graph-based approach would be to cut out the intersections, reconnect the OpenStreetMap paths via the traffic light geometries, and then calculate the route using these. However, the main problems here would probably be similar, especially the problem of connecting the traffic light geometries with each other and the problem of stitching at the edges. Thus, this idea was not further explored.
+
+Although the developed graph-based methods initially promised good results, they were ultimately not further studied in favor of more promising ideas. Even if the graph approach seems less susceptible to offsets and longer traffic light geometries, it clearly falls short when considering the curvature and not only the absolute location of the traffic light geometries. In the end, only each traffic light geometry's start and end points are considered. However, the curvature is similarly important to decide which traffic light could match the associated route.
 
 \subsubsection{Map-Matching Approach}
 
-In an ideal scenario, each matching traffic light geometry would perfectly align with the route's geometry. However, as highlighted before, this is typically not the case. Often, the generated route is offset from the most likely utilized signal. Of course, during the intersection planning process, it is not of interest if the signal's geometry would later align with the OpenStreetMap topology or other routing foundations. Nonetheless, the question arises: Since there is no option to intervene directly in the traffic light geometry creation process, would it be possible to adjust the traffic light geometries to the utilized routing foundation as a preprocessing step?
+A positive learning of the graph-based approach is that the map-matching problem of Newson and Krumm (2009) \cite{newson_hidden_2009} is, in theory, very similar to the problem we are trying to solve. Another idea based on this approach would be to map-match the traffic light geometries onto the OpenStreetMap road network, fusing both map sources and allowing for a direct traffic light lookup.
 
 \begin{figure}[htbp]
 \centering
@@ -236,13 +238,13 @@ The approach by Newson and Krumm (2009) \cite{newson_hidden_2009} is utilized as
 \label{fig:sg-selection-map-matching-fails}
 \end{figure}
 
-When testing the approach with the OpenStreetMap routing foundation, a substantial problem was determined. Although it was possible to project the traffic light geometries onto the routing foundation, they were completely distorted during the process. Examples of this distortion are highlighted in \Cref{fig:sg-selection-map-matching-fails}. These distortions may be amplified by the problem that traffic light geometries are usually shorter than typical GNSS trajectories for which the map-matching approach was initially conceived. What's clear is that, without enough intersection detail in the routing foundation, the map-matching procedure would often fail to find a suitable projection. Moreover, multiple traffic lights may be matched onto the same path segment, resulting in an ambiguous matching. 
+Despite the promising idea, when testing the approach with the OpenStreetMap routing foundation, a substantial problem was determined. Although it was possible to project the traffic light geometries onto the routing foundation, they were completely distorted during the process. Examples of this distortion are highlighted in \Cref{fig:sg-selection-map-matching-fails}. These distortions may be amplified by the problem that traffic light geometries are usually shorter than typical GNSS trajectories for which the map-matching approach was initially conceived. What's clear is that, without enough intersection detail in the routing foundation, the map-matching procedure would often fail to find a suitable projection. Moreover, multiple traffic lights may be matched onto the same path segment, resulting in an ambiguous matching. 
 
-Since not only bike traffic lights are represented in the system but also traffic lights shared between cars/buses and bikes, this approach would require a routing foundation that represents all of the respective paths (not only bike paths) noticeably more accurately than OpenStreetMap. As such a routing foundation is unavailable, the map-matching approach is also unsuitable for the traffic light matching problem. 
+Since not only bike traffic lights are represented in the system but also traffic lights shared between cars/buses and bikes, this approach would require a routing foundation that represents all of the respective paths (not only bike paths) noticeably more accurately than OpenStreetMap, such as a multimodal HD map. Whether this approach applies to such a map could not be tested as none was available. Due to these findings, the map-matching method was also not investigated further.
 
 \subsection{Algorithmic Filtering Approach}
 
-The preliminary H3, graph, and map-matching approaches have not been successful but provided a deeper understanding of the problem: First, an ideal matching procedure should be robust against offsets of the traffic light geometries from the route, especially in cases when the route geometry is mapped on the road while the bike traffic light is alongside. Second, the matching procedure must handle long and short traffic light geometries similarly well. 
+The preliminary H3, graph, and map-matching approaches have not been successful but provided a deeper understanding of the problem. First, an ideal matching procedure should be robust against offsets of the traffic light geometries from the route, especially in cases when the route geometry is mapped on the road while the bike traffic light is alongside. Second, the matching procedure must handle long and short traffic light geometries similarly well. 
 
 \begin{figure}[htbp]
 \centering
@@ -253,15 +255,11 @@ The preliminary H3, graph, and map-matching approaches have not been successful 
 
 Most importantly, it is crucial to consider the absolute location of the traffic light geometries along the route and their geometrical properties in relation to the route. If the signal's geometry is aligned relatively near the route and follows its curvature, it is likely to match the route. The question is how to mathematically model this relation and tell apart edge cases.
 
-The matching procedure designed as part of a publication at ISC2 2022 \cite{matthes2022matching} aims to tell apart matching from non-matching traffic light geometries by a geometrical comparison to the route. In four filtering steps specific geometric thresholds are applied to filter out traffic lights that are likely no match. The idea is that each step catches a specific type of misalignment with the route, such that in the end, only the wanted matches remain. In the next sections, we will first look at the workwise of each filter. Afterward, it will be discussed how the filter thresholds are optimized.
+One solution is to tell apart matching from non-matching traffic light geometries by a geometrical comparison with the route. In four filtering steps, specific geometric thresholds are applied to filter out traffic lights that are likely no match. The idea is that each step catches a specific type of misalignment with the route, such that, in the end, only the wanted matches remain. As shown in \Cref{fig:sg-matching-filters}, four filtering steps are employed: proximity filter, bearing filter, length filter, and overlap filter.
 
-\subsubsection{Distance Filter}
+\paragraph{Step 1 -- Distance Filter:} Step one focuses on coarsely excluding a large proportion of the traffic lights in the city area through a distance threshold $t_{dist}$ from the route. This step is efficiently executed through a PostGIS database using the \texttt{ST\_Distance}\footnote{\url{https://postgis.net/docs/en/ST\_Distance.html}} query.
 
-Step one focuses on coarsely excluding a large proportion of the traffic lights in the city area through a distance threshold $t_{dist}$ from the route. This step is efficiently executed through a PostGIS database using the \texttt{ST\_Distance}\footnote{\url{https://postgis.net/docs/en/ST\_Distance.html}} query.
-
-\subsubsection{Bearing Filter}
-
-As a next step, the bearing between the signal's geometry and the route is compared. Hereby, we can exclude traffic lights that are angled too steeply or even inverted to the route. As a foundation, the atan2 function is used to calculate the bearing between two coordinates on the earth\footnote{\url{https://www.movable-type.co.uk/scripts/latlong.html}}:
+\paragraph{Step 2 -- Bearing Filter:} As a next step, the bearing between the signal's geometry and the route is compared. Hereby, we can exclude traffic lights that are angled too steeply or even inverted to the route. As a foundation, the atan2 function is used to calculate the bearing between two coordinates on the earth\footnote{\url{https://www.movable-type.co.uk/scripts/latlong.html}}:
 
 \begin{equation}
 x(c_1, c_2) = sin(lon_2 - lon_1) \times cos(lat_2)
@@ -321,9 +319,7 @@ where $dist$ is calculated as the Euclidean distance and $n$ is the number of co
 
 \Cref{fig:sg-selection-bearing-filter-sum} gives an intuition for the final working principle of the bearing filter. In example (1) all segments of the signal's geometry are sufficiently aligned to the route. Examples (2) and (3) depict cases where none of the segments are within the angular threshold $t_{bear}$. Example (4) highlights a case where the first 60\% of the traffic light geometry matches the route. In the illustration, $t_{bear\_sum}$ is assumed to be larger than 60\%, and so the traffic light that curves away is filtered out. The higher this threshold is configured, the more aggressively the filter excludes inclined geometries.
 
-\subsubsection{Length Filter}
-
-With the previous two steps, we have two bearing thresholds ($t_{bear}$ and $t_{bear\_sum}$) in addition to the distance threshold $t_{dist}$. However, during the systematic testing of the thresholds it quickly became clear that these thresholds alone are not nearly enough to sufficiently distinguish matching from non-matching signals. During the search for other characteristics that distinguish matching from non-matching signals, a key observation was made: Non-matching traffic light geometries often have a shorter projection onto the route relative to their original length. This feature is also related to the traffic light geometry's angular position to the route but incorporates the shape of the route in between projected traffic light geometry coordinates.
+\paragraph{Step 3 -- Length Filter:} With the previous two steps, we have two bearing thresholds ($t_{bear}$ and $t_{bear\_sum}$) in addition to the distance threshold $t_{dist}$. However, during the systematic testing of the thresholds it quickly became clear that these thresholds alone are not nearly enough to sufficiently distinguish matching from non-matching signals. During the search for other characteristics that distinguish matching from non-matching signals, a key observation was made: Non-matching traffic light geometries often have a shorter projection onto the route relative to their original length. This feature is also related to the traffic light geometry's angular position to the route but incorporates the shape of the route in between projected traffic light geometry coordinates.
 
 \begin{figure}[htbp]
 \centering
@@ -332,7 +328,7 @@ With the previous two steps, we have two bearing thresholds ($t_{bear}$ and $t_{
 \label{fig:sg-selection-length-filter-sum}
 \end{figure}
 
-To mathematically represent this intuition, a cumulative score $\phi_{len}$ is calculated similarly to the bearing filter, and then subjected to a threshold $t_{len\_sum}$. The score $\phi_{len}$ quantifies the difference from 0 (no matching segments) to 1 (all segments matching), again weighted by the length of each segment. Example (3) shows that the length filter is not good at detecting inversely aligned geometries. However, since the bearing filter is assumed to handle this case, the length filter will likely not encounter such constellations.
+To mathematically represent this intuition, a cumulative score $\phi_{len}$ is calculated similarly to the bearing filter and then subjected to a threshold $t_{len\_sum}$. The score $\phi_{len}$ quantifies the difference from 0 (no matching segments) to 1 (all segments matching), again weighted by the length of each segment. Example (3) shows that the length filter is not good at detecting inversely aligned geometries. However, since the bearing filter is assumed to handle this case, the length filter will likely not encounter such constellations.
 
 Due to the similarity with the bearing filter, we can reuse its formulas and only have to replace the metric $\Psi$, which determines whether a segment is counted as a match. First, each segment $(c_1, \dots, c_n)$ is again projected onto the route as $(\bar{c_1}, \dots, \bar{c_n})$. Then, the length diff $\bar{\Delta}_{len_1}$ for the i-th segment is calculated as:
 
@@ -344,7 +340,7 @@ Due to the similarity with the bearing filter, we can reuse its formulas and onl
         \end{cases}
 \end{equation}
 
-where $dist$ is calculated as the Euclidean distance, and $line\_dist(\bar{c}_i, \bar{c}_{i+1})$ represents the distance along the route's geometry between $\bar{c}_i$ and $\bar{c}_{i+1}$. To calculate $line\_dist$ it is necessary to interpolate along the route's geometry. Using the calculated length diff, each segment of the signal's geometry is mapped as:
+where $dist$ is calculated as the Euclidean distance, and $line\_dist(\bar{c}_i, \bar{c}_{i+1})$ represents the distance along the route's geometry between $\bar{c}_i$ and $\bar{c}_{i+1}$. To calculate $line\_dist$, it is necessary to interpolate along the route's geometry. Using the calculated length diff, each segment of the signal's geometry is mapped as:
 
 \begin{equation}
 \Psi_{len_i} = 
@@ -366,9 +362,7 @@ where $\Psi_{len_i} = 1$ means the segment matches the length diff threshold $t_
 
 Here, $\phi_{len} = 0$ means that all of the traffic light geometry's segments are shortened too much when projecting them onto the route geometry, indicating a traffic light that is not aligned with the route. Likewise, $\phi_{len} = 1$ means that all segments roughly stay the same length when projected onto the route. To distinguish when a traffic light is counted as a match or not, the thresholds $t_{len}$ and $t_{len\_sum}$ can be optimized accordingly.
 
-\subsubsection{Overlap Matcher}
-
-The previous matching steps often struggle with one particular problem: multiple parallel-aligned signals. Often, this case leads to a multi-selection of these signals, while only one of them will be taken by the cyclist. On the other hand, especially on complex intersections, there may be multiple consecutive traffic lights whose geometries partially overlap along the route but are still a valid match. Thus, some overlaps need to be filtered out, while others are intentional.
+\paragraph{Step 4 -- Overlap Matcher:} The previous matching steps often struggle with one particular problem: multiple parallel-aligned signals. Often, this case leads to a multi-selection of these signals, while only one of them will be taken by the cyclist. On the other hand, especially on complex intersections, there may be multiple consecutive traffic lights whose geometries partially overlap along the route but are still a valid match. Thus, some overlaps need to be filtered out, while others are intentional.
 
 \begin{figure}[htbp]
 \centering
@@ -416,9 +410,7 @@ $t_{road\_side}$ & If two overlapping traffic lights are on opposite sides of th
 \label{tab:hyperparameter-space}
 \end{table}
 
-\subsubsection{Model Finetuning}
-
-The designed filtering pipeline has several thresholds that must be carefully selected to optimize the final matching performance. Here, it is important to consider that each filter influences the subsequent filters in the pipeline. This means that it is difficult and time-intensive to tune the individual filters by hand. A solution to this problem is utilizing a hyperparameter tuning algorithm, which tries to understand the influence of each hyperparameter on a model and maximizes its score. This algorithm can run overnight, resulting in a proposed model configuration after a few hundred to thousand trials. To prepare the model for hyperparameter tuning, search spaces for each hyperparameter must be defined. These search spaces are summarized in \Cref{tab:hyperparameter-space}.
+\paragraph{Model Finetuning:} The designed filtering pipeline has several thresholds that must be carefully selected to optimize the final matching performance. Here, it is important to consider that each filter influences the subsequent filters in the pipeline. This means that it is difficult and time-intensive to tune the individual filters by hand. A solution to this problem is utilizing a hyperparameter tuning algorithm, which tries to understand the influence of each hyperparameter on a model and maximizes its score. This algorithm can run overnight, resulting in a proposed model configuration after a few hundred to thousand trials. To prepare the model for hyperparameter tuning, search spaces for each hyperparameter must be defined. These search spaces are summarized in \Cref{tab:hyperparameter-space}.
 
 The Tree-Structured Parzen Estimator hyperparameter tuning algorithm \cite{ozaki_multiobjective_2020} is utilized to find a good configuration on the ground truth benchmark. The objective function given to the tuner algorithm is the F1 score. 
 
@@ -435,13 +427,15 @@ The Tree-Structured Parzen Estimator hyperparameter tuning algorithm \cite{ozaki
 \label{tab:hyperparameter-tuning-results}
 \end{table}
 
-Since two routings are utilized (OpenStreetMap and DRN), coming with different alignments of the generated routes to the traffic light geometries, the model must be tuned separately on both datasets. Therefore, one ground truth is created for each routing foundation. The final model configuration for both routing foundations is highlighted in \Cref{tab:hyperparameter-tuning-results}. Here, it is visible that the DRN version of the filtering pipeline has slightly more strict thresholds than the OpenStreetMap version. This is expected as the goal of the DRN routing foundation is to provide a more accurate bike routing, which is supposed to more accurately align with the traffic light geometries. A thorough performance study of this approach is given in \Cref{ch:results}.
+Since two routings will be utilized (OpenStreetMap and DRN -- see \Cref{ch:routing}), coming with different alignments of the generated routes to the traffic light geometries, the model must be tuned separately on both datasets. Therefore, one ground truth is created for each routing foundation. The final model configuration for both routing foundations is highlighted in \Cref{tab:hyperparameter-tuning-results}. Here, it is visible that the DRN version of the filtering pipeline has slightly more strict thresholds than the OpenStreetMap version. This is expected as the goal of the DRN routing foundation developed in \Cref{ch:routing} is to provide a more accurate bike routing, which is supposed to align more accurately with the traffic light geometries.
 
 \subsection{Machine Learning Filtering Approach}
 
-One identified problem of the algorithmic approach is that each threshold is defined globally and equally applied to all situations. However, not all intersections are crossed similarly by routes. Thus, the filtering pipeline would be applied too strictly in some situations, while the thresholds are not applied strictly enough in others. Here, a machine learning model can be useful to employ a more flexible and interlinked mapping of the geometric properties. Such a model was developed under supervision as part of Daniel Jeschor's Master thesis \cite{jeschor_2022} and published at ACM SIGSPATIAL 2023 [in print].
+One identified problem of the algorithmic approach is that each threshold is defined globally and equally applied to all situations. However, not all intersections are crossed similarly by routes. Thus, the filtering pipeline would be applied too strictly in some situations, while the thresholds are not applied strictly enough in others. Here, a machine learning model can be useful to employ a more flexible and interlinked mapping of the geometric properties.
 
-Regarding the problem of deciding between "match" and "no match" for each traffic light geometry, there may be many creative ways to establish a machine learning classifier. For example, it would be possible to generate top-down images of each intersection and utilize machine learning techniques from image detection or segmentation to classify each signal. However, as a rule of thumb, more complicated tasks tend to require larger machine learning models, which in turn require a larger ground truth. Unfortunately, the ground truth itself would contain a few thousand samples at most, which speaks against the viability of applying more advanced deep learning models. Dataset augmentation through artificial distortion of the traffic light geometries was found in preliminary experiments not to be a purposeful option. A meaningful balance between marginally distorting the traffic light geometries and invalidating the labeling could not be identified. Furthermore, there would be the concern of scalability with larger models and a more complex feature processing pipeline. Thus, the decision was made to opt for a more conservative approach.
+Regarding the problem of deciding between "match" and "no match" for each traffic light geometry, there may be many creative ways to establish a machine learning classifier. For example, it would be possible to generate top-down images of each intersection and utilize machine-learning techniques from image detection or segmentation to classify each signal. However, as a rule of thumb, more complicated tasks tend to require larger machine learning models, which in turn require a larger ground truth. 
+
+Unfortunately, the ground truth itself would ever be able to contain a few thousand unique samples at most, which speaks against the viability of applying more advanced deep learning models. Dataset augmentation through artificial distortion of the traffic light geometries was found in preliminary experiments not to be a purposeful option. A meaningful balance between marginally distorting the traffic light geometries and invalidating the labeling could not be identified. Furthermore, there would be the concern of scalability with larger models and a more complex feature processing pipeline. Thus, the decision was made to opt for a more conservative approach.
 
 \begin{figure}[htbp]
 \centering
@@ -454,9 +448,7 @@ The proposed approach (see \Cref{fig:sg-matching-ml-model}) operates as follows:
 
 The numerical features are subjected to a feature scaler to prepare them for model inference. The categorical features are calculated or extracted from the traffic light metadata. Both numerical features and categorical features are input into the machine learning model. As a result, the machine learning model produces a class probability for "match" or "no match." The class probability is utilized in an additional overlap cleanup step (similar to the algorithmic approach's overlap filter) to obtain the final matching traffic lights along the route.
 
-\subsubsection{Feature and Model Grid Search}
-
-To select a suitable machine learning model architecture and feature processing pipeline, experiences from a previous publication at IoTaIS 2022 \cite{matthes2022selecting} were utilized to systematically and rigorously identify promising configurations. Out of the tested traditional model architectures k-Nearest-Neighbors (k-NN), Decision Tree, Random Forest, Multilayer Perceptron (MLP), AdaBoost, Gaussian Naive Bayes, Quadratic Discriminant Analysis (QDA), and Support Vector Machine (SVM), the MLP model overall performed the best and was thus selected as the final classifier, after testing other promising models with different feature constellations. 
+\paragraph{Feature and Model Grid Search:} To select a suitable machine learning model architecture and feature processing pipeline, gathered experiences from hyperparameter tuning were utilized to systematically and rigorously identify promising configurations. Out of the tested traditional model architectures including k-Nearest-Neighbors (k-NN), Decision Tree, Random Forest, Multilayer Perceptron (MLP), AdaBoost, Gaussian Naive Bayes, Quadratic Discriminant Analysis (QDA), and Support Vector Machine (SVM), the MLP model overall performed the best and was thus selected as the final classifier, after testing other promising models with different feature constellations. 
 
 To ensure comparability during the model testing process, each model feature pipeline was trained and tested using the stratified variant of the k-fold cross-validation\footnote{\url{https://scikit-learn.org/1.3/modules/generated/sklearn.model_selection.StratifiedKFold.html}}. As there are many more non-matching traffic lights along routes in the ground truth than matching signals, this variant ensures that a similar balance is present in each generated training/testing split of the ground truth dataset. By looking at the models' scores and the mutual information of each feature, some features were discarded as they provided no additional information. The final feature set is as follows:
 
@@ -469,9 +461,7 @@ To ensure comparability during the model testing process, each model feature pip
     \item The length of the traffic light geometry's projection onto the route.
 \end{itemize}
 
-A feature scaling algorithm is employed to optimize the machine learning model's learning and inference process. Here, it is usually a good option to choose a Yeo-Johnson power transformation \cite{yeo_new_2000}, which includes a standardization and additionally tries to symmetrize the observed data into a normal distribution. Together with the scaled numerical features, the one-hot-encoded categorical features are input into the model as, in sum, 16 features. Together with the model, the parameters of the Yeo-Johnson power transformation are only fit to the dataset's training proportion.
-
-\subsubsection{Overlap Cleanup}
+A feature scaling algorithm is employed to optimize the machine learning model's learning and inference process. Here, it is usually a good option to choose a Yeo-Johnson power transformation \cite{yeo_new_2000}, which includes standardization and additionally tries to symmetrize the observed data into a normal distribution. Together with the scaled numerical features, the one-hot-encoded categorical features are input into the model as, in sum, 16 features. Together with the model, the parameters of the Yeo-Johnson power transformation are only fit to the dataset's training proportion.
 
 \begin{figure}[htbp]
 \centering
@@ -480,20 +470,21 @@ A feature scaling algorithm is employed to optimize the machine learning model's
 \label{fig:sg-selection-overlap-cleanup}
 \end{figure}
 
-As in the algorithmic approach, there may be some cases where multiple overlapping traffic lights are selected. These duplicate selections may happen when multiple traffic light geometries are very closely aligned to the route, and must be cleaned up, as the app should only focus on the most likely used signal. 
+\paragraph{Overlap Cleanup:} As in the algorithmic approach, there may be some cases where multiple overlapping traffic lights are selected. These duplicate selections may happen when multiple traffic light geometries are very closely aligned to the route, and must be cleaned up, as the app should only focus on the most likely used signal. 
 
 As shown in \Cref{fig:sg-selection-overlap-cleanup}, the utilized traffic light is most likely the longest of the three selected geometries. This traffic light arguably has the best alignment with the route geometry. How much the model thinks a traffic light matches the route can be measured by the output probability (neuron activation) for the two classes "match" and "no match." This feature is used to force the model to decide between overlapping signals. In case a sufficient overlap between two traffic light geometries is detected, the traffic light with the higher probability for "match" is selected. As highlighted in \Cref{fig:sg-selection-overlap-cleanup}, this process is effective at filtering out the problem.
 
 \subsection{Integration of Unconnected Intersections}
 
-Not all intersections have traffic lights connected to Hamburg's data broker. However, this represents a problem for matching traffic lights along a route. If an unconnected intersection lies between the user and the next connected intersection, the user may get a speed advisory for the wrong intersection. Although the traffic light is visualized on the in-app map, this may still lead to confusion for the user. Thus, it is crucial also to identify the unconnected intersections along the bike path. These unconnected intersections are visualized with a unique traffic light symbol in the user interface.
+Not all intersections have traffic lights connected to Hamburg's data broker. However, this represents a problem for matching traffic lights along a route. If an unconnected intersection lies between the user and the next connected intersection, the user may get a speed advisory for the wrong intersection. Although the traffic light is later visualized on the in-app map, this may still lead to confusion for the user. Thus, it is crucial also to identify the unconnected intersections along the bike path. These unconnected intersections are later visualized with a unique traffic light symbol in the user interface.
 
-To find out which intersections are not connected to the system (but still signalized), the Lichtsignalanlagen Hamburg\footnote{\url{https://metaver.de/trefferanzeige?docuuid=C498DEED-985C-11D5-889E-000102B6A10E}} dataset is utilized. This dataset is updated periodically every four months and contains single coordinates of each signalized intersection in Hamburg (see \Cref{fig:sg-selection-unconnected-intersections}). Thus, the dataset does not resolve individual traffic light geometries but the center locations of the intersection node. 
+To find out which intersections are not connected to the system (but still signalized), the Lichtsignalanlagen Hamburg\footnote{\url{https://metaver.de/trefferanzeige?docuuid=C498DEED-985C-11D5-889E-000102B6A10E}} dataset is utilized. This dataset is updated periodically every four months and contains single coordinates of each signalized intersection in Hamburg. Thus, the dataset does not resolve individual traffic light geometries but the center locations of the intersection node. 
 
-To identify which intersections are connected, it is determined which intersections have traffic light geometries within an empirically defined threshold of 50 meters. These intersection nodes from the Lichtsignalanlagen Hamburg dataset are marked as "connected." All other nodes are marked as "unconnected." In case of a traffic light unassigned to any intersection node, it is assumed that this intersection node is missing in the Lichtsignalanlagen Hamburg dataset, and a new intersection node is created. Finally, a list of intersection nodes is matched to the route by a distance threshold of 50 meters. To avoid displaying a speed advisory for a wrong intersection, the app handles each unconnected intersection like a traffic light that doesn't send any data. Once an unconnected intersection is passed before another (connected) signal, the speed advisory is enabled again. This step completes the traffic light matching pipeline.
+To identify which intersections are connected, it is determined which intersections have traffic light geometries within an empirically defined threshold of 50 meters. These intersection nodes from the Lichtsignalanlagen Hamburg dataset are marked as "connected." All other nodes are marked as "unconnected." In case of a traffic light unassigned to any intersection node, it is assumed that this intersection node is missing in the Lichtsignalanlagen Hamburg dataset, and a new intersection node is created. 
 
-\subsection{Summary of Methods for Traffic Light Matching}
+Finally, a list of intersection nodes is matched to the route by a distance threshold of 50 meters. To avoid displaying a speed advisory for a wrong intersection, the app handles each unconnected intersection like a traffic light that doesn't send any data. Once an unconnected intersection is passed before another (connected) signal, the speed advisory is enabled again. This step completes the traffic light matching pipeline.
 
+\begin{Summary}[Summary of Methods]
 Route-based traffic light matching is proposed as a novel solution to the problem of identifying traffic lights for GLOSA. The proposed method is designed to be practical for all smartphone mounting spots and invulnerable to inaccurate GNSS. Furthermore, all upcoming traffic lights are known at any time during the ride. However, a significant challenge is to precisely estimate which sequence of traffic lights will most likely be utilized by a cyclist. The approach must employ human-like spatial reasoning to tell apart non-matching from matching signals.
 
 To develop and test mathematical models with the goal of resembling human spatial reasoning, human matchings of traffic lights along randomized routes are collected through a web tool. The resulting ground truth dataset is utilized to calculate an overall matching quality through the F1 score.
@@ -502,20 +493,32 @@ Multiple methods were tested preliminarily but not investigated further. Nonethe
 
 To further improve the developed filtering pipeline, it was determined that the geometric features, such as bearing or projection length, could be weighted more dynamically by a machine learning model. The final MLP model utilizes 16 features calculated from the signal's geometry and its projection onto the route to determine if this traffic light matches the route. In case of overlaps, the traffic light predicted to match the route most likely is chosen.
 
-Finally, to avoid speed advisories being given for a traffic light that comes after an unconnected but signalized intersection, the Lichtsignalanlagen Hamburg dataset is utilized. The implemented web service, which incorporates both final models and matches unconnected intersections, is accessible to the app through a web API.
+Finally, to avoid speed advisories being given for a traffic light that comes after an unconnected but signalized intersection, the Lichtsignalanlagen Hamburg dataset is utilized. 
+\end{Summary}
 
 \section{Results}
 
+- Die Evaluation des traffic light matching ist in drei Teile geteilt.
+- Zunächst schauen wir uns die Charakteristika der Ampelgeometrien in Hamburg an. Ein besonderer Fokus liegt hierbei auf der Länge der Ingress Lanes, um nochmal genauer zu untersuchen, wie kurz Einfahrtsspuren für Radfahrer tatsächlich sind. Dies entscheidet darüber, ob ein Location-based approach überhaupt für Radfahrer umsetzbar ist, da dieser eine möglichst lange Einfahrtsspur für das Snapping zur Spur erfordert
+- Anschließend betrachten wir die Ground Truth und ob diese repräsentativ genug ist, um qualifizierte Aussagen über die Genauigkeit der entwickelten Verfahren zu machen
+- Mithilfe dieser Betrachtungen evaluieren wir anschließend die Benchmark-Performance beider Ansätze
+- Außerdem schauen wir uns an, wie effektiv beide Methoden die richtigen Ampeln auswählen, selbst wenn Routingfehler vorhanden sind
+- Zum Schluss validieren wir unsere Benchmark-Ergebnisse noch durch einen Test in Hamburg
+
+\subsection{Study of Traffic Light Geometries in Hamburg}
+
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.75\linewidth]{images/lane-analysis-lane-lengths.pdf}
+\includegraphics[width=\linewidth]{images/lanes-lengths.pdf}
 \caption{.}
 \label{fig:}
 \end{figure}
 
+\subsection{Coverage and Representativeness of Ground Truth}
+
 \begin{figure}[htbp]
 \centering 
-\includegraphics[width=0.75\linewidth]{images/binding-coverage-hamburg.png}
+\includegraphics[width=\linewidth]{images/binding-coverage-hamburg.png}
 \caption{.}
 \label{fig:}
 \end{figure}
@@ -534,6 +537,8 @@ Finally, to avoid speed advisories being given for a traffic light that comes af
 \label{fig:}
 \end{figure}
 
+\subsection{Model Evaluation}
+
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=0.75\linewidth]{images/model-analysis.pdf}
@@ -541,15 +546,27 @@ Finally, to avoid speed advisories being given for a traffic light that comes af
 \label{fig:}
 \end{figure}
 
+
 \begin{figure}[htbp]
-\centering
-\begin{tabular}{cc}
-\footnotesize{(a) False matches} & \footnotesize{(b) Correct matches} \\
-\includegraphics[width=0.35\linewidth]{images/error-analysis-constellations-false.pdf} & \includegraphics[width=0.35\linewidth]{images/error-analysis-constellations-right.pdf} \\
-\end{tabular}
+\centering 
+\includegraphics[width=\linewidth]{images/matching-constellations.pdf}
 \caption{.}
 \label{fig:}
 \end{figure}
 
 
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=\linewidth]{images/matching-route-errors.pdf}
+\caption{.}
+\label{fig:}
+\end{figure}
+
+
+
+- Validation Study
+
 \section{Conclusions}
+
+Future work: map-matching / routing with HD maps, cutting/stitching of intersections with MAPs
