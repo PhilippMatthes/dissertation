@@ -10,17 +10,17 @@ This chapter is based on the following two papers in which the author was the pr
 
 \section{Introduction}
 
-Accurately detecting upcoming traffic lights is crucial for many driving applications. It is not only a safety-critical functionality for (semi)autonomous driving systems but is also essential for bridging the gap between traffic light prediction and speed recommendation. So far, we have considered the traffic light prediction without its relationship to the traffic light's position along the user's trajectory. However, to determine the relevant traffic lights along the user's pathway, we must not only know about the predicted timing of the traffic light, but also about its position and whether it aligns with the predicted path. A georeferencing is required.
+Accurately detecting upcoming traffic lights is crucial for many driving applications. It is not only a safety-critical functionality for (semi)autonomous driving systems but is also essential for bridging the gap between traffic light prediction and speed recommendation. So far, we have considered the traffic light prediction without its relationship to the traffic light's position along the user's trajectory. However, to determine the relevant traffic lights along the user's pathway, we must not only know about the predicted timing of the traffic light but also about its position and whether it aligns with the predicted path. A georeferencing is required.
 
-The concept of georeferencing intersections, initially proposed under the name Geometric Intersection Description (GID), was introduced relatively early in the USA in 2008 \cite{cicas-v}. To not only reference the position of traffic lights, but also the specific turns served by them, the turn lane shapes are represented as line geometries crossing the intersection. In this way, it is possible to distinguish between turn directions and find which specific traffic light will be relevant for the vehicle. Today this information is represented in the internationally standardized MapData (MAP) format that was developed by the SAE\footnote{\url{https://www.sae.org/standards/content/j2735_202309/}} in coevolution with the Signal Phase and Timing (SPaT) message standard.
+The concept of georeferencing intersections, initially proposed under the name Geometric Intersection Description (GID), was introduced relatively early in the USA in 2008 \cite{cicas-v}. To not only reference the position of traffic lights, but also the specific turns served by them, the turn lane shapes are represented as line geometries crossing the intersection. In this way, it is possible to distinguish between turn directions and find which specific traffic light will be relevant for the vehicle. Today, this information is represented in the internationally standardized MapData (MAP) format that was developed by the SAE\footnote{\url{https://www.sae.org/standards/content/j2735_202309/}} in coevolution with the Signal Phase and Timing (SPaT) message standard.
 
 MAPs, like SPaTs, can reach the road user through various channels, encountering similar transmission issues as SPaTs (see \Cref{ch:prediction}). However, since MAPs are less frequently updated, collecting, transferring to a database, and redistributing the lane geometries is possible. This makes it viable to maintain a centralized directory service in which each lane is mapped. In Hamburg, this centralized directory service is provided by the Traffic Lights Data platform that takes its information from the MAPs developed by engineering bureaus for Hamburg's intersections.
 
 A more significant challenge than the acquisition of intersection topologies is determining which lane on the intersection will be used by a road user approaching it. Typically, there are multiple individual paths that can be chosen when crossing an intersection, and the concrete choice may depend on the user's route, mode of transportation, situation, or general preference. Due to the complexity of real-world traffic, a sudden lane change to align with the traffic perceived as the best option is possible, requiring the system to adapt quickly to the new lane or anticipate the direction in which the user wants to travel. 
 
-While cars are usually restricted by a few available lanes, cyclists or pedestrians often have multiple ambiguous options to cross an intersection. Moreover, cyclists or pedestrians may approach a traffic light from several directions, leading to no clear entry lane. This leads to the issue that the user's position cannot simply be matched to the nearest entry lane's geometry. Therefore, the problem of matching the correct traffic lights is highly difficile, and even moreso for cyclist applications.
+While cars are usually restricted by a few available lanes, cyclists or pedestrians often have multiple ambiguous options to cross an intersection. Moreover, cyclists or pedestrians may approach a traffic light from several directions, leading to no clear entry lane. This leads to the issue that the user's position cannot simply be matched to the nearest entry lane's geometry. Therefore, the problem of matching the correct traffic lights is highly complex, and even more so for cyclist applications.
 
-This chapter aims to address this problem and develop a practical solution for cyclist traffic light matching. First, we review related work and how they address the problem, identifying three core approaches: vision-based using cameras or similar sensors for traffic light identification, location-based using global navigation and satellite systems (GNSS) for lane positioning, and route-based using semantic information such as turns for lane selection. We find that route-based approaches are currently the most promising for bicycle applications. Based on this finding, two new methods for route-based bike traffic light matching are proposed: an algorithmic method, and a Machine Learning (ML) method. We also focus on approaches that did not yield the desired results and the reasons behind them. Finally, we evaluate the accuracy of the developed approach using multiple ground truths to make well-founded statements about the suitability of the method. A critical summary is provided of the state of the art, developed methods, and results to indicate directions for future work.
+This chapter aims to address this problem and develop a practical solution for cyclist traffic light matching. First, we review related work and how they address the problem, identifying three core approaches: vision-based using cameras or similar sensors for traffic light identification, location-based using global navigation and satellite systems (GNSS) for lane positioning, and route-based using semantic information such as turns for lane selection. We find that route-based approaches are currently the most promising for bicycle applications. Based on this finding, two new methods for route-based bike traffic light matching are proposed: an algorithmic method and a Machine Learning (ML) method. We also focus on approaches that did not yield the desired results and the reasons behind them. Finally, we evaluate the accuracy of the developed approach using multiple ground truths to make well-founded statements about the suitability of the method. A critical summary is provided of the state-of-the-art, developed methods and results to indicate directions for future work.
 
 \section{Related Work}
 
@@ -498,59 +498,84 @@ Finally, to avoid speed advisories being given for a traffic light that comes af
 
 \section{Results}
 
-- Die Evaluation des traffic light matching ist in drei Teile geteilt.
-- Zunächst schauen wir uns die Charakteristika der Ampelgeometrien in Hamburg an. Ein besonderer Fokus liegt hierbei auf der Länge der Ingress Lanes, um nochmal genauer zu untersuchen, wie kurz Einfahrtsspuren für Radfahrer tatsächlich sind. Dies entscheidet darüber, ob ein Location-based approach überhaupt für Radfahrer umsetzbar ist, da dieser eine möglichst lange Einfahrtsspur für das Snapping zur Spur erfordert
-- Anschließend betrachten wir die Ground Truth und ob diese repräsentativ genug ist, um qualifizierte Aussagen über die Genauigkeit der entwickelten Verfahren zu machen
+- Die Evaluation des traffic light matching ist in mehrere Teile geteilt. Wir fangen bei der Datenanalyse der Ampelgeometrien an, und tasten uns dann zur Untersuchung der Ground Truth vor.
+- Wir schauen ob diese repräsentativ genug ist, um qualifizierte Aussagen über die Genauigkeit der entwickelten Verfahren zu machen
 - Mithilfe dieser Betrachtungen evaluieren wir anschließend die Benchmark-Performance beider Ansätze
 - Außerdem schauen wir uns an, wie effektiv beide Methoden die richtigen Ampeln auswählen, selbst wenn Routingfehler vorhanden sind
+- Die Skalierbarkeit und Praktikabilität des Modells untersuchen wir mithilfe einer kurzen Performance-Analyse auf einem TU-Dresden Deployment
 - Zum Schluss validieren wir unsere Benchmark-Ergebnisse noch durch einen Test in Hamburg
 
 \subsection{Study of Traffic Light Geometries in Hamburg}
 
+- Um in die Evaluation zu starten, betrachten wir als erstes die Ampelgeometrien etwas genauer
+- Im Konzept wurde beschrieben, dass die Metainformation über die von einer Ampel bedienten Verkehrsmittel ein wichtiges Entscheidungskriterium darstellen. Das entwickelte Verfahren soll sich immer dann für eine dedizierte Radfahrampel entscheiden, wenn dies durch die Kreuzungstopologie möglich ist
+- Stand 8. Dezember 2023 haben 677 von 791 (85.6\%) im System verfügbaren Kreuzungsknoten mindestens eine dedizierte Fahrradampel. An 194 (24.5\%) Kreuzungen gibt es mindestens eine Ampel, die sich Radfahrer und KFZ teilen können. 53 Kreuzungen (6.7\%) besitzen mindestens eine Ampel die Mischverkehr von Radfahrern, KFZ und Bussen zugeordet ist. Abschließend gibt es noch 24 Kreuzungen (3\%) die von Radfahrer und Fußgängern benutzt werden sollen. 
+
+- Die Prozentzahlen überschneiden sich aber, da es häufig pro Kreuzung und Fahrtrichtung mehrere parallele Ampeln gibt, die theoretisch genutzt werden können, von denen aber nur eine schließlich die beste Wahl ist
+- Schon wenn wir einzelne Einfahrtsspuren und die möglichen Abbiegungen aus dieser Einfahrtsspur betrachten, wird deutlich, dass Radfahrer häufig viele Optionen haben, in die gleiche Richtung abzubiegen. Von insgesamt 4349 Einfahrtsspuren, die für Radfahrer markiert sind, sind 653 (15\%) der Einfahrtsspuren mit mehreren Ampelgeometrien verknüpft. An der Kreuzung 177 (53°34'10.6"N 10°03'22.1"E) haben Radfahrer beispielsweise die Möglichkeit, aus einer einzigen Einfahrtsspur in 4 Spuren rechts, 4 Spuren links, und 1 Spur geradeaus abzubiegen. 
+- Auch wenn in der Regel mehrere Connections simultan schalten und in diesem Fall eine Falschauswahl nicht zwangsweise zu einer falschen Geschwindigkeitsempfehlung führt, muss damit gerechnet werden, dass die unterschiedlichen Abbiegerichtungen auch durch separat schaltende Signalgeber bedient werden.
+- In diesem Fall ist die Auswahl rein über die nächste Ampelgeometrie durch die exakte Überlappung der Einfahrtsspuren mehrdeutig, und würde wieder die Darstellung mehrerer paralleler Spuren im User Interface erfordern
+- Meist gibt es zusätzlich noch mehrere parallele Einfahrtsspuren, die dann auch separat geschaltet werden können, bspw eine Radfahrampel vor der KFZ-Ampel die auch für Radfahrer getaggt ist. Diese überlappen sich zwar nicht, liegen aber meist wenige meter nah beieinander
+
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/lanes-lengths.pdf}
-\caption{.}
-\label{fig:}
+\caption{Lane lengths of traffic lights in Hamburg as measured through the Vincenty distance.}
+\label{fig:ingress-lane-lengths}
 \end{figure}
+
+- Hinzu kommt noch das Problem mit der Einfahrtsspurlänge
+- Wie in \Cref{fig:ingress-lane-lengths} gezeigt ist es grundsätzlich eine valide Annahme für Autos, von einer nicht allzu kurzen Einfahrtsspur auszugehen und diese für das Matching zu benutzen
+- Allerdings lassen sich keineswegs Linklängen mit 590 bis 910 metern wie von Stahlmann et al. (2018) \cite{stahlmann_exploring_2018} berichtet feststellen. Selbst wenn man die Einfahrtsspur, Connection, und Ausfahrtsspurgeometrien zusammenrechnet kommt man auf deutlich unter 300 meter.
+- Es wäre also unbedingt notwendig, zusätzliches Kartenmaterial zu nutzen, um die Einfahrtsspurlänge künstlich zu erweitern und einen Geschwindigkeitsempfehlungsservice frühzeitig aktivieren zu können
+
+- Für Radfahrer sieht die Situation aber ganz anders aus. Wie initial beschrieben stellt sich bei Radfahrern das Problem, dass viele Ampeln aus mehreren Richtungen angefahren werden können. Das Resultat ist in \Cref{fig:ingress-lane-lengths} sichtbar mit Einfahrtsspurlängen die, wirft man alle im Diagramm als grün markierten Fahrradspuren zusammen in einen Topf, im Median bei 1m liegen. 
+- Bei vielen Ampeln müsste man die Einfahrtsspur künstlich in mehrere Richtungen verlängern, oder zumindest mehrere längere Einfahrtsspuren zur Verfügung stellen. Dies würde eine Umstrukturierung sämtlicher Kreuzungstopologien erfordern
+- Selbst dann ist jedoch das Problem noch nicht gelöst, 
 
 \subsection{Coverage and Representativeness of Ground Truth}
 
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth]{images/binding-coverage-hamburg.png}
-\caption{.}
+\caption{Randomly generated and labeled routes in ground truth dataset.}
 \label{fig:}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.75\linewidth]{images/coverage-analysis.pdf}
-\caption{.}
+\includegraphics[width=0.6\linewidth]{images/coverage-analysis.pdf}
+\caption{Relation between the number of lanes and the number/length of routes in the ground truth.}
 \label{fig:}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.75\linewidth]{images/coverage-analysis-2.pdf}
-\caption{.}
+\includegraphics[width=0.6\linewidth]{images/coverage-analysis-2.pdf}
+\caption{Curvature and length of matching and non-matching lanes in ground truth.}
 \label{fig:}
 \end{figure}
 
-\subsection{Model Evaluation}
+\subsection{Benchmark Scores}
 
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=0.75\linewidth]{images/model-analysis.pdf}
-\caption{.}
+\caption{Visualization of the ML model inference process. Checkmark: predicted to match. Cross-mark: not predicted to match.}
 \label{fig:}
 \end{figure}
 
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=\linewidth,bb=0 0 760 760]{images/decision-boundaries.pdf}
+\caption{Decision boundaries of the ML model's Yeo-Johnson-transformed non-categorical features.}
+\label{fig:}
+\end{figure}
 
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-constellations.pdf}
-\caption{.}
+\caption{Model accuracy depending on the type of lane-route constellation.}
 \label{fig:}
 \end{figure}
 
@@ -559,13 +584,20 @@ Finally, to avoid speed advisories being given for a traffic light that comes af
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-route-errors.pdf}
-\caption{.}
+\caption{Model accuracy depending on the type of routing error.}
 \label{fig:}
 \end{figure}
 
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=\linewidth]{images/matching-performance-556-routes.pdf}
+\caption{Relation between number of traffic lights, route length, and matching time measured on the Beta deployment.}
+\label{fig:}
+\end{figure}
+
+\subsection{Real-World Validation}
 
 
-- Validation Study
 
 \section{Conclusions}
 

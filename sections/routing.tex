@@ -6,14 +6,28 @@ This chapter is based on the following paper in which the author was the princip
 \cite{matthes2023accurate} \fullcite{matthes2023accurate}
 \end{Summary}
 
+\section{Introduction}
+
 \section{Related Work}\label{sec:rw-uis}
+
+\subsection{Application Scenarios of Routing in GLOSA}
+
+- Multi-segment GLOSA
+- Metadaten für Kontextsensitivität und Routing-Profile
+- Traffic light matching
+
+\subsection{Assessments of Bike Path Accuracy in Routing Foundations}
 
 - Traffic Light Matching: Mahler et al. (2012) \cite{mahler_reducing_2012} schlagen Google Maps als Routing-Dienst vor, eine mögliche Open-Source Alternative mit attraktiveren Lizenzbedingungen ist jedoch OpenStreetMap
 - Sowohl Google Maps als auch OpenStreetMap sind jedoch dafür bekannt, nicht alle Fahrradwege korrekt abzubilden
 - Eine Studie von Hochmair et al. (2015) \cite{hochmair_assessing_2015} untersuchte einen Bereich in Portland mit 26 km Fahrrad trails, von denen im Vergleich mit einer Ground Truth 86.4\% in OSM und 78.4\% in Google Maps korrekt erfasst waren. Diese Vollständigkeit scheint stark zu variieren, da die gleiche Studie in Miami mit 22 km Referenzwegen auf nur 22.8\% (OpenStreetMap) und 36.5\% (Google Maps) kam. In diesem Fall fehlten besonders viele Fahrradwege entlang recreational sites wie flüsse und parks
 - Auch eine aktuellere Studie von Franzini et al. (2020) \cite{franzini_assessment_2020} die sich nicht speziell auf Fahrradwege konzentriert kommt zu ähnlichen Ergebnissen: Basierend auf Ergebnissen aus 2018 wird die Region von Pavia (Italy) nur zu 40\% vollständig in OpenStreetMap und zu 30\% vollständig in Google Maps kartiert
 
+\subsection{Methods to Improve Bike Routing}
+
 \section{Concept}
+
+\subsection{DRN Routing}
 
 Routing with GraphHopper and OpenStreetMap has the advantages of worldwide support and frequent updates of the community. However, the quality and consistency of the map materials vary from location to location. Since OpenStreetMap is a general-purpose map foundation, bike paths are often not represented as separate geometries but instead merged with the nearby road. This leads to the problem that some roads have separate bike path geometries running alongside, and others don't. Hence, when calculating a bike route based on OpenStreetMap, the bike route often jumps on or off the road. This degrades the distance-to-signal estimation, traffic light matching, and overall in-app routing. Although the system may work with OpenStreetMap, this situation is still not ideal.
 
@@ -118,3 +132,75 @@ To evaluate if the DGM models provide an overall better height profile than SRTM
 \subsection{Summary of Methods for Routing}
 
 To summarize, an end-to-end routing solution was developed and fine-tuned to the needs of a bike-GLOSA application. Providing route personalization is an integral part of the application design. In this context, a user interface was designed that maps user-defined preferences to specific routing profiles for the routing engine. With additional visualizations of route metadata or the current traffic situation, users can plan their route accordingly. Geocoding and the visualization of points of interest help users find specific locations on the map. To fulfill the high accuracy demands for routing, a more accurate bike routing foundation based on DRN is integrated. Finally, a digital elevation model is incorporated to allow for incline-avoiding routing profiles.
+
+\section{Results}
+
+\subsection{Alignment with Actual Cycling Infrastructure}
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=\linewidth]{images/drn-route-satellit.png}
+\caption{.}
+\label{fig:}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=\linewidth]{images/osm-route-satellit.png}
+\caption{.}
+\label{fig:}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{cccccc}
+\hline
+Hand-Drawn & Nr. of &\multicolumn{2}{c}{Cycling Network} & \multicolumn{2}{c}{OSM} \\
+Reference Track & Signals & Hausdorff & Mean & Hausdorff & Mean \\ \hline
+1 East-West ({1.0}{km}) & 4 & {6.89}{m} & {2.28}{m} & {10.52}{m} & {2.38}{m} \\
+1 West-East ({1.2}{km}) & 6 &{2.80}{m} & {1.29}{m} & {9.10}{m} & {5.78}{m} \\
+2 East-West ({2.2}{km}) & 12 & {3.49}{m} & {0.88}{m} & {18.22}{m} & {7.43}{m} \\
+2 West-East ({2.6}{km}) & 12 & {3.67}{m} & {0.95}{m} & {24.07}{m}  & {10.00}{m} \\
+3 East-West ({2.7}{km}) & 14 & {5.13}{m} & {0.91}{m} & {17.56}{m} & {8.00}{m} \\
+3 West-East ({2.5}{km}) & 10 & {5.39}{m} & {1.70}{m} & {24.45}{m} & {8.35}{m} \\ \hline
+\end{tabular}
+\caption{Measured deviations from actual bike infrastructure.}%
+\label{tab:accuracy-comparison}%
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcc}
+\hline
+Observed Error Cases \\ \hline
+Continuous routing on the road & 0 & 10 \\
+Routing through buildings or stairs & 0 & 2 \\
+Intersection crossing using car lanes & 0 & 8 \\
+Use of sidewalks on incorrect road side & 1 & 4 \\
+Missing permission for one-way streets & 0 & 1 \\
+Routing through other impassable obstacles & 0 & 2 \\
+Failure to consider turning restrictions & 0 & 1 \\
+Skipping or crossing additional signals & 1 & 3 \\
+Generally problematic road crossings & 1 & 4 \\
+\hline
+\end{tabular}
+\caption{Observed error cases among arbitrary sample of 72 routes.}%
+\label{tab:accuracy-comparison}%
+\end{table}
+
+\subsection{Influence on Traffic Light Matching}
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=0.75\linewidth]{images/distribution-tp-matchings.pdf}
+\caption{.}
+\label{fig:}
+\end{figure}
+
+\subsection{Comparison with User Trajectories}
+
+- Comparison routing with actual GPS trajectories (map-matching)
+
+- Evaluation rerouting-points, avoided segments
+
+\section{Conclusions}
