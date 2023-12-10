@@ -180,7 +180,7 @@ Which penalty value and intersection padding to choose may depend on each inters
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{images/sg-selection-graph-example.png}
+\includegraphics[width=\linewidth]{images/matching-dijkstra-correct.pdf}
 \caption{Examples of correct matching using the graph approach.}
 \label{fig:sg-selection-graph-example}
 \end{figure}
@@ -189,7 +189,7 @@ After tuning the model to the ground truth, the model reached an F1 score of 75.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{images/sg-selection-graph-fails.png}
+\includegraphics[width=\linewidth]{images/matching-dijkstra-incorrect.pdf}
 \caption{Examples of false matching using the graph approach.}
 \label{fig:sg-selection-graph-fails}
 \end{figure}
@@ -205,7 +205,7 @@ Option one initially may seem like a good choice here. However, this strategy wo
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{images/sg-selection-graph-strict.png}
+\includegraphics[width=\linewidth]{images/matching-dijkstra-strict.pdf}
 \caption{Examples of matching using the adjusted graph generation procedure.}
 \label{fig:sg-selection-graph-strict}
 \end{figure}
@@ -540,30 +540,41 @@ Finally, to avoid speed advisories being given for a traffic light that comes af
 - Bei vielen Ampeln müsste man die Einfahrtsspur künstlich in mehrere Richtungen verlängern, oder zumindest mehrere längere Einfahrtsspuren zur Verfügung stellen. Dies würde eine Umstrukturierung sämtlicher Kreuzungstopologien erfordern
 - Selbst dann ist jedoch das Problem noch nicht gelöst, 
 
-\subsection{Coverage and Representativeness of Ground Truth}
+\subsection{Analysis of Ground Truth}
 
 \begin{figure}[htbp]
 \centering 
-\includegraphics[width=\linewidth]{images/binding-coverage-hamburg.png}
-\caption{Randomly generated and labeled routes in ground truth dataset.}
+\includegraphics[width=\linewidth]{images/matching-ground-truth-osm-old.pdf}
+\caption{.}
 \label{fig:}
 \end{figure}
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.6\linewidth]{images/coverage-analysis.pdf}
-\caption{Relation between the number of lanes and the number/length of routes in the ground truth.}
+\centering 
+\includegraphics[width=\linewidth]{images/matching-ground-truth-osm.pdf}
+\caption{.}
 \label{fig:}
 \end{figure}
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=0.6\linewidth]{images/coverage-analysis-2.pdf}
-\caption{Curvature and length of matching and non-matching lanes in ground truth.}
+\centering 
+\begin{tabular}{cc}
+\includegraphics[width=0.45\linewidth]{images/matching-ground-truth-lsas-per-route-osm-old.pdf} & \includegraphics[width=0.45\linewidth]{images/matching-ground-truth-lsas-per-route-osm.pdf} \\
+\end{tabular}
+\caption{.}
 \label{fig:}
 \end{figure}
 
 \subsection{Benchmark Scores}
+
+\begin{figure}[htbp]
+\centering 
+\begin{tabular}{cc}
+\includegraphics[width=0.45\linewidth]{images/matching-model-loss-curve-ml-osm.pdf} & \includegraphics[width=0.45\linewidth]{images/matching-model-ml-osm.pdf} \\
+\end{tabular}
+\caption{.}
+\label{fig:}
+\end{figure}
 
 \begin{figure}[htbp]
 \centering 
@@ -581,17 +592,15 @@ Finally, to avoid speed advisories being given for a traffic light that comes af
 
 \begin{figure}[htbp]
 \centering 
-\includegraphics[width=\linewidth]{images/matching-constellations.pdf}
-\caption{Model accuracy depending on the type of lane-route constellation.}
+\includegraphics[width=\linewidth]{images/matching-constellations-osm-old.pdf}
+\caption{.}
 \label{fig:}
 \end{figure}
 
-
-
 \begin{figure}[htbp]
 \centering 
-\includegraphics[width=\linewidth]{images/matching-route-errors.pdf}
-\caption{Model accuracy depending on the type of routing error.}
+\includegraphics[width=\linewidth]{images/matching-route-errors-osm-old.pdf}
+\caption{.}
 \label{fig:}
 \end{figure}
 
