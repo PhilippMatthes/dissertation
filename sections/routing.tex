@@ -172,7 +172,7 @@ Reference Track & Signals & Hausdorff & Mean & Hausdorff & Mean \\ \hline
 \centering
 \begin{tabular}{lcc}
 \hline
-Observed Error Cases \\ \hline
+\textbf{Observed Error Cases} \\ \hline
 Continuous routing on the road & 0 & 10 \\
 Routing through buildings or stairs & 0 & 2 \\
 Intersection crossing using car lanes & 0 & 8 \\
@@ -210,13 +210,34 @@ Generally problematic road crossings & 1 & 4 \\
 \caption{Retrained model thresholds on the new routing.}
 \begin{tabular}{@{}lllllllll@{}}
 \toprule
-  Routing & $t_{dist}$ & $t_{bear}$ & $t_{bear\_sum}$ & $t_{len}$ & $t_{len\_sum}$ & $t_{road\_side}$ &  $t_{perfect\_match}$ & $t_{overlap}$ \\
+  \textbf{Routing} & $t_{dist}$ & $t_{bear}$ & $t_{bear\_sum}$ & $t_{len}$ & $t_{len\_sum}$ & $t_{road\_side}$ &  $t_{perfect\_match}$ & $t_{overlap}$ \\
   \midrule
   OSM & 20m & 32.64° & 78.63\% & 0.999 & 92.65\% & 58.97m & 49.99m & 42.70\% \\
   DRN & 17m & 26.75° & 73.43\% & 0.813 & 60.76\% & 47.87m & 42.51m & 58.52\% \\
 \bottomrule
 \end{tabular}
 \label{tab:hyperparameter-tuning-results-drn}
+\end{table}
+
+\begin{table}[h]
+\caption{.}
+\begin{tabular}{@{}lllllllll@{}}
+\toprule
+  \textbf{Model} & \textbf{Benchmark} & \textbf{Trained on} & \textbf{TP} & \textbf{FP} & \textbf{FN} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+  \midrule
+  Algorithmic & OSM 2022 & OSM 2022 & 920 & 207 & 123 & 82\% & 88\% & 84.8\% \\
+  Algorithmic & OSM 2022 & OSM 2023 & 908 & 221 & 135 & 80\% & 87\% & 83.6\% \\
+  ML          & OSM 2022 & OSM 2022 & 936 & 57 & 107 & 94\% & 90\% & 91.9\% \\
+  \midrule
+  Algorithmic & OSM 2023 & OSM 2022 & 615 & 159 & 143 & 79\% & 81\% & 80.3\% \\
+  Algorithmic & OSM 2023 & OSM 2023 & 637 & 136 & 121 & 82\% & 84\% & 83.2\% \\
+  ML          & OSM 2023 & OSM 2022 & 614 & 52 & 144 & 92\% & 81\% & 86.2\% \\
+  \midrule
+  Algorithmic & DRN 2023 & DRN 2023 & 655 & 95 & 83 & 87\% & 89\% & 88.0\% \\
+  ML          & DRN 2023 & DRN 2023 & 676 & 24 & 62 & 97\% & 92\% & 94.0\% \\
+\bottomrule
+\end{tabular}
+\label{tab:model-scores-drn}
 \end{table}
 
 \begin{figure}[htbp]
