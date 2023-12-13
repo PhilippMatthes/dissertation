@@ -390,43 +390,24 @@ The thresholds $t_{overlap\_pct}$, $t_{perfect\_match}$, and $t_{road\_side}$ ca
 
 \begin{table}[h]
 \caption{Summary of thresholds and search space.}
-\begin{tabular}{@{}lp{10cm}l@{}}
+\begin{tabular}{@{}lp{9.5cm}l@{}}
 \toprule
 \textbf{Hyperparameter}  & \textbf{Explanation} & \textbf{Search Interval} \\
-\midrule
-$t_{dist}$ & Traffic light geometries must be within this distance of the route. & $[1m, 100m]$ \\
-\midrule
-$t_{bear}$ & If segments of the traffic light geometry are angled more steeply to the route than this value, they are not counted for $t_{bear\_sum}$. & $[0°, 180°]$ \\
-$t_{bear\_sum}$ & The minimum proportion of the signal's geometry matching $t_{bear}$. & $[0, 100\%]$ \\
-\midrule
-$t_{len}$ & If segments of the traffic light geometry are elongated or shortened more than $1 \pm t_{len}$ when projected onto the route, they are not counted for $t_{len\_sum}$. & $[0, 1]$\\
-$t_{len\_sum}$ & The minimum proportion of the signal's geometry matching $t_{len}$. & $[0, 100\%]$ \\
-\midrule
-$t_{overlap\_pct}$ & If two traffic lights overlap more relative to their combined length, a decision process between both traffic lights is initiated. & $[0, 100\%]$ \\
-$t_{perfect\_match}$ & If a signal's geometry is closer to the route than this value, it is preferred over another overlapping traffic light geometry. & $[0, 50m]$ \\
-$t_{road\_side}$ & If two overlapping traffic lights are on opposite sides of the route and less than this distance away from each other, decide by the ordinary traffic side. & $[0, 100m]$ \\
+T1 ($t_{dist}$) & Traffic light geometries must be within this distance of the route. & $[1m, 100m]$ \\
+T2 ($t_{bear\_sum}$) & The minimum proportion of the signal's geometry matching $t_{bear}$. & $[0, 100\%]$ \\
+T3 ($t_{bear}$) & If segments of the traffic light geometry are angled more steeply to the route than this value, they are not counted for $t_{bear\_sum}$. & $[0°, 180°]$ \\
+T4 ($t_{inv}$) & Whether inverted traffic light geometries should be matched. & $[\text{False}, \text{True}]$ \\
+T5 ($t_{len\_sum}$) & The minimum proportion of the signal's geometry matching $t_{len}$. & $[0, 100\%]$ \\
+T6 ($t_{len}$) & If segments of the traffic light geometry are elongated or shortened more than $1 \pm t_{len}$ when projected onto the route, they are not counted for $t_{len\_sum}$. & $[0, 1]$\\
+T7 ($t_{road\_side}$) & If two overlapping traffic lights are on opposite sides of the route and less than this distance away from each other, decide by the ordinary traffic side. & $[0, 100m]$ \\
+T8 ($t_{perfect\_match}$) & If a signal's geometry is closer to the route than this value, it is preferred over another overlapping traffic light geometry. & $[0, 50m]$ \\
+T9 ($t_{overlap\_pct}$) & If two traffic lights overlap more relative to their combined length, a decision process between both traffic lights is initiated. & $[0, 100\%]$ \\
 \bottomrule
 \end{tabular}
 \label{tab:hyperparameter-space}
 \end{table}
 
-\paragraph{Model Finetuning:} The designed filtering pipeline has several thresholds that must be carefully selected to optimize the final matching performance. Here, it is important to consider that each filter influences the subsequent filters in the pipeline. This means that it is difficult and time-intensive to tune the individual filters by hand. A solution to this problem is utilizing a hyperparameter tuning algorithm, which tries to understand the influence of each hyperparameter on a model and maximizes its score. This algorithm can run overnight, resulting in a proposed model configuration after a few hundred to thousand trials. To prepare the model for hyperparameter tuning, search spaces for each hyperparameter must be defined. These search spaces are summarized in \Cref{tab:hyperparameter-space}.
-
-
-\begin{table}[h]
-\caption{Final thresholds of the designed filtering pipeline for traffic light matching.}
-\begin{tabular}{@{}lllllllll@{}}
-\toprule
-  \textbf{Routing} & $t_{dist}$ & $t_{bear}$ & $t_{bear\_sum}$ & $t_{len}$ & $t_{len\_sum}$ & $t_{road\_side}$ &  $t_{perfect\_match}$ & $t_{overlap}$ \\
-  \midrule
-  OSM & 20m & 32.64° & 78.63\% & 0.999 & 92.65\% & 58.97m & 49.99m & 42.70\% \\
-\bottomrule
-\end{tabular}
-\label{tab:hyperparameter-tuning-results}
-\end{table}
-
-
-The Tree-Structured Parzen Estimator hyperparameter tuning algorithm \cite{ozaki_multiobjective_2020} is utilized to find a good configuration on the ground truth benchmark. The objective function given to the tuner algorithm is the F1 score. The final model configuration for OpenStreetMap is highlighted in \Cref{tab:hyperparameter-tuning-results}.
+\paragraph{Model Finetuning:} The designed filtering pipeline has several thresholds that must be carefully selected to optimize the final matching performance. Here, it is important to consider that each filter influences the subsequent filters in the pipeline. This means that it is difficult and time-intensive to tune the individual filters by hand. A solution to this problem is utilizing a hyperparameter tuning algorithm, which tries to understand the influence of each hyperparameter on a model and maximizes its score. This algorithm can run overnight, resulting in a proposed model configuration after a few hundred to thousand trials. To prepare the model for hyperparameter tuning, search spaces for each hyperparameter must be defined. These search spaces are summarized in \Cref{tab:hyperparameter-space}. The Tree-Structured Parzen Estimator hyperparameter tuning algorithm \cite{ozaki_multiobjective_2020} is utilized to find a good configuration on the ground truth benchmark. The objective function given to the tuner algorithm is the F1 score.
 
 \subsection{Machine Learning Filtering Approach}
 
@@ -508,7 +489,7 @@ Finally, to avoid speed advisories being given for a traffic light that comes af
 
 - Um in die Evaluation zu starten, betrachten wir als erstes die Ampelgeometrien etwas genauer
 - Im Konzept wurde beschrieben, dass die Metainformation über die von einer Ampel bedienten Verkehrsmittel ein wichtiges Entscheidungskriterium darstellen. Das entwickelte Verfahren soll sich immer dann für eine dedizierte Radfahrampel entscheiden, wenn dies durch die Kreuzungstopologie möglich ist
-- Stand 8. Dezember 2023 haben 677 von 791 (85.6\%) im System verfügbaren Kreuzungsknoten mindestens eine dedizierte Fahrradampel. An 194 (24.5\%) Kreuzungen gibt es mindestens eine Ampel, die sich Radfahrer und KFZ teilen können. 53 Kreuzungen (6.7\%) besitzen mindestens eine Ampel die Mischverkehr von Radfahrern, KFZ und Bussen zugeordet ist. Abschließend gibt es noch 24 Kreuzungen (3\%) die von Radfahrer und Fußgängern benutzt werden sollen. 
+- Stand 8. Dezember 2023 haben 677 von 791 (85.6\%) im System verfügbaren Kreuzungsknoten mindestens eine dedizierte Fahrradampel. An 194 (24.5\%) Kreuzungen gibt es mindestens eine Ampel, die sich Radfahrer und KFZ teilen können. 53 Kreuzungen (6.7\%) besitzen mindestens eine Ampel die Mischverkehr von Radfahrern, KFZ und Bussen zugeordet ist. An 24 Kreuzungen (3\%) gibt es Ampeln geteilt zwischen Fußgängern und Radfahrern
 
 \begin{figure}[htbp]
 \centering
@@ -517,7 +498,7 @@ Finally, to avoid speed advisories being given for a traffic light that comes af
 \label{fig:lanes-map}
 \end{figure}
 
-- Die Prozentzahlen überschneiden sich aber, da es häufig pro Kreuzung und Fahrtrichtung mehrere parallele Ampeln gibt, die theoretisch genutzt werden können, von denen aber nur eine schließlich die beste Wahl ist
+- Die Prozentzahlen überschneiden sich, da es häufig pro Kreuzung und Fahrtrichtung mehrere parallele Ampeln gibt, die theoretisch genutzt werden können, von denen aber nur eine schließlich die beste Wahl ist
 - Schon wenn wir einzelne Einfahrtsspuren und die möglichen Abbiegungen aus dieser Einfahrtsspur betrachten, wird deutlich, dass Radfahrer häufig viele Optionen haben, in die gleiche Richtung abzubiegen. Von insgesamt 4349 Einfahrtsspuren, die für Radfahrer markiert sind, sind 653 (15\%) der Einfahrtsspuren mit mehreren Ampelgeometrien verknüpft. An der Kreuzung 177 (53°34'10.6"N 10°03'22.1"E) haben Radfahrer beispielsweise die Möglichkeit, aus einer einzigen Einfahrtsspur in 4 Spuren rechts, 4 Spuren links, und 1 Spur geradeaus abzubiegen. 
 - Auch wenn in der Regel mehrere Connections simultan schalten und in diesem Fall eine Falschauswahl nicht zwangsweise zu einer falschen Geschwindigkeitsempfehlung führt, muss damit gerechnet werden, dass die unterschiedlichen Abbiegerichtungen auch durch separat schaltende Signalgeber bedient werden.
 - In diesem Fall ist die Auswahl rein über die nächste Ampelgeometrie durch die exakte Überlappung der Einfahrtsspuren mehrdeutig, und würde wieder die Darstellung mehrerer paralleler Spuren im User Interface erfordern
@@ -536,58 +517,113 @@ Finally, to avoid speed advisories being given for a traffic light that comes af
 - Es wäre also unbedingt notwendig, zusätzliches Kartenmaterial zu nutzen, um die Einfahrtsspurlänge künstlich zu erweitern und einen Geschwindigkeitsempfehlungsservice frühzeitig aktivieren zu können
 
 - Für Radfahrer sieht die Situation aber ganz anders aus. Wie initial beschrieben stellt sich bei Radfahrern das Problem, dass viele Ampeln aus mehreren Richtungen angefahren werden können. Das Resultat ist in \Cref{fig:ingress-lane-lengths} sichtbar mit Einfahrtsspurlängen die, wirft man alle im Diagramm als grün markierten Fahrradspuren zusammen in einen Topf, im Median bei 1m liegen. 
-- Bei vielen Ampeln müsste man die Einfahrtsspur künstlich in mehrere Richtungen verlängern, oder zumindest mehrere längere Einfahrtsspuren zur Verfügung stellen. Dies würde eine Umstrukturierung sämtlicher Kreuzungstopologien erfordern
-- Selbst dann ist jedoch das Problem noch nicht gelöst, 
+- Bei vielen Ampeln müsste man die Einfahrtsspur also künstlich in mehrere Richtungen verlängern, oder zumindest mehrere längere Einfahrtsspuren zur Verfügung stellen. Dies würde eine Umstrukturierung sämtlicher Kreuzungstopologien erfordern
+- Selbst dann ist jedoch das Problem noch nicht gelöst, da sich in diesem Fall die Anfahrtsspuren mehrerer Ampeln überlappen würden und wieder kein eindeutiges Mapping vorliegt, auf welche Ampel sich der Nutzer gerade zubewegt
+- Insgesamt bestätigen diese Ergebnisse also die Beobachtung, dass ein online-Matching Verfahren ohne Kenntnis über die tatsächlich genommene Abbiegung an der kommenden Kreuzung für Radfahrer stark limitiert ist. Die Mehrdeutigkeit bei der Zufahrt auf die Ampel wäre in vielen Fällen zu groß um eine eindeutige Auswahl zu treffen, selbst unter der Annahme einer perfekten GNSS-Genauigkeit. 
+- Dies untermalt nochmals, weshalb eine routenbasierte Auswahl der Ampeln wichtig ist
 
 \subsection{Analysis of Ground Truth}
+
+- Zur Entwicklung des routenbasierten Matching-Verfahrens wurden mehrere Ground Truths angelegt. Diese betrachten wir nun genauer.
 
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-osm-old.pdf}
 \caption{.}
-\label{fig:}
+\label{fig:matching-ground-truth-osm-old}
 \end{figure}
+
+- Die erste Ground Truth wurde 2022 angelegt und enthält 148 mit OpenStreetMap und dem GraphHopper \texttt{bike2} Profil zufällig generierte Fahrradrouten durch Hamburg. Diese Ground Truth ist in \Cref{fig:matching-ground-truth-osm-old} gezeigt. 
+- Die Ground Truth wurde erstellt auf einem Ampelgeometrie-Datensatz mit 2414 in 2022 verfügbaren individuellen Connections. Den 148 Routen wurden insgesamt 1043 Ampeln händisch zugeordnet. Pro Route sind dies im Schnitt 7 Ampeln.
+- In \Cref{fig:matching-ground-truth-osm-old} sind die händisch zu den Routen (blau) zugeordneten Ampeln grün markiert. Ampeln, die nie zugeordnet wurden, sind rot markiert. Sichtbar ist, dass es einige Ampeln gibt, die nie ausgewählt wurden.
+- Dies hat zwei Gründe: einerseits gibt es Kreuzungen, die von keiner generierten Route überfahren wurden. Andererseits gibt es an überfahrenen Kreuzungen auch häufig Ampeln, die nie ein sinnvolles Match darstellen. In Extremfällen gibt es auch Kreuzungen, an denen keine Ampel zur Route passt, beispielsweise da sie nicht für den Radweg seitlich der Straße relevant ist
+- Es wurden entlang der 148 Routen 6440 Connections mindestens einmal beim Labeling der Ground Truth berücksichtigt, davon 5397 (83.8\%) als "no match". Dies bezieht sich auf alle Ampeln innerhalb des 20m Radius, der immer um die Route gezogen wird. Im Matching-Prozess müssen vom Modell also deutlich mehr Connections als "no match" gekennzeichnet werden, als als "match".
+- Insgesamt werden zwar nur 549 unique Connections mindestens einmal als "Match" markiert, aber 1231 weitere unique Connections nie als "Match" identifiziert, obwohl sie berücksichtigt wurden. Der 2022er Datensatz deckt also insgesamt 73.7\% (1780) aller 2414 Ampeln ab, wenngleich auch nicht zwangsweise immer alle möglichen Einfahrtsrichtungen der Kreuzungen berücksichtigt wurden
 
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-osm.pdf}
 \caption{.}
-\label{fig:}
+\label{fig:matching-ground-truth-osm}
 \end{figure}
+
+- Eine Limitation der ersten Ground Truth ist, dass sie nur 2414 Connections beinhaltet. Dies sind 44\% der Stand 13. Dezember 2023 verfügbaren 5486 Connections.
+- Aus diesem Grund wurde in 2023 eine zweite Ground Truth angelegt, die zur Validierung der Modelle und Ergebnisse auf der 2022er Ground Truth genutzt werden kann. Diese enthält mit 5168 (94.2\%) deutlich mehr Connections, was auch in \Cref{fig:matching-ground-truth-osm} sichtbar wird
+- Die 2023er Ground Truth enthält 52 nach dem gleichen Schema generierte Routen und 758 als "match" markierte Connections. Dies entspricht ca. 15 Connections pro Route, analog zur vergrößerten Abdeckung.
+
+- Nicht mit jeder neuen Route die der Ground truth hinzugefügt wird, werden auch neue Connections hinzugefügt. Da mehrere Routen eine Kreuzung in der gleichen Art überqueren können, werden mit jeder neu hinzugefügten Route zum Datensatz tendenziell weniger neue Ampeln ergänzt
+- Ein Resultat dessen ist, dass nicht unbegrenzt viele Routen im Datensatz hinzugefügt werden können. Mit jeder Route steigt die Chance, die Anzahl duplizierter Beispiele zu erhöhen. Zu viele Duplikate sollten weitestgehend vermieden werden, um den Bias des Datensatzes gering zu halten. Speziell beim Training eines ML-Klassifikators führen zu viele Duplikate sonst zu Overfitting und einer verminderten Generalisierungsfähigkeit
 
 \begin{figure}[htbp]
 \centering 
 \begin{tabular}{cc}
+\footnotesize{(a) Redundancy in OSM Ground Truth (2022)} & \footnotesize{(b) Redundancy in OSM Ground Truth (2023)} \\
+\includegraphics[width=0.45\linewidth]{images/matching-ground-truth-progression-osm-old.pdf} & \includegraphics[width=0.45\linewidth]{images/matching-ground-truth-progression-osm.pdf} \\
 \includegraphics[width=0.45\linewidth]{images/matching-ground-truth-lsas-per-route-osm-old.pdf} & \includegraphics[width=0.45\linewidth]{images/matching-ground-truth-lsas-per-route-osm.pdf} \\
 \end{tabular}
 \caption{.}
-\label{fig:}
+\label{fig:ground-truth-routes-per-lanes-osm}
 \end{figure}
+
+- Der Zusammenhang ist in \Cref{fig:ground-truth-routes-per-lanes-osm} genauer dargestellt. Hierfür wurde pro neuer Route ermittelt, wie viele als "match" markierte Connections bereits im Datensatz vorhanden waren. Da im 2022er Datensatz mehr Routen gelabelt wurden als im 2023er Datensatz, ist auch die Redundanz neuer Routen tendenziell größer. 
+- Mithilfe des zeitlichen Verlaufs der prozentual redundanten Connections pro neuer Route lässt sich schätzen, wie hoch die Wahrscheinlichkeit ist, bei einer neuen zufälligen Route bereits gesehene Connections anzutreffen. Nehmen wir einen linearen Zusammenhang an, wie in \Cref{fig:ground-truth-routes-per-lanes-osm} als gestrichelte Linie dargestellt, so liegt die Wahrscheinlichkeit bei 65\% für den Datensatz aus 2022 und 38\% für den Datensatz aus 2023.
+- Insgesamt können wir also nicht unbegrenzt viele Routen zur Ground Truth hinzufügen, ohne Probleme mit der Redundanz zu erhalten. An welcher Stelle die weitere Erstellung von Routen terminiert wird, ist gewissermaßen arbiträr. Bei der Erstellung des 2023er Datensatzes wurde diese Entscheidung eher getroffen als beim 2022er Datensatz.
+
+- Das Ergebnis der Erstellung ist, dass die meisten Spuren (Connections) nur einer Route zugeordnet sind. Wie in \Cref{fig:ground-truth-routes-per-lanes-osm} gezeigt, betrifft dies 323 Routen im 2022er Datensatz und 399 Routen im 2023er Datensatz. Im 2022er Datensatz gibt es vereinzelte Spuren, die bis zu sieben verschiedenen Routen zugeordnet sind. 
+- Insgesamt zeigt die Verteilung, dass beim 2022er Datensatz damit zu rechnen ist, dass deutlich mehr Duplikate vorliegen als im 2023er Datensatz. Ob dies absolut zu viele Duplikate sind, ist schwer abzuschätzen ohne die Generalisierungsfähigkeit des Modell auf ungesehenen Daten zu testen
+- Dies werden wir im nächsten Abschnitt im Detail behandeln
 
 \subsection{Model Evaluation}
 
-\begin{figure}[htbp]
-\centering 
-\begin{tabular}{cc}
-\includegraphics[width=0.45\linewidth]{images/matching-model-loss-curve-ml-osm.pdf} & \includegraphics[width=0.45\linewidth]{images/matching-model-ml-osm.pdf} \\
+\begin{table}[h]
+\caption{Tuned hyperparameters for the algorithmic matching model.}
+\begin{tabular}{@{}llllllllll@{}}
+\toprule
+\textbf{Ground Truth} & $t_{dist}$ & $t_{bear}$ & $t_{bear\_sum}$ & $t_{inv}$ & $t_{len}$ & $t_{len\_sum}$ & $t_{road\_side}$ &  $t_{perfect\_m.}$ & $t_{overlap}$ \\
+  \midrule
+  OSM (2022) & 20m & 33° & 79\% & False & 0.99 & 93\% & 59m & 50m & 43\% \\
+  OSM (2023) & 19m & 50° & 78\% & False & 0.96 & 77\% & 95m & 46m & 5\% \\
+\bottomrule
 \end{tabular}
+\label{tab:hyperparameter-tuning-results}
+\end{table}
+
+- Es wurden zwei Modelle konzipiert: Das Algorithmische Modell und das ML-Modell. Diese Modelle wurden jeweils auf den in der vorigen Sektion vorgestellten Ground Truths trainiert und evaluiert. Als erstes betrachten wir das algorithmische Modell
+- Die gleiche Variante des algorithmischen Modells wurde einmal auf dem 2022er OpenStreetMap Datensatz trainiert, und einmal auf dem 2023er Datensatz. Als Ergebnis erhalten wir zwei verschiedene Modelle, die auf dem jeweils anderen Datensatz validiert werden können.
+- Die genauen Modellkonfigurationen sind in \Cref{tab:hyperparameter-tuning-results} gezeigt. Das Hyperparameter-Tuning-Verfahren hat für die ersten Thresholds entlang der Filter-Pipeline ähnliche Werte ausgewählt. Ignorieren wir zunächst die Parameter des Overlap Matchers, zeigen sich nur im gewählten bearing threshold $t_{bear}$ und dem length filter größere Unterschiede. Während das 2023er Modell weniger strikt beim Filtern steilwinkliger Spurgeometrien ist, ist der length filter strikter konfiguriert. Dies ist nicht überraschend, da sich der Bearing Filter und der Length Filter auf ähnliche Eigenschaften zwischen Route und Spur beziehen.
+- Der zum Schluss in der Filter-Pipeline kommende Overlap matcher zeigt relativ große Unterschiede zwischen beiden Modellvarianten. Einen Zusammenhang mit den Daten zu vermuten wäre aber spekulativ.
+
+\begin{figure}[t]
+\centering 
+\includegraphics[width=\linewidth]{images/matching-hpt-contour-topological-osm-updated.png}
 \caption{.}
-\label{fig:}
+\label{fig:hyperparameter-contourplot}
 \end{figure}
 
-\begin{figure}[htbp]
-\centering 
-\includegraphics[width=0.75\linewidth]{images/model-analysis.pdf}
-\caption{Visualization of the ML model inference process. Checkmark: predicted to match. Cross-mark: not predicted to match.}
-\label{fig:}
-\end{figure}
+- \Cref{fig:hyperparameter-contourplot} gibt noch etwas detailliertere Aufschlüsse über die Interpretation des Hyperparameter-Tuners darüber, in welche Richtung die Parameterkonfiguration optimiert werden muss, um den maximalen F1 Score zu erreichen. Diese Abbildung wurde mit dem Trainingsverlauf des 2023er Modells erzeugt.
+- Aus der Abbildung lassen sich mehrere interessante Rückschlüsse auf das Training und die allgemeine Interpretation eines "guten" Matches zwischen Route und Ampelgeometrie ziehen.
+- Zunächst ist eine sehr klare Tendenz mit Threshold 5 zu sehen, der darüber entscheidet, ob invers zur Route liegende Ampelgeometrien als Match gewählt werden sollen. Dass die Tendenz klar zu "nein" geht, liegt an Regel 6 bei der Erstellung des Datensatzes, die besagt, dass Ampelgeometrien niemals entgegen der Fahrtrichtung gewählt werden sollten. Dieser Zusammenhang konnte durch das Hyperparametermodell rekonstruiert werden.
+- Auch bei anderen Thresholds sind klare Gefälle erkenntlich. Eher diffus sind die Verlustgradienten bei den Overlap-Thresholds T7 -- T9. Dies stimmt grundsätzlich überein mit der Variabilität dieser Parameter die wir bei den finalen Modellen sehen.
+- Insgesamt scheint das Hyperparameter-Tuning wesentliche Zusammenhänge gut erkannt zu haben. Zumindest konnte händisch kein besseres Modell gefunden werden.
+
+- Bevor wir uns die finalen F1-Scores der Modelle ansehen, betrachten wir noch das trainierte ML-Modell.
+- Dieses Modell wurde auf dem 2022er OSM Datensatz trainiert, wird aber später auch auf beiden OSM Ground Truths evaluiert. Das Training und die Evaluation des ML-Modells ist komplexer strukturiert, um den Problemen des Overfittings effektiver zu begegenen. Die Ground Truth wird stärker reguliert.
+- Aus der Analyse der Ground Truth ist hervor gegangen, dass wir speziell beim 2022er OSM Datensatz mit einer vermehrten Redundanz zu rechnen haben. Da dies auch der Datensatz ist, auf dem wir das ML-Modell trainieren, wurden vor dem Training 3092 von 6440 redundanten Beispielen anhand übereinstimmender Feature-Vektoren erkannt und entfernt.
+- Das Training des Modells wurde mit der Stratified K-Fold Cross Validation über 342 Epochen durchgeführt
 
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth,bb=0 0 760 760]{images/decision-boundaries.pdf}
 \caption{Decision boundaries of the ML model's Yeo-Johnson-transformed non-categorical features.}
-\label{fig:}
+\label{fig:ml-model-decision-boundaries}
 \end{figure}
+
+- Bevor wir zu den Ergebnissen kommen, lohnt sich wie beim algorithmischen modell ein Blick auf die Entscheidungsgrenzen des trainierten ML-Modells, um die Funktionsweise etwas genauer zu verstehen. Die fließenden Entscheidungsgrenzen der nicht-kategorischen Features sind in \Cref{fig:ml-model-decision-boundaries} gezeigt. Erstellt wurde diese Visualisierung durch Inferenz auf zufälligen Routen und Aufzeichnung der berechneten Features sowie der prognostizierten Klasse. 
+- Da die Eingabewerte bereits durch die Yeo-Johnson Transformation in den Feature-Space überführt wurden, sind die dargestellten Zusammenhänge möglicherweise nicht gleichverteilt zu den Eingabedaten. 
+- Klar sichtbar ist jedoch insbesondere bei den Bearing-Features (Max und Min), dass speziell die auf 0 gemappten Eingabewerte, die um 180° entgegen der Route liegen dürften, als Ausschlusskriterium nicht passender Spuren dienen
+- Liegen die Spur und die Route besonders nah beieinander (Point Dists), ist dies ein weiterer guter Indikator für ein Match. Diese Erkenntnis ist weniger spannend. Relevanter hingegen ist die Beobachtung, dass auch nahe der Nulllinie der Point Distances, also Spuren die vermutlich sehr nah über der Route liegen, trotzdem viele nicht passende Spuren liegen. Die Distanz zur Route scheint also, selbst bei gut überlappenden Geometrien, kein alleiniges Entscheidungskriterium zu sein. Die gleiche Beobachtung gilt für das Length Diff Feature.
+
+- Nachdem wir uns mit der Erklärbarkeit der Modelle beschäftigt haben, konzentrieren wir uns nun auf die erreichten Scores.
 
 \begin{table}[h]
 \caption{.}
@@ -606,6 +642,8 @@ Finally, to avoid speed advisories being given for a traffic light that comes af
 \end{tabular}
 \label{tab:model-scores}
 \end{table}
+
+- Stratified k-fold-cross-validation auf dem 2022er OSM Datensatz: 92\% test F1 score (94\% training)
 
 \begin{figure}[htbp]
 \centering 
