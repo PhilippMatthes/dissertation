@@ -692,9 +692,15 @@ It is evident that the matching time correlates with the route's length. The mor
 However, there are also longer routes that are matched relatively quickly due to a lower number of connected intersections. Routes longer than about 50 km were not generated, as traffic lights are only available in the Hamburg area. This consideration is important if the method is to be applied on an inter-city level with significantly longer routes and many more intersections.
 
 \begin{Summary}[Summary of Results]
-Through measurement, it could be confirmed that the ingress geometries of bike traffic lights are much shorter than those for buses and cars. Together with multiple ambiguous turning directions and various choices for bike traffic lights at each intersection 
+While the challenges of a location-based approach have already been described in related work, the results also speak against such an approach. The cyclist's planned trajectory over the upcoming intersection must be known in order to accurately determine the appropriate traffic lights and give the user enough reaction time to the speed advisory. Two ground truths with human-made choices for the best traffic light were created. The analysis of these ground truths indicates that many traffic lights theoretically available for bike usage are never chosen as appropriate matches, especially in the presence of dedicated bike traffic lights. As a consequence, newly labeled routes quickly do not introduce new examples anymore, limiting the overall ground truth size. 
+
+Trained on the ground truths, the angular relationship between traffic light geometries and the route seems to be an especially important decision criterion between "match" and "no match." While the 2022 algorithmic model achieves an F1 score of 84.8\% on the 2022 dataset, its score drops to 80.3\% when validated on the 2023 dataset, containing double as many traffic light geometries. The 2022 ML model achieves a much higher test F1 score of 92\% during k-fold cross-validation and also drops to 86.2\% validated on the 2023 dataset. 
+
+Only a few false matchings are made when the traffic light geometry and the route closely overlap. The biggest potential for improvement resides in routing on the road instead of the bike infrastructure, which is more than two times as prevalent as cases without routing errors. Although the models are able to compensate for this issue to some extent, the results suggest that an improved routing could significantly boost the matching performance. Finally, it is shown that the matching can be executed in a time frame of less than two seconds in most cases, with routes of up to 50 km. 
 \end{Summary}
 
 \section{Conclusions}
+
+
 
 Future work: map-matching / routing with HD maps, cutting/stitching of intersections with MAPs
