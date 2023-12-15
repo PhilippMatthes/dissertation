@@ -687,7 +687,7 @@ In \Cref{fig:matching-performance}, a measurement is presented based on 556 rand
 
 The median matching time is 1.4 seconds, with the 75th percentile at 2.1 seconds. Users can expect approximately this time for both route calculation and traffic light selection. While optimization, for example, through implementation in a faster programming language than Python, is not urgently necessary, it should be considered as a potential improvement. The observed matching time is generally satisfactory in the current state.
 
-It is evident that matching time correlates with route length. The more traffic lights along the route, the longer the process tends to take. This is expected since the ML model likely needs to search through more intersections, not filtered out by the initial, very efficient distance filter around the route.
+It is evident that the matching time correlates with the route's length. The more traffic lights along the route, the longer the process tends to take. This is expected since the ML model likely needs to search through more intersections, not filtered out by the initial, very efficient distance filter around the route.
 
 However, there are also longer routes that are matched relatively quickly due to a lower number of connected intersections. Routes longer than about 50 km were not generated, as traffic lights are only available in the Hamburg area. This consideration is important if the method is to be applied on an inter-city level with significantly longer routes and many more intersections.
 
