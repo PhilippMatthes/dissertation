@@ -155,34 +155,34 @@ Not all traffic lights in Hamburg are available for prediction. Those who are av
 \subsection{Predictability Analysis}
 
 - Bisherige Arbeiten haben sich nur eingeschränkt damit beschäftigt, was Prognostizierbarkeit von Ampeln eigentlich genau bedeutet. Genaue Kriterien oder Metriken, nach denen entschieden werden kann, welches Verfahren das geeignetste ist, gibt es bisher nicht. In diesem Abschnitt werden wir solche Kriterien ableiten und ein systematisches Modell erarbeiten, mit dem wir herausfinden, wie gut unser Prognosemodell geeignet ist.
-- Mit den zur Verfügung stehenden Echtzeitdaten der Ampeln in Hamburg können wir unser Vorgehensmodell anschließend umsetzen und Erkenntnisse über die tatsächliche Prognostizierbarkeit von Ampeln ableiten. Direkte Messungen der Prognostizierbarkeit gab es in dieser Form auch bisher noch nicht.
+- Mit den zur Verfügung stehenden Echtzeitdaten der Ampeln in Hamburg können wir unser Vorgehensmodell anschließend umsetzen und Erkenntnisse über die tatsächliche Prognostizierbarkeit von Ampeln ableiten.
 
 - Wie gut prognostizierbar eine Ampel ist, hängt davon ab, wie gut sich Muster in der Schalthistorie erkennen lassen. 
-- Der einfachste Fall ist, wenn jeder sich wiederholende Zyklus der Ampel gleich schaltet. Alternativ kann es auch sein, dass die Grünphase nicht mit dem Zyklus synchronisiert ist, aber in gleichen zeitlichen Abständen schaltet. Auch dieser Fall entspricht grundsätzlich einem sehr leicht zu erkennenden Muster.
+- Der einfachste Fall ist, wenn eine Ampel immer in gleichbleibenden zeitlichen Abständen zwischen Grün und Rot schaltet.
 - Mit einer zunehmenden Adaption des Programms an den Verkehr verschieben sich prognostizierbare Muster, da Grünphasen früher oder später beginnen als gewohnt. Je zufälliger diese Adaption ist, desto schwieriger ist eine Prognose des Programms.
 - Wir müssen also eine Möglichkeit finden, die Abweichung der Ampelschaltung von einem normalen Muster, also die Instabilität zu messen.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering 
 \begin{tabular}{|c|c|c|}
 \hline
 & \footnotesize{\textbf{Low cycle-dependent instability}} & \footnotesize{\textbf{High cycle-dependent instability}} \\
 \hline
-\rotatebox{90}{\footnotesize{\textbf{High cycle-independent instability}}} & \includegraphics[width=0.42\linewidth]{images/predictability-cycles-1.pdf} & \includegraphics[width=0.42\linewidth]{images/predictability-cycles-2.pdf} \\
+\rotatebox{90}{\footnotesize{\textbf{High cycle-independent instability}}} & B \includegraphics[width=0.42\linewidth]{images/predictability-cycles-1.pdf} & D \includegraphics[width=0.42\linewidth]{images/predictability-cycles-2.pdf} \\
 \hline
-\rotatebox{90}{\footnotesize{\textbf{Low cycle-independent instability}}} & \includegraphics[width=0.42\linewidth]{images/predictability-cycles-3.pdf} & \includegraphics[width=0.42\linewidth]{images/predictability-cycles-4.pdf} \\
+\rotatebox{90}{\footnotesize{\textbf{Low cycle-independent instability}}} & A \includegraphics[width=0.42\linewidth]{images/predictability-cycles-3.pdf} & C \includegraphics[width=0.42\linewidth]{images/predictability-cycles-4.pdf} \\
 \hline
 \end{tabular}
 \caption{.}
 \label{fig:types-of-instability}
 \end{figure}
 
-- Zwei Arten von Instabilitäten sind besonders relevant für Prognoseverfahren: cycle-dependent instability und cycle-independent instability. 
-- Wie in  \Cref{fig:types-of-instability} gezeigt kann man sich vier verschiedene Fälle vorstellen:
-- Links unten ist ein Ampelschaltprogramm, das jeden Zyklus gleich schaltet, mit zwischenzeitlich eventuell auftretendem Programmwechsel. Solche Programme sind am stabilsten und daher auch am besten prognostizierbar.
-- Links oben wird die Grünphase nur gelegentlich freigeschaltet, aber dann zu einem festen Zeitpunkt im Zyklus. Schwerer zu prognostizieren ist der Zeitpunkt der Freischaltung, während das auftretende Muster im Zyklus sehr gleichmäßig ist. Die zyklusunabhängige Instabilität ist groß, während die zyklusabhängige Instabilität gering ist.
-- Rechts unten wird die Grünphase sehr regelmäßig freigeschaltet, aber verschiebt sich mit jeder Freischaltung im Zyklus. Die zyklusabhängige Instabilität ist groß, während die zyklusunabhängige Instabilität gering ist.
-- Rechts oben sind beide Arten von Instabilität sehr hoch. Die Prognostizierbarkeit ist somit stark eingeschränkt.
+- Die Instabilität lässt sich zyklusabhängig oder von Grünphase zu Grünphase (zyklusunabhängig) messen. Warum eine differenzierung in diese beiden Klassen wichtig ist, sehen wir in \Cref{fig:types-of-instability}. 
+- A: Links unten ist ein Ampelschaltprogramm, das jeden Zyklus gleich schaltet, mit zwischenzeitlich eventuell auftretendem Programmwechsel. Solche Programme sind am stabilsten und daher auch am besten prognostizierbar. Ein probabilistisches Verfahren ist derzeit die skalierbarste und robusteste Wahl. Graphbasierte oder ML-basierte Modelle lohnen sich hier eher nicht im Tradeoff.
+- B: Links oben wird die Grünphase nur gelegentlich freigeschaltet, aber dann zu einem festen Zeitpunkt im Zyklus. Schwerer zu prognostizieren ist der Zeitpunkt der Freischaltung, während das auftretende Muster im Zyklus sehr gleichmäßig ist. Die zyklusunabhängige Instabilität ist groß, während die zyklusabhängige Instabilität gering ist. Auch hier ist ein probabilistisches Verfahren eine gute Wahl, da es die Chance in manchen Fällen eine Freigabe zu erhalten trotzdem reflektiert und somit die Möglichkeit bietet, sich an den Bereich, in dem eine Grünphase geschaltet werden könnte, zu adaptieren. 
+- C: Rechts unten wird die Grünphase sehr regelmäßig freigeschaltet, aber verschiebt sich mit jeder Freischaltung im Zyklus. Die zyklusabhängige Instabilität ist groß, während die zyklusunabhängige Instabilität gering ist. Diese Art von Ampeln kann nur schwer von probabilistischen Modellen prognostiziert werden. Eine gute Alternative für diese Art von Ampeln sind graphbasierte Methoden, da diese die Phasenlänge statt der Lokalität im Zyklusvektor zur Prognose nutzen.
+- D: Rechts oben sind beide Arten von Instabilität sehr hoch. Die Prognostizierbarkeit ist somit stark eingeschränkt, für alle Arten von Modellen. Eine gute Alternative wären jedoch in diesem Fall Machine-Learning-basierte Modelle, da diese die höchste Chance haben, komplexere Muster zu erkennen
+- 
 
 - Konsequenzen für Prognosealgorithmen?
 
