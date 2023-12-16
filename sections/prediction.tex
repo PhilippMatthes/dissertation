@@ -154,10 +154,15 @@ Not all traffic lights in Hamburg are available for prediction. Those who are av
 
 \subsection{Predictability Analysis}
 
-- Bisherige Arbeiten haben sich nur eingeschränkt damit beschäftigt, was Prognostizierbarkeit eigentlich genau bedeutet.
-- Wie prognostizierbar eine Ampel ist, hängt nicht nur von ihrer Verkehrsadaptivität, sondern auch vom Verfahren ab, mit dem die Prognose durchgeführt wird.
-- Das auch in dieser Arbeit genutzte probabilistische Verfahren kann gut mit Schwankungen in Grünphasen umgehen, solange diese zwischen den Zyklen ungefähr übereinander liegen, also zu einer ähnlichen Zeit beginnen. Wenn dies gegeben ist, ist das probabilistische Verfahren sehr attraktiv aufgrund seiner niedrige
-- Was nicht gut prognostiziert werden kann sind Muster, die sich nicht im Einklang mit den Zyklen wiederholen. 
+- Bisherige Arbeiten haben sich nur eingeschränkt damit beschäftigt, was Prognostizierbarkeit von Ampeln eigentlich genau bedeutet. Genaue Kriterien oder Metriken, nach denen entschieden werden kann, welches Verfahren das geeignetste ist, gibt es bisher nicht. In diesem Abschnitt werden wir solche Kriterien ableiten und ein systematisches Modell erarbeiten, mit dem wir herausfinden, wie gut unser Prognosemodell geeignet ist.
+- Mit den zur Verfügung stehenden Echtzeitdaten der Ampeln in Hamburg können wir unser Vorgehensmodell anschließend umsetzen und Erkenntnisse über die tatsächliche Prognostizierbarkeit von Ampeln ableiten. Direkte Messungen der Prognostizierbarkeit gab es in dieser Form auch bisher noch nicht.
+
+- Wie gut prognostizierbar eine Ampel ist, hängt davon ab, wie gut sich Muster in der Schalthistorie erkennen lassen. 
+- Der einfachste Fall ist, wenn jeder sich wiederholende Zyklus der Ampel gleich schaltet. Alternativ kann es auch sein, dass die Grünphase nicht mit dem Zyklus synchronisiert ist, aber in gleichen zeitlichen Abständen schaltet. Auch dieser Fall entspricht grundsätzlich einem sehr leicht zu erkennenden Muster.
+- Mit einer zunehmenden Adaption des Programms an den Verkehr verschieben sich prognostizierbare Muster, da Grünphasen früher oder später beginnen als gewohnt. Je zufälliger diese Adaption ist, desto schwieriger ist eine Prognose des Programms.
+- Wir müssen also eine Möglichkeit finden, die Abweichung der Ampelschaltung von einem normalen Muster, also die Instabilität zu messen.
+
+- Orientieren sich die Muster an der Zykluslänge der Ampel, so ist eine Prognose über das probabilistische Verfahren möglich. Wiederholen sich Abstände zwischen Grünphasen, aber finden die Grünphasen nicht immer um den gleichen Zeitpunkt im Zyklus statt, so ist eine Prognose über das probabilistische Verfahren stark eingeschränkt. In diesem Fall müsste zu alternativen Methoden wie graphbasierten oder machine-learning-methoden gegriffen werden. 
 
 \begin{figure}[htbp]
 \centering 
@@ -171,7 +176,7 @@ Not all traffic lights in Hamburg are available for prediction. Those who are av
 \hline
 \end{tabular}
 \caption{.}
-\label{fig:}
+\label{fig:types-of-instability}
 \end{figure}
 
 \begin{lstlisting}[language=Python, caption=Python implementation of the cycle-dependent instability metric.]
