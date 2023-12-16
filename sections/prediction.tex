@@ -162,8 +162,6 @@ Not all traffic lights in Hamburg are available for prediction. Those who are av
 - Mit einer zunehmenden Adaption des Programms an den Verkehr verschieben sich prognostizierbare Muster, da Grünphasen früher oder später beginnen als gewohnt. Je zufälliger diese Adaption ist, desto schwieriger ist eine Prognose des Programms.
 - Wir müssen also eine Möglichkeit finden, die Abweichung der Ampelschaltung von einem normalen Muster, also die Instabilität zu messen.
 
-- Orientieren sich die Muster an der Zykluslänge der Ampel, so ist eine Prognose über das probabilistische Verfahren möglich. Wiederholen sich Abstände zwischen Grünphasen, aber finden die Grünphasen nicht immer um den gleichen Zeitpunkt im Zyklus statt, so ist eine Prognose über das probabilistische Verfahren stark eingeschränkt. In diesem Fall müsste zu alternativen Methoden wie graphbasierten oder machine-learning-methoden gegriffen werden. Im Wesentlichen 
-
 \begin{figure}[htbp]
 \centering 
 \begin{tabular}{|c|c|c|}
@@ -178,6 +176,15 @@ Not all traffic lights in Hamburg are available for prediction. Those who are av
 \caption{.}
 \label{fig:types-of-instability}
 \end{figure}
+
+- Zwei Arten von Instabilitäten sind besonders relevant für Prognoseverfahren: cycle-dependent instability und cycle-independent instability. 
+- Wie in  \Cref{fig:types-of-instability} gezeigt kann man sich vier verschiedene Fälle vorstellen:
+- Links unten ist ein Ampelschaltprogramm, das jeden Zyklus gleich schaltet, mit zwischenzeitlich eventuell auftretendem Programmwechsel. Solche Programme sind am stabilsten und daher auch am besten prognostizierbar.
+- Links oben wird die Grünphase nur gelegentlich freigeschaltet, aber dann zu einem festen Zeitpunkt im Zyklus. Schwerer zu prognostizieren ist der Zeitpunkt der Freischaltung, während das auftretende Muster im Zyklus sehr gleichmäßig ist. Die zyklusunabhängige Instabilität ist groß, während die zyklusabhängige Instabilität gering ist.
+- Rechts unten wird die Grünphase sehr regelmäßig freigeschaltet, aber verschiebt sich mit jeder Freischaltung im Zyklus. Die zyklusabhängige Instabilität ist groß, während die zyklusunabhängige Instabilität gering ist.
+- Rechts oben sind beide Arten von Instabilität sehr hoch. Die Prognostizierbarkeit ist somit stark eingeschränkt.
+
+- Konsequenzen für Prognosealgorithmen?
 
 \begin{lstlisting}[language=Python, caption=Python implementation of the cycle-dependent instability metric.]
 def cycle_dependent_instability(cycles: list) -> int:
