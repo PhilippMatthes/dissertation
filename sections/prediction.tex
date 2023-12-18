@@ -202,7 +202,7 @@ In addition to this monitoring system, a predictability analysis is conducted to
 
 \section{Results}
 
-The evaluation of the prediction infrastructure is divided into two parts: the assessment of the forecasting process and the evaluation of traffic adaptability at traffic lights in Hamburg.
+The evaluation of the prediction infrastructure is divided into two parts: the assessment of the prediction process and the evaluation of traffic light predictability in Hamburg.
 
 Firstly, we examine how well the prediction system interacts with the Hamburg Traffic Light Data platform and identify potential weaknesses. This involves analyzing the spatial coverage and trends of traffic light predictions over an extended period, utilizing recorded metrics from the implemented monitoring system. We investigate the temporal availability of predictions to understand the number of traffic lights in Hamburg where speed recommendations can be expected. Our findings indicate that the availability is significantly lower than desired. To delve deeper into the reasons for this, we examine the recorded metrics from the implemented monitoring tool, identifying recurring error patterns that suggest systematic issues in the Hamburg data infrastructure. Collaborating with the data platform operators, we draw conclusions about the root causes of these problems and propose potential solutions. To further demonstrate the scalability of the prediction algorithm, we briefly examine the CPU, RAM, and network usage of the prediction service.
 
@@ -333,9 +333,9 @@ To interpret these numbers, it should be noted that the prediction service encom
 
 We have previously established that many traffic lights, in case they send enough data, can be accurately predicted based on the quality metric of the algorithm. The selected algorithm not only appears to scale well but also surprisingly performs effectively with the numerous traffic-dependent traffic light systems in Hamburg. This observation contrasts with previous studies that had suggested the opposite.
 
-It's worth noting that our analysis has so far focused only on bicycle traffic lights, providing only a partial picture. Therefore, our next step is to examine the traffic dependence for all traffic lights in Hamburg. This analysis aims to gain deeper insights into traffic light sequences and, ultimately, to identify areas for future optimizations of current prediction systems.
+It is worth noting that our analysis has so far focused only on bicycle traffic lights, providing only a partial picture. Therefore, our next step is to examine the predictability of all traffic lights in Hamburg in a broader context. This analysis aims to gain deeper insights into traffic light sequences and, ultimately, to identify areas for future optimizations of current prediction systems.
 
-To conduct these evaluations, real-time data was recorded for approximately four weeks. This encompassed all 18,528 traffic lights available in the Hamburg Traffic Lights Data system at the time of evaluation. In general, we can reuse the existing prediction infrastructure for data collection, including error detection. However, since we are not predicting but only recording the data for analysis, we have to conduct some modifications to the infrastructure. 
+To conduct these evaluations, real-time data was recorded for approximately four weeks. This encompassed all 18,528 individual traffic lights available in the Hamburg Traffic Lights Data system at the time of evaluation. In general, we can reuse the existing prediction infrastructure for data collection, including error detection. However, since we are not predicting but only recording the data for analysis, we have to conduct some modifications to the infrastructure. 
 
 One issue that we aim to minimize is the observed problem of dropped MQTT messages. Since the time criticality of the messages is less important for this experiment, while the completeness of messages is much more important than for the prediction, we can apply a hack to get many more Observations than possible with MQTT only. We query all Datastreams in a round-robin fashion via the HTTP interface of the Traffic Lights Data API and fetch the latest Observations via this web interface. In case we encounter any unseen Observations, we insert them into the database in which our MQTT Observations are located. 
 
@@ -351,42 +351,43 @@ Although theoretically applicable to the prediction service, implementing this p
 
 The detection of faulty cycles, also implemented in the prediction service, was utilized for problem identification. Out of approximately 424 million reconstructed cycles, 13.8 million cycles were discarded. Here, 90\% of faulty cycles are distributed across 10\% of the connections. By examining the faulty connections on the map, one of the known faulty traffic computers could be identified as the cause.
 
-It is possible that not all faulty cycles were detected in this process. 35\% of the available traffic lights in Hamburg, according to recorded data, switch only between red and green, making it impossible to identify missing phases. However, for 42\% of the traffic lights, the detection should have worked well, as it was determined that they switch in the order of green-amber-red-redamber. The remaining traffic lights switch between other colors, such as amber and dark, represented by \texttt{primary\_signal} Observations with \texttt{result = 0}. Despite this, the Distance metric and the Shift metric are calculated normally for these traffic lights.
+It is possible that not all faulty cycles were detected in this process. 35\% of the available traffic lights in Hamburg, according to recorded data, switch only between red and green, making it impossible to identify missing phases. However, for 42\% of the traffic lights, the detection should have worked well, as it was determined that they switch in the order of green-amber-red-redamber. The remaining traffic lights switch between other colors, such as amber and dark, represented by \texttt{primary\_signal} Observations with \texttt{result = 0}. These were not excluded from the analyses since no substantial effect on the interpretability of our metrics is expected.
 
-In conclusion, we cannot completely eliminate all errors, but they seem to be present only to a minor extent. It is expected that isolated recording errors will be overshadowed by the mass of valid data. However, it is important to note for subsequent analyses that recording errors (e.g., missing cycle observation leading to doubled cycle length) may occur. Accordingly, metrics will be chosen to minimize distortion by outliers.
-
-Now, turning our attention to adaptability, we analyze the calculated Distance metric. To provide an overview of the adaptability of all traffic lights, we first calculate the Distance metric between all cycles within each hour distributed across each weekday in the four recorded weeks. The result is a weekly table with hourly cells, mapping each hour for the recorded four weeks. This weekly table forms the basis for examining the weekly trend across all connections. Aggregating in weekly tables is efficient for processing the billions of recorded observation rows. For each cell, a filter query can be used to efficiently extract observations stored as rows in the PostgreSQL database using previously installed indexes.
-
-The following metrics are calculated for each hourly cell in every weekly table. We use the median of the Distance metric instead of the mean because the cycle length and, consequently, the Distance metric are affected by outliers due to missing cycle time observations. The median is more robust against such outliers. Additionally, we calculate the interquartile range (IQR) of the first and third quartiles of the metric distribution. The IQR provides a similar insight into the distribution of adaptability within the respective hour, like the dispersion measure, but is also statistically more robust against outliers.
-
-After calculating these metrics for all cells, the result is shown in figure \ref{fig:adaptiveness-weekdays-distance}. The information is presented along with the normalized frequencies of recorded bus requests (bus observations) as well as cars, bikes, and pedestrians (detector observations) and validated with the frequency of public transit stops according to publicly accessible schedules.
+In conclusion, we cannot completely eliminate all errors, but they seem to be present only to a minor extent. It is expected that isolated recording errors will be overshadowed by the mass of valid data. However, it is important to note for subsequent analyses that recording errors (e.g., missing cycle observation leading to doubled cycle length) may occur. Accordingly, we will use meta-statistics that are robust to outliers.
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/adaptiveness-weekdays-distance.pdf}
-    \caption{Measured traffic light adaptiveness over weekdays based on the Distance metric in relation to the measured traffic volume.}\label{fig:adaptiveness-weekdays-distance}
+    \caption{Measured traffic light adaptiveness over weekdays based on the cycle-dependent instability metric in relation to the measured traffic volume.}\label{fig:adaptiveness-weekdays-distance}
 \end{figure}
 
-As a result, we observe that adaptiveness (measured by the distance metric) correlates as expected with traffic volume. While adaptiveness is at its lowest during the night, it rises rapidly during the morning traffic surge and then remains relatively constant until the evening before decreasing again.
+The first chart displayed in \Cref{fig:adaptiveness-weekdays-distance} looks at the relation between traffic light predictability and daytime. To get an insight into which hours and days during the week the predictability is highest, we calculate the cycle-dependent instability that provides a scalar value of the adaptiveness. We calculate this metric between all cycles within each hour distributed across each weekday in the four recorded weeks. The extracted week table forms the basis for examining trends across all traffic lights.
 
-Measured across all traffic lights, the median of the distance metric ranges between 0 and 3 seconds. Interpreting the interquartile range (IQR): at least 25\% of all traffic lights exhibit no adaptiveness in the median, and at least 75\% of all traffic lights in the median operate with a maximum adaptiveness of 15 seconds.
+We use the median of the cycle-dependent instability for each hour instead of the mean because it is affected by outliers due to missing cycle time observations. The median is more robust against such outliers. Additionally, we calculate the interquartile range (IQR) of the first and third quartiles of the metric distribution. The IQR provides a similar insight into the distribution of adaptability within the respective hour, like the dispersion measure, but is also statistically more robust against outliers. The information is presented along with the normalized frequencies of recorded bus requests (bus observations) as well as cars, bikes, and pedestrians (detector observations) and validated with the frequency of public transit stops according to publicly accessible schedules.
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\linewidth]{images/predictability-by-lanes.pdf}
-    \caption{.}\label{fig:}
-\end{figure}
-
+As a result, we observe that instability correlates, as expected, with traffic volume. While the instability is at its lowest during the night, it rises rapidly during the morning traffic surge. However, it then remains relatively constant after reaching an upper bound until the evening before decreasing again. The plateaus of instability during daytime indicate that there may be limits to the instability even in the presence of increasing traffic. Measured across all traffic lights, the median of the distance metric ranges between 0 and 3 seconds. Interpreting the interquartile range (IQR): at least 25\% of all traffic lights exhibit no persistent instability in the median, and at least 75\% of all traffic lights in the median operate with a maximum instability of 15 seconds.
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-heatmap.pdf}
+    \caption{.}\label{fig:predictability-heatmap}
+\end{figure}
+
+A more conjugated perspective on the instability is given in \Cref{predictability-heatmap} in which the cycle-dependent metric is set in relation to the cycle-independent metric.  
+
+- Die Visualisierung nutzt auch wieder die stundenweise Granularität, da Ampeln auch zwischen adaptiven und nicht-adaptiven programmen wechseln können. Das heißt, für eine Ampel, die 50\% der Zeit adaptiv und 50\% der Zeit nicht adaptiv schaltet, werden sowohl Stunden mit adaptivität als auch ohne adaptivität im Diagramm repräsentiert. Daher liegt der Maximalwert der Farbskala auch bei über $10^5$ Messungen auf einem Histogrammelement.
+- Was klar sichtbar ist, ist, dass die allermeisten Ampeln nur eine minimale Adaptivität aufweisen. 43\% (1,206,817) aller ausgewerteten 2,793,786 Ampelstunden liegen unter einer cycle-dependent instability von 5 sekunden und einer cycle-independent instability von 10\%. 
+- Wenn wir die logarithmische Farbskala betrachten, sehen wir, dass mit Abstand am meisten Stunden 
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{images/predictability-heatmap-hourly.pdf}
     \caption{.}\label{fig:}
 \end{figure}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=\linewidth]{images/predictability-heatmap-hourly.pdf}
+    \includegraphics[width=\linewidth]{images/predictability-by-lanes.pdf}
     \caption{.}\label{fig:}
 \end{figure}
 
