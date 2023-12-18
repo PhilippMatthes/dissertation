@@ -383,7 +383,6 @@ A more conjugated perspective on the instability is given in \Cref{predictabilit
 - Die Vertikale bei cycle-dependent instability = 0 deutet auf einige Ampeln hin, die nur gelegentlich auf Grün schalten. 9\% (245,379) der aufgezeichneten Ampelstunden liegen im Median bei der cycle-dependent instability bei 0 Sekunden aber bei der cycle-independent instability höher als 10\%.
 - Die Horizontale bei cycle-independent instability = 1 deutet auf einige Fälle hin, bei denen die Zyklen sehr instabil sind oder sich andere nicht-grüne Signalfarben ungleichmäßig abwechseln, beispielsweise schwarz-amber. Dies ist also wahrscheinlich ein Messartefakt und deutet nicht zwangsweise auf einen kausalen Zusammenhang mit dem tatsächlichem Schaltverhalten hin
 - Das zu verzeichnende Hintergrundrauschen ab 50 Sekunden cycle-dependent instability, speziell die sichtbaren vertikalen Linienartefakte deutet generell auf fehlerhafte Daten hin. Wenn wir Ampeln exkludieren bei denen mehr als 10\% Zyklen wegen erkannten Fehlern verworfen wurden werden die Fehlermuster weitestgehend aus der Visualisierung eliminiert
-- Es gibt ebenfalls Punkte, die bei einer niedrigen cycle-indepdendent instability liegen, aber eine hohe cycle-dependent instability aufweisen. Dies deutet auf die Existenz von Stufenmustern hin, kann aber auch aus Datenfehlern wie fehlenden Zyklus-Observations resultieren
 
 \begin{figure}[t]
     \centering
@@ -391,22 +390,25 @@ A more conjugated perspective on the instability is given in \Cref{predictabilit
     \caption{.}\label{fig:predictability-heatmap-hourly}
 \end{figure}
 
-- \Cref{fig:predictability-heatmap-hourly} schlüsselt den Zusammenhang zwischen cycle-dependent und cycle-independent instability nochmals im Tagesverlauf auf. Vergleicht man die Stunden, so sieht man einen klaren Unterschied zwischen vor 6 Uhr und nach 6 Uhr, der bis ca. 23 Uhr anhält. Das ist auch der Moment, in dem nach \Cref{fig:adaptiveness-weekdays-distance} die Adaptivität wieder abnimmt.
-- Auch hier sieht man wieder den großen Anteil Ampeln, die eine hohe Regelmäßigkeit und scheinbar eine geringe Verkehrsadaptivität zeigen.
-- Speziell der Bereich, in dem stufenartige Muster zu erwarten sind, verändert sich im Tagesverlauf. Eine mögliche Ursache könnte sein, dass verkehrsabhängige Ampeln durchgängig ausgelöst werden und somit relativ regelmäßig schalten. Klar erkennbar wird dies aus dieser Darstellung aber nicht. 
+- Es gibt einige aufgezeichnete Stunden, die bei einer niedrigen cycle-indepdendent instability liegen, aber eine hohe cycle-dependent instability aufweisen. Dies deutet auf die Existenz von Stufenmustern hin, kann aber auch aus Datenfehlern wie fehlenden Zyklus-Observations resultieren
+- \Cref{fig:predictability-heatmap-hourly} schlüsselt den Zusammenhang zwischen cycle-dependent und cycle-independent instability nochmals im Tagesverlauf auf. Vergleicht man die Stunden, so sieht man einen klaren Unterschied zwischen vor 6 Uhr und nach 6 Uhr, der bis ca. 23 Uhr anhält. Das ist auch der Moment, in dem nach \Cref{fig:adaptiveness-weekdays-distance} die Adaptivität wieder abnimmt. Allerdings ist 6 Uhr auch gerade der Zeitpunkt nach \Cref{fig:monitoring-7-days} an dem vermehrt Datenausfälle auftreten. Schaut man sich Fallbeispiele aus diesem Bereich an, wurden bei den meisten einzelne Zyklusobservations nicht aufgezeichnet, weshalb einzelne Zyklus zwei oder dreimal so lang ist. Da die Grünphase aber in den meisten Fallstudien weiterhin in einem regelmäßigen, am Zyklus ausgerichteten, Muster auftritt, ist die cycle-independent instability niedrig. Die beobachtete Variation, auch im Zeitverlauf, tritt also anhand dessen vermutlich zum Teil wegen Datenfehlern auf.
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-by-lanes.pdf}
-    \caption{.}\label{fig:}
+    \caption{.}\label{fig:predictability-by-lanes}
 \end{figure}
 
+- Erwartbar wäre, dass die Stabilität der Zyklen auch vom Fahrzeugtyp der Ampel abhängt. Dies scheint aber, zumindest nach der zyklusabhängigen Instabilität, nicht so zu sein. \Cref{fig:predictability-by-lanes} zeigt dass für alle unterschiedlichen Fahrzeugtypen eine ähnliche Instabilitätsverteilung zu beobachten ist. 
+- Wenn wir uns die cycle-dependent instability nach dem Fahrzeugtyp der Ampel ansehen, lässt sich ein ähnliches Bild für die unterschiedlichen Typen der Ampeln feststellen.
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-real-examples.pdf}
     \caption{.}\label{fig:predictability-real-examples}
 \end{figure}
+
+
 
 \section{Conclusions}
 
