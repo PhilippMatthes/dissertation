@@ -154,38 +154,22 @@ Not all traffic lights in Hamburg are available for prediction. Those who are av
 
 \subsection{Predictability Analysis}
 
-The chosen probabilistic prediction method assumes that the green phases should roughly align with each other across the recorded cycles. Depending on the specific traffic light control program, the traffic light's deviation from a recurring base pattern may be more or less influenced by incoming traffic. Although it is clear that, as of 2023, 90.7\% of traffic lights in Hamburg \textit{can} adapt to inbound traffic, it is unclear how pronounced this behavior is. To fill this knowledge gap, we can directly measure the traffic adaptivity based on the same data provided by the SensorThings API in Hamburg. The collected information can then be utilized to estimate how well the probabilistic method will predict the traffic lights and how it may perform in relation to other methods.
+Considering the potential traffic-adaptive behavior of traffic lights, it is clear that we cannot predict each one equally well. Understanding the quantity and implications of traffic-adaptive behavior on the prediction method is crucial. However, previous work has only dealt superficially with this issue. There are no precise criteria or metrics that can be used to decide how well traffic lights are predictable and which prediction method is the most suitable. In this section, we will derive such criteria and develop a systematic model to determine how suitable our prediction model is. With the real-time data available from the traffic lights in Hamburg, we can then implement our process model and derive findings on the actual predictability of traffic lights.
 
-First, it must be determined which metrics are suitable for measuring characteristics of traffic adaptivity. One aspect of traffic adaptivity that can be directly measured from the recorded cycles is the shift of the green phase. We can measure the green phase's start time $g_{start}(L_j)$ and end time $g_{end}(L_j)$ in each cycle $L_j$, and calculate the shift between both:
+The predictability of traffic lights depends on the stability of patterns in the switching behavior. Only if there are reoccurring patterns, the traffic light can be predicted. Vice versa, a highly spontaneous and thus unstable switching behavior is related to low predictability. Assuming alignment of a traffic light's switching behavior with the cycle length \cite{protschky_extensive_2014}, one option to measure the switching behavior's instability is counting the seconds differing between two cycles $C_1$ and $C_2$ with the length $l_1$ and $l_2$ in the recorded history. As a result, we obtain a cycle-dependent instability metric measured in seconds of discrepancy between cycles:
 
-\begin{equation} \text{Shift}(L_1, L_2) = [g_{start}(L_2) - g_{start}(L_1), g_{end}(L_2) - g_{end}(L_1)] \end{equation}
-
-In the example given in \Cref{fig:types-of-adaptiveness}, $\text{Shift}$$(L_1, L_2)$ would be $[-2, -2]$ and $\text{Shift}$$(L_2, L_3) $$= [3, 3]$. While partially adaptive traffic lights, as highlighted in \Cref{fig:types-of-adaptiveness} are assumed to shift the green phase within the cycle, other traffic lights may only insert a green phase once a vehicle is detected. Thus, one problem of this metric is that each cycle may have different numbers of green phases. As a result, we have to discard additional green phases at the end of one cycle that are not seen in the other cycle, potentially leading to some discarded information. 
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.75\linewidth]{images/explanation-partially-adaptive.pdf}
-    \caption{Partially adaptive traffic light switching pattern as highlighted by Otto et al. (2023) \cite{otto_framework_2023}}\label{fig:types-of-adaptiveness}
-\end{figure}
-
-To account for this loss of information, we calculate another metric to capture the cycles that are not fully considered through the Shift metric. This metric indirectly measures the deviation by the number of seconds in the current cycle that deviate from the previous cycle. We name this metric "Distance" since it calculates the second-wise distance between the cycles. The Distance metric between two cycles $L_1$ and $L_2$, with the lengths $l_1$ and $l_2$ calculated as follows:
-
-\begin{equation} \text{Distance}(L_1, L_2) =  \sum_{i=0}^{\max(l_1, l_2)-1} \left\{
+\begin{equation} \text{Cycle-Dependent Instability}(C_1, C_2) =  \sum_{i=0}^{\max(l_1, l_2)-1} \left\{
 \begin{array}{ll}
 1 & \text{if } i \geq l_1 \text{ or } i \geq l_2 \\
-1 & \text{if } L_1[i] \neq L_2[i] \\
+1 & \text{if } C_1[i] \neq C_2[i] \\
 0 & \text{otherwise}
 \end{array} \right.\end{equation}
 
-If we apply this metric to the example in \Cref{fig:types-of-adaptiveness}, we get $\text{Distance}$$(L_1, L_2)$$ = 4$ and $\text{Distance}$$(L_2, L_3)$$ = 6$. This metric captures all second-wise differences but not the directionality of the green phase shifts. This means that traffic lights expressing a "staircase" pattern, in which the green phase is shifted by a constantly increasing factor each cycle, will be measured as highly adaptive, although they express a relatively predictable pattern. As a consequence, both the Distance and Shift metrics are used in conjunction with the recorded traffic light data.
+One limitation of this metric is that it does not capture reoccurring patterns between green phases that are not aligned with the cycle length. As a result, the time between green phases could be constant but result in a high cycle-dependent instability if the green phases are not aligned relative to the cycle start time. 
 
-- Bisherige Arbeiten haben sich nur eingeschränkt damit beschäftigt, was Prognostizierbarkeit von Ampeln eigentlich genau bedeutet. Genaue Kriterien oder Metriken, nach denen entschieden werden kann, welches Verfahren das geeignetste ist, gibt es bisher nicht. In diesem Abschnitt werden wir solche Kriterien ableiten und ein systematisches Modell erarbeiten, mit dem wir herausfinden können, wie gut unser Prognosemodell geeignet ist.
-- Mit den zur Verfügung stehenden Echtzeitdaten der Ampeln in Hamburg können wir unser Vorgehensmodell anschließend umsetzen und Erkenntnisse über die tatsächliche Prognostizierbarkeit von Ampeln ableiten.
 
-- Wie gut prognostizierbar eine Ampel ist, hängt davon ab, wie gut sich Muster in der Schalthistorie erkennen lassen. 
-- Der einfachste Fall ist, wenn eine Ampel immer in gleichbleibenden zeitlichen Abständen zwischen Grün und Rot schaltet.
-- Mit einer zunehmenden Adaption des Programms an den Verkehr verschieben sich prognostizierbare Muster, da Grünphasen früher oder später beginnen als gewohnt. Je zufälliger diese Adaption ist, desto schwieriger ist eine Prognose des Programms.
-- Wir müssen also eine Möglichkeit finden, die Abweichung der Ampelschaltung von einem normalen Muster, also die Instabilität zu messen.
+
+This metric captures all second-wise differences but not the directionality of the green phase shifts. This means that traffic lights expressing a "staircase" pattern, in which the green phase is shifted by a constantly increasing factor each cycle, will be measured as highly adaptive, although they express a relatively predictable pattern. As a consequence, both the Distance and Shift metrics are used in conjunction with the recorded traffic light data.
 
 \begin{figure}[t]
 \centering 
@@ -214,24 +198,6 @@ If we apply this metric to the example in \Cref{fig:types-of-adaptiveness}, we g
 - Fall C ist sehr schlecht vom probabilistischen Modell prognostizierbar. Eine gute Alternative für diese Art von Schaltverhalten sind graphbasierte Methoden, da diese die Phasenlänge statt der Lokalität im Zyklusvektor zur Prognose nutzen.
 - Bei Fall D lohnt sich die Überlegung, ein rechnerisch aufwändigeres Machine Learning Modell zu nutzen, da diese die höchste Chance haben, komplexere Muster zu erkennen.
 - Eine Messung der zyklusabhängigen und zyklusunabhängigen Instabilität gibt uns also einen guten Richtwert zur Evaluation, wie gut prognostizierbar Ampeln sind und wie sinnvoll unser gewähltes Verfahren auf die Situation vor Ort passt.
-
-
-\begin{lstlisting}[language=Python, caption=Python implementation of the cycle-dependent instability metric.]
-def cycle_dependent_instability(cycles: list) -> int:
-    if len(cycles) < 2:
-        raise ValueError("Not enough cycles")
-    diffs = []
-    for i in range(len(cycles) - 1):
-        cycle_a, cycle_b = cycles[i], cycles[i + 1]
-        diff = 0
-        for j in range(max(len(cycle_a), len(cycle_b))):
-            if j >= len(cycle_a) or j >= len(cycle_b):
-                diff += 1
-            elif cycle_a[j] != cycle_b[j]:
-                diff += 1
-        diffs.append(diff)
-    return int(np.median(diffs))
-\end{lstlisting}
 
 \begin{lstlisting}[language=Python, caption=Python implementation of the cycle-independent instability metric.]
 def cycle_independent_instability(cycles: list) -> float:
@@ -429,13 +395,6 @@ As a result, we observe that adaptiveness (measured by the distance metric) corr
 
 Measured across all traffic lights, the median of the distance metric ranges between 0 and 3 seconds. Interpreting the interquartile range (IQR): at least 25\% of all traffic lights exhibit no adaptiveness in the median, and at least 75\% of all traffic lights in the median operate with a maximum adaptiveness of 15 seconds.
 
-Was noch fehlt
-- Betrachtung der Grünphasenlänge/Grünphasenüberschneidung und Shift
-- Diskussion der Ergebnisse: speziell auch näher auf immer rote Ampeln eingehen
-- Was bedeuten die Ergebnisse für das Prognoseverfahren und andere Prognoseverfahren?
-
-
-
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-by-lanes.pdf}
@@ -445,7 +404,13 @@ Was noch fehlt
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=\linewidth]{images/predictability-cycle-independent.pdf}
+    \includegraphics[width=\linewidth]{images/predictability-heatmap.pdf}
+    \caption{.}\label{fig:}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{images/predictability-heatmap-hourly.pdf}
     \caption{.}\label{fig:}
 \end{figure}
 
