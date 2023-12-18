@@ -165,11 +165,15 @@ The predictability of traffic lights depends on the stability of patterns in the
 0 & \text{otherwise}
 \end{array} \right.\end{equation}
 
-One limitation of this metric is that it does not capture reoccurring patterns between green phases that are not aligned with the cycle length. As a result, the time between green phases could be constant but result in a high cycle-dependent instability if the green phases are not aligned relative to the cycle start time. To cope 
+One limitation of this metric is that it does not capture reoccurring patterns between green phases that are not aligned with the cycle length. As a result, the time between green phases could be constant but result in a high cycle-dependent instability if the green phases are not aligned relative to the cycle start time. To cope with this issue, a second metric is required that measures the instability independent of the cycle length. 
 
+The additional cycle-independent instability metric is designed as follows. First, the recorded cycles are concatenated into a continuous history $H_{C_1, \dots, C_n}$ of traffic light switching. Then, between every two green phases for which a continuous record is present, the wait time in between is measured and rounded in seconds. As a result, we obtain a list of wait times between green phases. Then, we measure how many \textit{different} waiting times are seen proportionally to the number of all wait times:
 
+\begin{equation}
+\text{Cycle-Independent Instability}(H_{C_1, \dots, C_n}) = \frac{\text{\# Different Wait Times}}{\text{\# Total Wait Times}}
+\end{equation}
 
-This metric captures all second-wise differences but not the directionality of the green phase shifts. This means that traffic lights expressing a "staircase" pattern, in which the green phase is shifted by a constantly increasing factor each cycle, will be measured as highly adaptive, although they express a relatively predictable pattern. As a consequence, both the Distance and Shift metrics are used in conjunction with the recorded traffic light data.
+If there are more reoccurring patterns in the wait time, the cycle-independent instability is expected to be close to 0. Here, it doesn't matter whether the reoccurring patterns are aligned with the cycle time or if these revolve after a few cycles. If the variability of waiting times between green phases is high, and thus the number of different wait times, the cycle-independent instability is expected to be close to 1. Since the cycle-independent instability, however, does not necessarily capture the amount of shift between green phases and only the uniqueness, it is not entirely better than the cycle-dependent instability metric. Both measures need to be employed in conjunction to determine whether predictable patterns are present.
 
 \begin{figure}[t]
 \centering 
@@ -177,48 +181,18 @@ This metric captures all second-wise differences but not the directionality of t
 \hline
 & \footnotesize{\textbf{Low cycle-dependent instability}} & \footnotesize{\textbf{High cycle-dependent instability}} \\
 \hline
-\rotatebox{90}{\footnotesize{\textbf{High cycle-independent instability}}} & B \includegraphics[width=0.42\linewidth]{images/predictability-cycles-1.pdf} & D \includegraphics[width=0.42\linewidth]{images/predictability-cycles-2.pdf} \\
+\rotatebox{90}{\footnotesize{\textbf{    High cycle-independent instability}}} & B \includegraphics[width=0.42\linewidth]{images/predictability-cycles-1.pdf} & D \includegraphics[width=0.42\linewidth]{images/predictability-cycles-2.pdf} \\
 \hline
-\rotatebox{90}{\footnotesize{\textbf{Low cycle-independent instability}}} & A \includegraphics[width=0.42\linewidth]{images/predictability-cycles-3.pdf} & C \includegraphics[width=0.42\linewidth]{images/predictability-cycles-4.pdf} \\
+\rotatebox{90}{\footnotesize{\textbf{    Low cycle-independent instability}}} & A \includegraphics[width=0.42\linewidth]{images/predictability-cycles-3.pdf} & C \includegraphics[width=0.42\linewidth]{images/predictability-cycles-4.pdf} \\
 \hline
 \end{tabular}
 \caption{.}
 \label{fig:types-of-instability}
 \end{figure}
 
-- Die Instabilität lässt sich zyklusabhängig oder von Grünphase zu Grünphase (zyklusunabhängig) messen. Warum eine differenzierung in diese beiden Klassen wichtig ist, sehen wir in \Cref{fig:types-of-instability}. 
-- A: Jeder Zyklus schaltet gleich, mit zwischenzeitlich eventuell auftretendem Programmwechsel. Solche Programme sind am stabilsten und daher auch am besten prognostizierbar.
-- B: Die Grünphase wird nur gelegentlich freigeschaltet, dann aber zu einem festen Zeitpunkt im Zyklus. Schwerer zu prognostizieren ist der Zeitpunkt der Freischaltung, während das auftretende Muster im Zyklus sehr gleichmäßig ist. Die zyklusunabhängige Instabilität ist groß, während die zyklusabhängige Instabilität gering ist.
-- C: Rechts unten wird die Grünphase sehr regelmäßig freigeschaltet, aber verschiebt sich mit jeder Freischaltung im Zyklus. Die zyklusabhängige Instabilität ist groß, während die zyklusunabhängige Instabilität gering ist.
-- D: Rechts oben sind beide Arten von Instabilität sehr hoch. Die Prognostizierbarkeit ist somit stark eingeschränkt, für alle Arten von Modellen.
+\Cref{fig:types-of-instability} provides a systematic model for the types of instability that can be measured with our two metrics. In case A, the green phases are both aligned with the cycle time and at relatively constant distances from each other. Thus, both the cycle-independent and cycle-dependent instability is low. In case B, the green phase is only occasionally switched upon detection of a vehicle, cyclist, or pedestrian. As a result, the cycle-dependent instability is low since all cycles are very similar to each other. However, since the waiting time between green phases is highly variable, the cycle-independent instability is high. Case C highlights the scenario that is not captured well by the cycle-dependent metric alone. A "staircase" pattern is present, meaning that the green time is shifted in a constant rhythm that is not aligned with the cycle time, resulting in a high cycle-dependent instability but a low cycle-independent instability. Case C is a weakness of our prediction method and needs a thorough investigation. Finally, case D contains the least predictable switching behavior, which expresses both cycle-dependent and independent instability. 
 
-- Mithilfe dieser Unterteilung können wir uns überlegen, welche Prognoseverfahren im jeweiligen Fall geeignet wären:
-- Im einfachsten Fall A liegt der Fokus auf der Skalierbarkeit und Robustheit des Prognoseverfahrens gegenüber fehlenden Daten.
-- In Fall B wäre ein probabilistisches Verfahren anstelle eines selbstadaptiven Verfahrens zu präferieren da es die Chance in manchen Fällen eine Freigabe zu erhalten trotzdem reflektiert und somit die Möglichkeit bietet, sich an den Bereich, in dem eine Grünphase geschaltet werden könnte, zu adaptieren.
-- Fall C ist sehr schlecht vom probabilistischen Modell prognostizierbar. Eine gute Alternative für diese Art von Schaltverhalten sind graphbasierte Methoden, da diese die Phasenlänge statt der Lokalität im Zyklusvektor zur Prognose nutzen.
-- Bei Fall D lohnt sich die Überlegung, ein rechnerisch aufwändigeres Machine Learning Modell zu nutzen, da diese die höchste Chance haben, komplexere Muster zu erkennen.
-- Eine Messung der zyklusabhängigen und zyklusunabhängigen Instabilität gibt uns also einen guten Richtwert zur Evaluation, wie gut prognostizierbar Ampeln sind und wie sinnvoll unser gewähltes Verfahren auf die Situation vor Ort passt.
-
-\begin{lstlisting}[language=Python, caption=Python implementation of the cycle-independent instability metric.]
-def cycle_independent_instability(cycles: list) -> float:
-    if len(cycles) < 2:
-        raise ValueError("Not enough cycles")
-    cycles_flat = [item for sublist in cycles for item in sublist]
-    greens_end_times = []
-    greens_start_times = []
-    for i in range(len(cycles_flat) - 1):
-        if cycles_flat[i] == green and cycles_flat[i + 1] != green:
-            greens_end_times.append(i)
-        if cycles_flat[i] != green and cycles_flat[i + 1] == green:
-            greens_start_times.append(i)
-    wait_times = []
-    for i in range(min(len(greens_end_times), len(greens_start_times))):
-        wait_times.append(greens_start_times[i] - greens_end_times[i])
-    if len(wait_times) == 0:
-        return 0
-    return len(set(wait_times)) / len(wait_times)
-\end{lstlisting}
-
+Locating the recorded histories of traffic lights on this 2-dimensional scale will help us determine which kinds of patterns are present. It also helps us find the number of cases in which our prediction method is inadequate, especially with respect to cases C and D. In general, the more cases are similar to A and B, the better for our chosen probabilistic prediction method. Finally, we can explore these metrics in other dimensions, such as over time in a week, to gain additional insights about predictability.
 
 \begin{Summary}[Summary of Methods]
 The designed prediction infrastructure makes use of Hamburg's centralized Traffic Light Data platform and reuses the existing probabilistic prediction method  \cite{pape_untersuchung_2012, protschky_extensive_2014, protschky_adaptive_2014} guaranteeing scalability in addition to robustness to latencies and data errors. Interoperability with platforms without the availability of intersection-controller-level predictions (as with SPaT messages) is also given since the prediction algorithm only relies on the availability of traffic light colors and cycle timing information. Additional measures are implemented that detect and discard erroneous data. Through a monitoring system the prediction quality can be analyzed and systematic issues identified. Information about the prediction availability is forwarded to the user to enhance the explainability of outages. In addition to this monitoring system, an adaptivity analysis is conducted to explore the traffic-adaptiveness of traffic lights. This adaptivity analysis reuses the traffic light data infrastructure for direct measurement of the adaptiveness instead of extrapolating on the reported number of 90.7\% adaptive traffic lights. The adaptiveness is measured with two metrics in conjunction: the Distance metric incorporating the absolute shift between traffic light cycles, and the Shift metric that measures the directionality in the traffic light switching patterns.
