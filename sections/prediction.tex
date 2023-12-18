@@ -173,7 +173,9 @@ The additional cycle-independent instability metric is designed as follows. Firs
 \text{Cycle-Independent Instability}(H_{C_1, \dots, C_n}) = \frac{\text{\# Different Wait Times}}{\text{\# Total Wait Times}}
 \end{equation}
 
-If there are more reoccurring patterns in the wait time, the cycle-independent instability is expected to be close to 0. Here, it doesn't matter whether the reoccurring patterns are aligned with the cycle time or if these revolve after a few cycles. If the variability of waiting times between green phases is high, and thus the number of different wait times, the cycle-independent instability is expected to be close to 1. Since the cycle-independent instability, however, does not necessarily capture the amount of shift between green phases and only the uniqueness, it is not entirely better than the cycle-dependent instability metric. Both measures need to be employed in conjunction to determine whether predictable patterns are present.
+In the extreme case that only one green phase is detected, the metric is set to 1, meaning that no reoccurring pattern was detected. If no green phase is detected, the metric is set to 0, assuming that this represents an easily predictable pattern (always red). Otherwise, if there are more reoccurring green patterns in the wait time, the cycle-independent instability is expected to be close to 0. Here, it doesn't matter whether the reoccurring patterns are aligned with the cycle time or if these revolve after a few cycles. If the variability of waiting times between green phases is high, and thus the number of different wait times, the cycle-independent instability is expected to be close to 1. 
+
+Since the cycle-independent instability, however, does not necessarily capture the amount of shift between green phases and only the uniqueness, it is not entirely better than the cycle-dependent instability metric. Both measures need to be employed in conjunction to determine whether predictable patterns are present.
 
 \begin{figure}[t]
 \centering 
@@ -376,8 +378,12 @@ As a result, we observe that instability correlates, as expected, with traffic v
 A more conjugated perspective on the instability is given in \Cref{predictability-heatmap} in which the cycle-dependent metric is set in relation to the cycle-independent metric.  
 
 - Die Visualisierung nutzt auch wieder die stundenweise Granularität, da Ampeln auch zwischen adaptiven und nicht-adaptiven programmen wechseln können. Das heißt, für eine Ampel, die 50\% der Zeit adaptiv und 50\% der Zeit nicht adaptiv schaltet, werden sowohl Stunden mit adaptivität als auch ohne adaptivität im Diagramm repräsentiert. Daher liegt der Maximalwert der Farbskala auch bei über $10^5$ Messungen auf einem Histogrammelement.
-- Was klar sichtbar ist, ist, dass die allermeisten Ampeln nur eine minimale Adaptivität aufweisen. 43\% (1,206,817) aller ausgewerteten 2,793,786 Ampelstunden liegen unter einer cycle-dependent instability von 5 sekunden und einer cycle-independent instability von 10\%. 
-- Wenn wir die logarithmische Farbskala betrachten, sehen wir, dass mit Abstand am meisten Stunden 
+- Was klar sichtbar ist, ist, dass viele Ampeln nur eine geringe persistente Adaptivität aufweisen. 43\% (1,206,817) aller ausgewerteten 2,793,786 Ampelstunden liegen unter einer cycle-dependent instability von 5 sekunden und einer cycle-independent instability von 10\%. 
+- Ampeln mit mehr Grünphasen tendieren hierbei weiter nach unten als Ampeln mit wenigen Grünphasen. 
+- Die Vertikale bei cycle-dependent instability = 0 deutet auf einige Ampeln hin, die nur gelegentlich auf Grün schalten. 9\% (245,379) der aufgezeichneten Ampelstunden liegen im Median bei der cycle-dependent instability bei 0 Sekunden aber bei der cycle-independent instability höher als 10\%.
+- Die Horizontale bei cycle-independent instability = 1 deutet auf einige Fälle hin, bei denen die Zyklen sehr instabil sind oder sich andere nicht-grüne Signalfarben ungleichmäßig abwechseln, beispielsweise schwarz-amber. Dies ist also wahrscheinlich ein Messartefakt und deutet nicht zwangsweise auf einen kausalen Zusammenhang mit dem tatsächlichem Schaltverhalten hin
+- Das zu verzeichnende Hintergrundrauschen ab 50 Sekunden cycle-dependent instability, speziell die sichtbaren vertikalen Linienartefakte deutet generell auf fehlerhafte Daten hin. Wenn wir Ampeln exkludieren bei denen mehr als 10\% Zyklen wegen erkannten Fehlern verworfen wurden werden die Fehlermuster weitestgehend aus der Visualisierung eliminiert
+- Es gibt ebenfalls Punkte, die bei einer niedrigen cycle-indepdendent instability liegen, aber eine hohe cycle-dependent instability aufweisen. Dies deutet auf die Existenz von Stufenmustern hin.
 
 \begin{figure}[t]
     \centering
