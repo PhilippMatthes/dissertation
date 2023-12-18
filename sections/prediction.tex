@@ -383,7 +383,24 @@ A more conjugated perspective on the instability is given in \Cref{predictabilit
 - Die Vertikale bei cycle-dependent instability = 0 deutet auf einige Ampeln hin, die nur gelegentlich auf Grün schalten. 9\% (245,379) der aufgezeichneten Ampelstunden liegen im Median bei der cycle-dependent instability bei 0 Sekunden aber bei der cycle-independent instability höher als 10\%.
 - Die Horizontale bei cycle-independent instability = 1 deutet auf einige Fälle hin, bei denen die Zyklen sehr instabil sind oder sich andere nicht-grüne Signalfarben ungleichmäßig abwechseln, beispielsweise schwarz-amber. Dies ist also wahrscheinlich ein Messartefakt und deutet nicht zwangsweise auf einen kausalen Zusammenhang mit dem tatsächlichem Schaltverhalten hin
 - Das zu verzeichnende Hintergrundrauschen ab 50 Sekunden cycle-dependent instability, speziell die sichtbaren vertikalen Linienartefakte deutet generell auf fehlerhafte Daten hin. Wenn wir Ampeln exkludieren bei denen mehr als 10\% Zyklen wegen erkannten Fehlern verworfen wurden werden die Fehlermuster weitestgehend aus der Visualisierung eliminiert
-- Es gibt ebenfalls Punkte, die bei einer niedrigen cycle-indepdendent instability liegen, aber eine hohe cycle-dependent instability aufweisen. Dies deutet auf die Existenz von Stufenmustern hin.
+- Es gibt ebenfalls Punkte, die bei einer niedrigen cycle-indepdendent instability liegen, aber eine hohe cycle-dependent instability aufweisen.
+
+\begin{figure}[t]
+\centering 
+\begin{tabular}{|c|c|c|}
+\hline
+& \footnotesize{\textbf{Cycle-dependent instability <5s}} & \footnotesize{\textbf{Cycle-dependent instability >70s}} \\
+\hline
+\rotatebox{90}{\footnotesize{\textbf{\hspace{0.18cm} Cycle-independent instability >90\%}}} & B \includegraphics[width=0.42\linewidth]{images/predictability-rw-example-top-left.pdf} & D \includegraphics[width=0.42\linewidth]{images/predictability-rw-example-top-right.pdf} \\
+\hline
+\rotatebox{90}{\footnotesize{\textbf{\hspace{0.18cm} Cycle-independent instability <10\%}}} & A \includegraphics[width=0.42\linewidth]{images/predictability-rw-example-bottom-left.pdf} & C \includegraphics[width=0.42\linewidth]{images/predictability-rw-example-bottom-right.pdf} \\
+\hline
+\end{tabular}
+\caption{.}
+\label{fig:rw-examples-of-instability}
+\end{figure}
+
+- 
 
 \begin{figure}[t]
     \centering
