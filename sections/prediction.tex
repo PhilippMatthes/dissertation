@@ -385,6 +385,7 @@ It is evident from this visualization that many traffic lights exhibit low persi
 
 Outside of the large stable proportion of traffic lights, there are three other notable observations. First, a vertical line at cycle-dependent instability = 0 indicates traffic lights that only occasionally switch to green. Approximately 9\% (245,379) of recorded traffic light hours have a median cycle-dependent instability of 0 seconds but a cycle-independent instability higher than 10\%. Second, the horizontal line at cycle-independent instability = 1 suggests cases where cycles are highly unstable or non-green signal colors alternate unevenly, such as black-amber. This is likely a measurement artifact and does not necessarily indicate a causal relationship with the actual switching behavior. Finally, background noise recorded above 50 seconds of cycle-dependent instability, especially visible vertical line artifacts, generally suggests faulty data in these areas. Excluding traffic lights with more than 10\% of cycles discarded due to detected errors largely eliminates these error patterns from the visualization, confirming this interpretation.
 
+
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-heatmap-hourly.pdf}
@@ -395,15 +396,8 @@ Some recorded hours exhibit low cycle-independent instability but high cycle-dep
 
 \Cref{fig:predictability-heatmap-hourly} further dissects the relationship between cycle-dependent and cycle-independent instability throughout the day. When comparing hours, a distinct difference is observed before 6 AM and after 6 AM, persisting until around 11 PM. This aligns with the moment when adaptivity, as shown in \Cref{fig:adaptiveness-weekdays-distance}, starts to decrease. However, 6 AM is also the time when, according to \Cref{fig:monitoring-7-days}, data failures become more prevalent. Examining case studies from this period reveals that, in most instances, individual cycle observations were not recorded, resulting in cycles being two or three times as long. Despite this, as the green phase continues in a regular, cycle-aligned pattern in most case studies, the cycle-independent instability remains low. Therefore, the observed variation, even over time, is likely partially due to data errors.
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\linewidth]{images/predictability-by-lanes.pdf}
-    \caption{.}\label{fig:predictability-by-lanes}
-\end{figure}
 
-One might expect that the cycle stability also depends on the type of traffic light, varying with the type of vehicles it controls. However, at least in terms of cycle-dependent instability, this does not seem to be the case. \Cref{fig:predictability-by-lanes} illustrates a similar instability distribution across different vehicle types. Examining predictability reveals comparable patterns among the various types of traffic lights, and no noticeable discrepancies.
-
-\begin{figure}[t]
+\begin{figure}[htbp]
 \centering 
 \begin{tabular}{|c|c|c|}
 \hline
@@ -417,6 +411,21 @@ One might expect that the cycle stability also depends on the type of traffic li
 \caption{.}
 \label{fig:types-of-instability}
 \end{figure}
+
+- Um ein besseres Gefühl dafür zu bekommen, was die gezeigten Messungen für eine Konsequenz auf die Prognostizierbarkeit haben, schauen wir uns einmal ein paar konkrete zufällig gewählte Fallbeispiele an.
+- \Cref{fig:types-of-instability} zeigt jeweils vier solcher Fallbeispiele, je nachdem in welchem Bereich sie in \Cref{fig:predictability-heatmap} angesiedelt sind.
+- Unter den Beispielen zeigen sich erwartete aber auch unerwartete Muster. Speziell Fall C ist interessant - hier wurden tatsächlich stufenähnliche Muster festgestellt. Meist deuten diese Muster stark auf eine vollverkehrsabhängige Ampel die durchgängig ausgelöst wird
+- Anhand der zufälligen Stichprobe lässt sich aber sagen, dass diese sehr selten vorkommen. Insgesamt scheinen die Muster, wie durch Protschky et al. (2014) \cite{protschky_extensive_2014} beschrieben, mit der Zykluslänge synchronisiert zu sein.
+- Häufiger kommen im Bereich C Ampeln vor, die oft zwischen zwei Verhaltensweisen hin und her schalten -- hierbei ist der Schaltverlauf innerhalb einer Verhaltensweise aber stabil und mit dem Zyklus aligned. Als resultat der Median der zyklusabhängigen Instabilität hoch, während es nur wenige unterschiedliche Wartezeiten zwischen den Grünphasen gibt. Die Programme, welche sich rechts unten im Diagramm befinden, sind also im Schnitt auch durch das probabilistische Verfahren relativ gut prognostizierbar - zumindest der sichere Grünbereich.
+- Rechts oben im Bereich D befinden sich zunächst, wie erwartet, Ampeln die eine starke Adaptivität verzeichnen. Allerdings ist es in diesen Fällen auch nicht ausgeschlossen, dass die Grünphase zu einer relativ festen Zeit freigeschaltet wird. 
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{images/predictability-by-lanes.pdf}
+    \caption{.}\label{fig:predictability-by-lanes}
+\end{figure}
+
+One might expect that the cycle stability also depends on the type of traffic light, varying with the type of vehicles it controls. However, at least in terms of cycle-dependent instability, this does not seem to be the case. \Cref{fig:predictability-by-lanes} illustrates a similar instability distribution across different vehicle types. Examining predictability reveals comparable patterns among the various types of traffic lights, and no noticeable discrepancies.
 
 \begin{figure}[t]
     \centering
