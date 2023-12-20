@@ -8,7 +8,21 @@ This chapter is based on the following paper in which the author was the princip
 
 \section{Introduction}
 
-- 
+- Radfahrerverhalten und insbesondere die Routenwahl von Radfahrern zu verstehen, hilft nicht nur bei der Berechnung zur Präferenz von Radfahrern passender Routen, sondern ist auch Kernbestandteil des Ausbaus von Radinfrastruktur https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9529273
+- Mit Modellen, welche die Routenwahl von Radfahrern nachbilden, lässt sich unmittelbar nachvollziehen, an welchen Stellen die Radinfrastruktur besonders hohe Priorität haben sollte.
+- Für Radfahr-Navigationsanwendungen ist eine gute Routenwahl ebenfalls unabdinglich. Eine der großen Herausforderungen für Fahrradrouting ist jedoch die hohe Individualität und Kontextabhängigkeit der gewählten Wege. Routenwahlen hängen nicht nur von der Bodenbeschaffenheit, sondern auch vom Fahrradtyp oder der persönlichen Präferenz ab. Das macht es sehr schwer, optimale Routen für Radfahrer zu berechnen.
+
+- In GLOSA applikationen ist das Routing mit noch ein paar weiteren Faktoren verbunden. Hier ist es nicht nur wichtig, dass die Radroute generell sinnvolle Wege einschlägt, sondern auch akkurat zu den Fahrradwegen passt. Dies ist für ein genaues Matching der Ampeln wünschenswert.
+- Je genauer die Route zum Radweg passt, desto besser eignet sich die Route auch zur Distanzabschätzung zur Ampel. Wenn road bends oder andere Hindernisse auf dem Weg zur Ampel umfahren werden müssen, so sollte dies durch die Route nachvollzogen werden, um die Distanz zur Ampel nicht zu unterschätzen. Andernfalls driftet die Geschwindigkeitsempfehlung von der gefahrenen Geschwindigkeit weg.
+- Auch die Ansteigung einer Route oder die Bodenbeschaffenheit fließen nicht nur in das Routing ein, sondern kann auch eine wichtige Informationsquelle für die Geschwindigkeitsempfehlung darstellen. Fährt ein Nutzer bergauf oder über unbefestigten Untergrund, so ist es möglicherweise nicht immer machbar, der Geschwindigkeitsempfehlung zu folgen. Genaue und konsistente Metainformationen sind wünschenswert.
+
+- In \Cref{ch:matching} hat sich unter anderem ergeben, dass mit OpenStreetMap generierte Fahrradrouten nicht immer die gewünschte Genauigkeit aufweisen. OpenStreetMap ist eine state-of-the-art kartengrundlage, aber bekannt dafür, in seiner Genauigkeit und Konsistenz zu variieren. Die Probleme kommen daher, dass OpenStreetMap auf das Volunteered Geographical Information (VGI) Konzept setzt, in dem Karteninformationen frei von Nutzern kontribuiert werden können, ähnlich dem Konzept der Wikipedia. Dies sorgt für eine relativ aktuelle Karte auch bei sich ändernden Straßenzügen, globale Verfügbarkeit, aber eben auch für Inkonsistenzen, die trotz Richtlinien entstehen. 
+- Im Gegenzug zu OpenStreetMap gibt es auch HD-Maps oder andere proprietäre Kartenabieter wie Google Maps, deren Offenheit und Erweiterbarkeit jedoch stark eingeschränkt sind. Kosten und Faktoren wie vendor-lockins sind bei diesen Kartenabietern ebenfalls zu berücksichtigen. Generell ist OpenStreetMap daher, bis auf die mangelde Genauigkeit und Konsistenz mit der Fahrradinfrastruktur, eine gute Wahl.
+
+- In diesem Kapitel führen wir noch eine weitere Alternativmöglichkeit für das Fahrradrouting ein
+- Wir schauen uns Infrastruktur-Kartenreferenzmodelle an, die institutionell maintaint und unter Open Source Lizenzen veröffentlicht werden. Ein solches Modell existiert für die Radwege in Hamburg: das Digitale Radnetz Hamburg (DRN).
+- Generell verspricht dieses Modell eine deutlich genauere und konsistentere Auflösung der Radwege, weshalb es eine sehr attraktive Lösung für die GLOSA-App darstellt.
+- Wie auch andere Modelle besteht bei diesen Infrastruktur-Referenzmodellen jedoch das Problem, dass sie keine globale Abdeckung aufweisen. Im Falle des DRN ist dies nur die Stadt Hamburg. Um Routing außerhalb der Stadt zu unterstützen müssen wir 
 
 \section{Related Work}\label{sec:rw-uis}
 
