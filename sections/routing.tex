@@ -8,15 +8,15 @@ This chapter is based on the following paper in which the author was the princip
 
 \section{Introduction}
 
-The mobility behavior in urban environments is becoming increasingly intermodal. The trend is moving towards a multimodal mobility planning \cite{park_framework_2023}, where bike-sharing and bike routes also play a significant role. Understanding cyclists' behaviors, particularly their route choices, is crucial not only for calculating preferences for suitable cycling routes but also as a fundamental aspect of expanding cycling infrastructure \cite{huber_modelling_2021}. Models that replicate cyclists' route choices provide immediate insights into where cycling infrastructure should receive high priority. Effective route selection is indispensable for bicycle navigation applications, but the challenge lies in the high individuality and context dependence of chosen paths. Route choices depend not only on road conditions but also on factors such as bicycle type and personal preferences, making it challenging to compute optimal routes for cyclists.
+The mobility behavior in urban environments is becoming increasingly intermodal. The trend is moving towards a multimodal mobility planning \cite{park_framework_2023}, where bike-sharing and bike routes also play a significant role. Understanding cyclists' behaviors, particularly their route choices, is crucial not only for calculating preferences for suitable cycling routes but also as a fundamental aspect of expanding cycling infrastructure and urban planning \cite{zielstra_comparative_2011, huber_modelling_2021}. Models that replicate cyclists' route choices provide immediate insights into where cycling infrastructure should receive high priority. Effective route selection is indispensable for bicycle navigation applications, but the challenge lies in the high individuality and context dependence of chosen paths \cite{dill_revisiting_2016, schleinitz_german_2017, misra_modeling_2018}. Route choices depend not only on road conditions but also on factors such as bicycle type and personal preferences, making it challenging to compute optimal routes for cyclists.
 
 In the context of GLOSA applications, routing is linked to additional factors. It is essential not only for the cycling route to follow reasonable paths but also to accurately align with bicycle lanes for precise traffic light matching. The closer the route aligns with the bicycle lane, the better it serves distance estimation to the traffic light. Accounting for bends or obstacles on the way to the traffic light ensures accurate distance estimation, preventing the speed recommendation from deviating from the actual speed. Additionally, factors such as route incline and road conditions contribute not only to routing but also serve as crucial information sources for speed recommendations. Accurate and consistent meta-information is desirable in these cases and must be obtained from a routing foundation.
 
 Commercial map providers provide highly accurate map material but currently have the drawback of limited openness and extensibility. Considerations about copyright, privacy, costs, and vendor lock-ins are also relevant for these map providers, rendering them unattractive for many services. Thus, OpenStreetMap has established itself as the most popular foundation for various acknowledged solutions, such as Openrouteservice\footnote{\url{https://openrouteservice.org/}}, Photon and Komoot\footnote{\url{https://photon.komoot.io/}}, and Mapbox\footnote{\url{https://wiki.openstreetmap.org/wiki/Mapbox}}. Apple Maps and Bing Maps also use OpenStreetMap wherever no commercial data providers are available\footnote{\url{https://wiki.openstreetmap.org/wiki/Apple}, \url{https://wiki.openstreetmap.org/wiki/Bing_Maps}}. 
 
-Despite being a highly recognized map foundation, an ongoing issue is that OpenStreetMap's accuracy and consistency vary due to its Volunteered Geographical Information (VGI) concept. As a result, bicycle routes generated with OpenStreetMap may not always achieve the desired accuracy. With a highly engaged user base and various company-level contributors, OpenStreetMap profits from frequent updates. However, similar to Wikipedia, not all contributions are of high quality. As a result, bike paths are not always captured as separate geometries from the road or tagged with the correct properties.
+Despite being a highly recognized map foundation, an ongoing issue is that OpenStreetMap's accuracy and consistency vary due to its Volunteered Geographical Information (VGI) concept \cite{wasserman_evaluating_2019, jacobs_openstreetmap_2020, vybornova_automated_2023}. As a result, bicycle routes generated with OpenStreetMap may not always achieve the desired accuracy. With a highly engaged user base and various company-level contributors, OpenStreetMap profits from frequent updates. However, similar to Wikipedia, not all contributions are of high quality. As a result, bike paths are not always captured as separate geometries from the road or tagged with the correct properties.
 
-In this chapter, we introduce an open alternative for accurate bicycle routing. We propose methods to reuse bike infrastructure reference models (authoritative datasets) that are institutionally maintained and released under open-source licenses. An example is the "Digitales Radnetz Hamburg" (Digital Cycling Network Hamburg, DRN), specifically designed for cycling paths in Hamburg. This model promises a significantly more accurate and consistent resolution of cycling paths, making it an attractive solution for the GLOSA app. Another example is the GIP system in Austria \cite{englede2013efficient} or the authoritative dataset of Lombardia \cite{brovelli_towards_2017}.
+In this chapter, we introduce an open alternative for accurate bicycle routing. We propose methods to reuse bike infrastructure reference models (authoritative datasets) that are institutionally maintained and released under open-source licenses. An example is the "Digitales Radnetz Hamburg" (Digital Cycling Network Hamburg, DRN), specifically designed for cycling paths in Hamburg. Such models promise a significantly more accurate and consistent resolution of cycling paths, making them an attractive solution for a GLOSA app. Other municipalities provide such models as well \cite{englede_efficient_2013, brovelli_towards_2017}. 
 
 However, infrastructure reference models face the challenge of lacking global coverage. In the case of DRN, it covers only the city of Hamburg, making routing across city borders challenging. Solutions need to be devised for integrating the dataset with routing profiles for cyclists, addressing various technical challenges. Given that both DRN and OpenStreetMap lack elevation data, selecting the best provider from several available elevation providers is crucial. The goal is to outline precise steps that can help utilize similar datasets for bicycle routing in other regions and develop an open routing engine applicable beyond the GLOSA app for accurate bicycle routing in Hamburg.
 
@@ -40,10 +40,16 @@ Apart from the methodological aspect, the core contribution primarily lies in th
 - Wasserman et al. 2019 \cite{wasserman_evaluating_2019}: calculation of bikeability is limited by the inconsistent use of metadata tags
 - Vybornova et al. 2022 \cite{vybornova_automated_2023}: Automated Detection of Missing Links in Bicycle Networks: Issues in connectivity of the bike network in OSM
 
-- Assessment using reference datasets
+- Assessment of OSM using reference datasets ist ein in vielen Facetten erforschtes Thema
 - Haklay et al. 2010 \cite{haklay_how_2010}
     - Vergleich von OSM mit Ordnance Survey dataset in UK
     - Die Genauigkeit von OSM mit Motorways liegt bei 6m, also relativ genau
+- Ludwig et al. 2011 \cite{ludwig_comparison_2011}
+    - Vergleich von OSM mit HD-Map Navteq (heute HERE)
+    - Completeness of metadata in cities higher than outside of cities
+    - Studie ist zwar älter, gibt aber durchaus interessante Einblicke in die Struktur einer HD-Map: Fußweg und Radweg bzw. andere Features wie Treppen werden einfach unter Fußweg zusammengefasst.
+- Jokar Arsanjani et al. 2015 \cite{jokar_arsanjani_quality_2015}
+    - Vergleich von OpenStreetMap mit Landuse in authoritative Dataset
 - Brovelli et al. 2017 \cite{brovelli_towards_2017}
     - Fokus ist ein wiederverwendbares Framework für den Vergleich von offenen Referenzkartendaten mit OSM zu implementieren
     - Nutzen authoritatives Dataset von Lombardia
@@ -55,7 +61,20 @@ Apart from the methodological aspect, the core contribution primarily lies in th
     - Verbinden bedeutet hierbei, dass Koordinaten aus der einen Routing-Foundation auf Koordinaten in der anderen Routing Foundation gemappt werden. Dieser Ansatz ist also ähnlich zu map-matching
     - Könnte also genutzt werden, um Metadaten von OSM zu verbessern, aber nicht, um die Genauigkeit der Route zu verbessern
 - Fan et al. 2016 \cite{fan_polygon-based_2016}
-    - Beschäftigen sich ebenfalls mit der Frage, wie Pfade aus einem authoritativen Datensatz miteinander gematcht werden können
+    - Beschäftigen sich ebenfalls mit der Frage, wie Pfade aus einem authoritativen Datensatz miteinander gematcht werden können, als zusätzliche Informationsquelle
+- Meister et al. 2023 \cite{meister_route_2023}
+    - Untersuchen die Routenauswahl von Radfahrern in Zürich.
+    - In ihrer Studie werden die Metadaten über die Radinfrastruktur, weil diese in OSM zu ungenau vorlagen, aus einem Datensatz von municipalities genommen. Als verfahren wird map-matching verwendet.
+    - Auch hier werden also die Metadaten vervollständigt, aber an sich keine genauere Route erzeugt
+
+- Taxonomie Castanedo et al. [86]
+- Smarzaro et al. 2021 \cite{smarzaro_creation_2021}
+    - Zeigen, wie sich Daten aus mehreren authoritativen datasets und VGIs miteinander fusionieren lassen.
+    - Hier geht es vor allem darum, unbekannte Pfade wie Fußwege in Parks und Metainformationen zu erschließen
+    - Für jedes GeoFeature eines externen Datensatzes wird geschaut, ob dieses schon im fusionierten Datensatz vorhanden ist. Hierfür wird die Ähnlichkeit mit nah liegenden Pfaden verglichen
+    - Gegebenenfalls werden die OSM-Tags aktualisiert, wenn die Information im authoritativen Datensatz einen anderen Tag suggeriert
+    - 
+    
 
 \section{Concept}
 
