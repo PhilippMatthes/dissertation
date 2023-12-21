@@ -30,15 +30,23 @@ Apart from the methodological aspect, the core contribution primarily lies in th
 - Metadaten für Kontextsensitivität und Routing-Profile
 - Traffic light matching
 
-\subsection{Assessments of Bike Path Accuracy in Routing Foundations}
+\subsection{Bike Path Consistency and Accuracy in Routing Foundations}
 
 - Traffic Light Matching: Mahler et al. (2012) \cite{mahler_reducing_2012} schlagen Google Maps als Routing-Dienst vor. Google Maps hat aber nicht zwangsläufig bessere Eigenschaften als OpenStreetMap
 - In einem Vergleich von Ciepluch (2010) \cite{ciepluch_comparison_2010} konnte festgestellt werden, dass Google Maps, Bing Maps und OpenStreetMap in ihrer Qualität nicht besonders unterschiedlich sind. Keine dieser Plattformen sticht als Gewinner heraus.
-- Natürlich ist diese Studie schon ein paar Jahre her, und bezog sich nicht direkt auf Fahrradwege. Aber auch aktueller Studien mit diesem Fokus kommen zu einer ähnlichen Beobachtung
-- Eine Studie von Hochmair et al. (2015) \cite{hochmair_assessing_2015} untersuchte einen Bereich in Portland mit 26 km Fahrrad trails, von denen im Vergleich mit einer Ground Truth 86.4\% in OSM und 78.4\% in Google Maps korrekt erfasst waren. Diese Vollständigkeit scheint stark zu variieren, da die gleiche Studie in Miami mit 22 km Referenzwegen auf nur 22.8\% (OpenStreetMap) und 36.5\% (Google Maps) kam. In diesem Fall fehlten besonders viele Fahrradwege entlang recreational sites wie flüsse und parks
-- Auch eine aktuellere Studie von Franzini et al. (2020) \cite{franzini_assessment_2020} die sich nicht speziell auf Fahrradwege konzentriert kommt zu ähnlichen Ergebnissen: Basierend auf Ergebnissen aus 2018 wird die Region von Pavia (Italy) nur zu 40\% vollständig in OpenStreetMap und zu 30\% vollständig in Google Maps kartiert
-- Wasserman et al. 2019 \cite{wasserman_evaluating_2019}: calculation of bikeability is limited by the inconsistent use of metadata tags
-- Vybornova et al. 2022 \cite{vybornova_automated_2023}: Automated Detection of Missing Links in Bicycle Networks: Issues in connectivity of the bike network in OSM
+- Eine aktuellere Studie von Franzini et al. (2020) \cite{franzini_assessment_2020} die sich nicht speziell auf Fahrradwege konzentriert kommt zu ähnlichen Ergebnissen: Basierend auf Ergebnissen aus 2018 wird die Region von Pavia (Italy) nur zu 40\% vollständig in OpenStreetMap und zu 30\% vollständig in Google Maps kartiert
+- Diese Ergebnisse sind generell auf die Verkehrsinfrastruktur, nicht speziell auf Radwege bezogen.
+
+- Hochmair et al. (2015) \cite{hochmair_assessing_2015} schauen sich explizit die Abdeckung der Radinfrastruktur an. Die Forscher untersuchten einen Bereich in Portland mit 26 km Fahrrad trails, von denen im Vergleich mit einer Ground Truth 86.4\% in OSM und 78.4\% in Google Maps korrekt erfasst waren. Diese Vollständigkeit scheint stark zu variieren, da die gleiche Studie in Miami mit 22 km Referenzwegen auf nur 22.8\% (OpenStreetMap) und 36.5\% (Google Maps) kam. In diesem Fall fehlten besonders viele Fahrradwege entlang recreational sites wie flüsse und parks
+- Darüber hinaus ist auch die Konsistenz von Metainformationen über Radwegqualität nicht immer optimal. In einer Studie von Wasserman et al. (2019) \cite{wasserman_evaluating_2019} wird explizit darauf hingewiesen, dass inkonsistente Metainformationen für Radwege in OSM dazu führen, dass die Bikeability nicht sinnvoll bestimmt werden kann.
+- Vybornova et al. 2023 \cite{vybornova_automated_2023} zeigen außerdem, dass die Konnektivität von Radwegsegmenten auch in Teilen fehlerhaft sein kann. Als Konsequenz aus fehlenden Pfadverbindungen können Fahrradrouten nicht sinnvoll berechnet werden.
+- Insgesamt scheinen also mehrere Studien OSM, aber auch Alternativen wie Google Maps eine mangelhafte Radinfrastrukturabdeckung zu diagnostizieren
+
+- Erkennen lassen sich Fehler in den OSM-Daten schon relativ gut. Hierfür werden schon länger auch authoritative Datensätze als Ground Truth verwendet, um Diskrepanzen oder unvollständige Stadtteile zu erkennen.  
+
+- Lösungen gibt es noch nicht viele. Vybornova et al. 2023 \cite{vybornova_automated_2023} schlugen erst kürzlich ein Verfahren vor, mit dem fehlende Verbindungen zwischen Radwegen detektiert und behoben werden können.
+
+Haklay et al. 2010 \cite{haklay_how_2010} waren die ersten, die authoritative Daten für eine Qualitätskontrolle von OSM nutzten.
 
 - Assessment of OSM using reference datasets ist ein in vielen Facetten erforschtes Thema
 - Haklay et al. 2010 \cite{haklay_how_2010}
@@ -54,8 +62,6 @@ Apart from the methodological aspect, the core contribution primarily lies in th
     - Fokus ist ein wiederverwendbares Framework für den Vergleich von offenen Referenzkartendaten mit OSM zu implementieren
     - Nutzen authoritatives Dataset von Lombardia
 
-\subsection{Routing on Reference Datasets}
-
 - Grzegorz Szwoch 2018 \cite{szwoch_combining_2019}
     - Auf OSM generierte Route mit Metadaten aus einer authoritativen Datenbank verbinden
     - Verbinden bedeutet hierbei, dass Koordinaten aus der einen Routing-Foundation auf Koordinaten in der anderen Routing Foundation gemappt werden. Dieser Ansatz ist also ähnlich zu map-matching
@@ -67,14 +73,13 @@ Apart from the methodological aspect, the core contribution primarily lies in th
     - In ihrer Studie werden die Metadaten über die Radinfrastruktur, weil diese in OSM zu ungenau vorlagen, aus einem Datensatz von municipalities genommen. Als verfahren wird map-matching verwendet.
     - Auch hier werden also die Metadaten vervollständigt, aber an sich keine genauere Route erzeugt
 
-- Taxonomie Castanedo et al. [86]
-- Smarzaro et al. 2021 \cite{smarzaro_creation_2021}
-    - Zeigen, wie sich Daten aus mehreren authoritativen datasets und VGIs miteinander fusionieren lassen.
-    - Hier geht es vor allem darum, unbekannte Pfade wie Fußwege in Parks und Metainformationen zu erschließen
-    - Für jedes GeoFeature eines externen Datensatzes wird geschaut, ob dieses schon im fusionierten Datensatz vorhanden ist. Hierfür wird die Ähnlichkeit mit nah liegenden Pfaden verglichen
+- Smarzaro et al. 2021 \cite{smarzaro_creation_2021} 
+    - Zeigen, wie sich Daten aus mehreren authoritativen datasets und VGIs miteinander fusionieren lassen, um generell ein verbessertes multimodales Routing zu erhalten
+    - Hier geht es vor allem darum, unbekannte Pfade wie Fußwege in Parks oder Parking Lots und Metainformationen zu erschließen
+    - Für jedes GeoFeature eines externen Datensatzes wird geschaut, ob dieses schon im fusionierten Datensatz vorhanden ist. Hierfür wird die Ähnlichkeit mit nah liegenden Pfaden verglichen. Wenn das Segment neu ist, wird es in den Datensatz aufgenommen. Die Schwierigkeit liegt hierbei darin, geeignete Thresholds zu definieren, die überlappende von nicht überlappenden Segmenten unterscheiden
     - Gegebenenfalls werden die OSM-Tags aktualisiert, wenn die Information im authoritativen Datensatz einen anderen Tag suggeriert
-    - 
-    
+    - Ob Fahrradwege die direkt neben einem Segment liegen verworfen werden, ist nicht geklärt. Fahrradwege scheinen generell nicht betrachtet zu werden.
+    - Leider vergleichen die Autoren ihr Konzept nur im Bezug auf Reiselänge mit Google Maps, und nicht im Bezug auf eine verbesserte Abdeckung oder Genauigkeit.
 
 \section{Concept}
 
