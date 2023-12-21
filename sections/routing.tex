@@ -16,17 +16,13 @@ Commercial map providers provide highly accurate map material but currently have
 
 Despite being a highly recognized map foundation, an ongoing issue is that OpenStreetMap's accuracy and consistency vary due to its Volunteered Geographical Information (VGI) concept. As a result, bicycle routes generated with OpenStreetMap may not always achieve the desired accuracy. With a highly engaged user base and various company-level contributors, OpenStreetMap profits from frequent updates. However, similar to Wikipedia, not all contributions are of high quality. As a result, bike paths are not always captured as separate geometries from the road or tagged with the correct properties.
 
-In this chapter, we introduce an open alternative for accurate bicycle routing. We propose methods to reuse bike infrastructure reference models that are institutionally maintained and released under open-source licenses. An example is the "Digitales Radnetz Hamburg" (Digital Cycling Network Hamburg, DRN), specifically designed for cycling paths in Hamburg. This model promises a significantly more accurate and consistent resolution of cycling paths, making it an attractive solution for the GLOSA app. Another example is the GIP system in Austria \cite{englede2013efficient}.
+In this chapter, we introduce an open alternative for accurate bicycle routing. We propose methods to reuse bike infrastructure reference models (authoritative datasets) that are institutionally maintained and released under open-source licenses. An example is the "Digitales Radnetz Hamburg" (Digital Cycling Network Hamburg, DRN), specifically designed for cycling paths in Hamburg. This model promises a significantly more accurate and consistent resolution of cycling paths, making it an attractive solution for the GLOSA app. Another example is the GIP system in Austria \cite{englede2013efficient}.
 
 However, infrastructure reference models face the challenge of lacking global coverage. In the case of DRN, it covers only the city of Hamburg, making routing across city borders challenging. Solutions need to be devised for integrating the dataset with routing profiles for cyclists, addressing various technical challenges. Given that both DRN and OpenStreetMap lack elevation data, selecting the best provider from several available elevation providers is crucial. The goal is to outline precise steps that can help utilize similar datasets for bicycle routing in other regions and develop an open routing engine applicable beyond the GLOSA app for accurate bicycle routing in Hamburg.
 
 Apart from the methodological aspect, the core contribution primarily lies in the results section. A key focus is evaluating how much the accuracy of traffic light matching can be improved with a potentially more precise representation of cycling paths, compared to results from \Cref{ch:matching}. The primary contribution is determining the effectiveness of routing based on this type of dataset by comparing alignment with cycling infrastructure and the number of routing errors. Ideally, using the open DRN routing foundation should resolve many of the issues found with OpenStreetMap bike routing, providing users of the bike-GLOSA app with much better directions and speed recommendations.
 
 \section{Related Work}\label{sec:rw-uis}
-
-- Die Thematik Routing kann grundsätzlich in zwei Richtungen gedacht werden: 1. Das Erhalten von Kartenmaterialien, welche möglichst genau zur Infrastruktur passen und fehlerfrei sind, und 2. die Erstellung von Modellen (Routing-Profilen) welche die Routenwahl von Radfahrern genau nachvollziehen
-
-- 
 
 \subsection{Application Scenarios of Routing in GLOSA}
 
@@ -36,12 +32,28 @@ Apart from the methodological aspect, the core contribution primarily lies in th
 
 \subsection{Assessments of Bike Path Accuracy in Routing Foundations}
 
+- Haklay et al. 2010: https://journals.sagepub.com/doi/epdf/10.1068/b35097
+    - Vergleich von OSM mit Ordnance Survey dataset in UK
+    - Die Genauigkeit von OSM mit Motorways liegt bei 6m
+- Brovelli et al. 2017: https://onlinelibrary.wiley.com/doi/full/10.1111/tgis.12182
+    - Fokus ist ein Wiederverwendbares Framework für den Vergleich von Referenzkartendaten mit OSM zu implementieren
+    - "authoritative road vector dataset, having a scale of 1:2,000 and available as open data (download is available from the geoportal of Lombardy Region at http://www.geoportale.regione.lombardia.it/download-dati)"
+
 - Traffic Light Matching: Mahler et al. (2012) \cite{mahler_reducing_2012} schlagen Google Maps als Routing-Dienst vor, eine mögliche Open-Source Alternative mit attraktiveren Lizenzbedingungen ist jedoch OpenStreetMap
 - Sowohl Google Maps als auch OpenStreetMap sind jedoch dafür bekannt, nicht alle Fahrradwege korrekt abzubilden
 - Eine Studie von Hochmair et al. (2015) \cite{hochmair_assessing_2015} untersuchte einen Bereich in Portland mit 26 km Fahrrad trails, von denen im Vergleich mit einer Ground Truth 86.4\% in OSM und 78.4\% in Google Maps korrekt erfasst waren. Diese Vollständigkeit scheint stark zu variieren, da die gleiche Studie in Miami mit 22 km Referenzwegen auf nur 22.8\% (OpenStreetMap) und 36.5\% (Google Maps) kam. In diesem Fall fehlten besonders viele Fahrradwege entlang recreational sites wie flüsse und parks
 - Auch eine aktuellere Studie von Franzini et al. (2020) \cite{franzini_assessment_2020} die sich nicht speziell auf Fahrradwege konzentriert kommt zu ähnlichen Ergebnissen: Basierend auf Ergebnissen aus 2018 wird die Region von Pavia (Italy) nur zu 40\% vollständig in OpenStreetMap und zu 30\% vollständig in Google Maps kartiert
 
+- Wasserman et al. 2019: [Evaluating OpenStreetMap's performance potential for level of traffic stress analysis](https://journals.sagepub.com/doi/pdf/10.1177/0361198119836772?casa_token=4iWwTIoLdTAAAAAA:9gR8h76tJLmQlDJ32bvDr4c8d4pHErFXqCnESetsffjgIYL1A6oK0msSfHKSPpn1tsrLalp5pQo): calculation of bikeability is limited by the inconsistent use of metadata tags
+
 \subsection{Methods to Improve Bike Routing}
+
+- [Vybornova et al. 2022: Automated Detection of Missing Links in Bicycle Networks](https://onlinelibrary.wiley.com/doi/abs/10.1111/gean.12324): Issues in connectivity of the bike network in OSM
+
+- Grzegorz Szwoch 2018: Combining Road Network Data from OpenStreetMap with an Authoritative Database https://ascelibrary.org/doi/abs/10.1061/JTEPBS.0000215
+    - Auf OSM generierte Route mit Metadaten aus einer authoritativen Datenbank verbinden
+    - Verbinden bedeutet hierbei, dass Koordinaten aus der einen Routing-Foundation auf Koordinaten in der anderen Routing Foundation gemappt werden. Dieser Ansatz ist also ähnlich zu map-matching
+    - Könnte also genutzt werden, um Metadaten von OSM zu verbessern, aber nicht, um die Genauigkeit der Route zu verbessern
 
 \section{Concept}
 
