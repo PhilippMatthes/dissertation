@@ -55,10 +55,12 @@ for root, dirs, files in os.walk('.'):
             continue
         
         if filename not in latex_text:
-            print(f'Found unused image: {filename}')
-
-        # Check if the image is bigger than 1MB. In this case it should be optimized.
-        filepath = os.path.join(root, filename)
-        if os.path.getsize(filepath) > 1000 * 1000:
-            print(f'Image {filename} is bigger than 1MB ({os.path.getsize(filepath) / 1_000_000} MB).')
+            # Remove the image.
+            os.remove(os.path.join(root, filename))
+            print(f'Removed unused image {filename}.')
+        else:
+            # Check if the image is bigger than 1MB. In this case it should be optimized.
+            filepath = os.path.join(root, filename)
+            if os.path.getsize(filepath) > 1000 * 1000:
+                print(f'Image {filename} is bigger than 1MB ({os.path.getsize(filepath) / 1_000_000} MB).')
         
