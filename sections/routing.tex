@@ -26,7 +26,7 @@ Apart from the methodological aspect, the core contribution primarily lies in th
 
 Establishing an accurate bike routing is a multifaceted research area. One avenue of investigation focuses on models that can predict cyclists' route choices with high accuracy based on available metadata \cite{dill_understanding_2008, ghanayim_modelling_2018, huber_modelling_2021}. This involves correlating GNSS trajectories with routing networks to understand the relationships between path characteristics and route selection \cite{sultan_extracting_2017, huber_modelling_2021}. Some studies also focus on safe bike routing \cite{loidl_online_2018}, popularity-based routing \cite{bergman_conflation_2016} or the short-term effects of infrastructure changes on cyclists' route preferences \cite{yeboah_route_2015, pritchard_does_2019}. Over the years, open routing engines such as GraphHopper\footnote{\url{https://www.graphhopper.com/}} have continuously improved, providing community and research-tested routing profiles tailored for various types of cycling. Thus, although there are optimization opportunities for bike routing profiles \cite{krismer_elevation_2016}, the available ones can be considered well consolidated.
 
-Our focus will be on the issue of achieving a more accurate routing foundation and its application scenarios in GLOSA systems. First, we will discuss the status quo of bike path consistency and accuracy in routing foundations. Looking for solutions to the problem, we will investigate methods that utilize external authoritative datasets to improve the overall quality and alignment of bike path segments. Subsequently, we will delve into several challenges for GLOSA systems where precise routing emerges as a key solution. These challenges include multi-segment GLOSA, GNSS error correction, context-sensitive speed advisories, traffic light matching, and distance-to-signal estimation.
+Our focus will be on the issue of achieving a more accurate routing foundation and its application scenarios in GLOSA systems. First, we will discuss the status quo of bike path consistency and accuracy in routing foundations. Looking for solutions to the problem, we will investigate methods that utilize external authoritative datasets to improve the overall quality and alignment of bike path segments. Subsequently, we will delve into several challenges for GLOSA systems where precise routing emerges as a key solution. These challenges include multi-segment GLOSA, context-sensitive speed advisories, traffic light matching, distance-to-signal estimation, and GNSS error correction.
 
 \subsection{Bike Path Consistency and Accuracy in Routing Foundations}
 
@@ -52,17 +52,19 @@ Here, it needs to be considered that the authors conducted their study on a rela
 
 In summary, the inaccuracy and inconsistency of OpenStreetMap is a relatively well-known issue. Approaches to solve this problem focus on combining OpenStreetMap with authoritative datasets. Two approaches by Smarzaro et al. (2021) \cite{smarzaro_creation_2021} and Li et al. (2017) \cite{li_optimized_2017} also aim to correct geometrical information in the path network, not only its metadata. However, the main limitation of these approaches is an overall limited investigation of the effects of correction on the alignment accuracy with actual infrastructure, i.e., a ground truth such as lane geometries. Both approaches focus on unifying individual path segments, trading off with the need to decide or average between matching path segments. Replacing entire areas in OpenStreetMap with covered proportions of a reference dataset, assuming the reference dataset is closer to the ground truth, is another opportunity since it could drastically reduce the chances for individual mismatches and thus increase automation. This idea, however, shifts the problem of dataset harmonization towards stitching in boundary regions, requiring further attention.
 
-\subsection{Application Scenarios of Routing in GLOSA}
+\subsection{Routing in GLOSA Applications}
+
+- Mit oder ohne Routing?
 
 - Multi-segment GLOSA
-
-- GNSS Error Correction
 
 - Metadaten für Kontextsensitivität und Routing-Profile
 
 - Traffic light matching
 
 - Distance-to-signal estimation
+
+- GNSS Error Correction
 
 \section{Concept}
 
