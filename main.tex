@@ -134,7 +134,7 @@ frametitle={%
 }%
 {\mdfsetup{%
 frametitle={%
-{\strut \color{cidarkblue}\textsf{#1}}}}%
+{\strut \color{cidarkblue}\textrm{#1}}}}%
 }%
 \mdfsetup{innertopmargin=0pt,innerbottommargin=0pt,innerrightmargin=16pt,innerleftmargin=0pt,linecolor=cidarkblue,linewidth=2pt,topline=false,bottomline=false,leftline=false,}
 \begin{mdframed}[]\relax%
@@ -220,12 +220,12 @@ frametitle={%
   \maketitle
   
   \TUDoption{abstract}{section,multiple}
-  \begin{abstract}[pagestyle=empty.tudheadings]
+  \begin{abstract}
 Promoting cycling is a crucial solution to improve the livability of urban environments. One non-invasive way to promote cycling is enhancing the overall ride experience by implementing Green Light Optimal Speed Advisory for bikes (bike-GLOSA). Through signal predictions, users are given the chance to adapt their ride speed to catch the next green light. The potential of bike-GLOSA to improve rides has been underlined by previous studies in simulation and controlled test-track environments. However, significant knowledge gaps must be addressed to make bike-GLOSA practical in real-world urban environments. Here, this work makes the following contributions. (1) A signal data and prediction infrastructure is proposed that scales towards multiple thousand signals based on existing traffic computers. (2) Trustworthy speed advisory user interfaces are presented that convey signal data outages and prediction uncertainties due to traffic-adaptive signal timing. (3) Accurate distance-to-signal estimation and signal matching are achieved through methods that compare lane geometries to the user-defined route. (4) A precise bike routing foundation is proposed to enhance signal matching and distance estimation. (5) An end-to-end integration is presented that incorporates a mobile application, "PrioBike," and a backend service infrastructure. Each component is evaluated independently. Based on collected data from the mobile app, thorough studies are conducted on the effectiveness of bike-GLOSA in a real-world urban environment. Finally, this study draws conclusions and new perspectives for future applications.
   \end{abstract}
 
-  % \newpage
-  % \confirmation
+  \newpage
+  \confirmation
 
   \tableofcontents
 
@@ -243,13 +243,13 @@ Promoting cycling is a crucial solution to improve the livability of urban envir
   \nocite{matthes2023accurate}
   \nocite{matthes2022selecting}
 
-  % \input{sections/introduction.tex}
-  % \input{sections/prediction.tex}
-  % \input{sections/matching.tex}
+  \input{sections/introduction.tex}
+  \input{sections/prediction.tex}
+  \input{sections/matching.tex}
   \input{sections/routing.tex}
-  % \input{sections/app.tex}
-  % \input{sections/impacts.tex}
-  % \input{sections/conclusions.tex}
+  \input{sections/app.tex}
+  \input{sections/impacts.tex}
+  \input{sections/conclusions.tex}
 
    \nocite{*}
 
