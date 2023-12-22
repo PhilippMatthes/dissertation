@@ -1,11 +1,14 @@
 \documentclass[
   ngerman,english, % change to ngerman for german theses
   BCOR=0mm,cdgeometry=no,DIV=13, % use two-side for booklike layouts
-  cdfont=false, % modify this to use the TUD font (Open Sans)
   numbers=noenddot, % remove trailing dots in chapter/section/... enumeration
   cd=fullcolor,
-  headings=light
+  headings=heavy,
+  chapterpage=true,
+  cdfont=off, % modify this to use the TUD font (Open Sans)
+  egregdoesnotlikesansseriftitles
 ]{tudscrmanual}
+
 % use a custom serif font
 \usepackage[bitstream-charter]{mathdesign}
 
@@ -149,6 +152,54 @@ frametitle={%
 \setlength{\intextsep}{0.6cm}
 
 \begin{document}
+\addtokomafont{disposition}{\rmfamily}
+\addtokomafont{title}{\rmfamily}
+\addtokomafont{titlepage}{\rmfamily}
+\addtokomafont{thesis}{\rmfamily}
+\addtokomafont{tudheadings}{\rmfamily}
+\addtokomafont{partsubtitle}{\rmfamily}
+\addtokomafont{chaptersubtitle}{\rmfamily}
+\addtokomafont{author}{\rmfamily}
+\addtokomafont{caption}{\rmfamily}
+\addtokomafont{captionlabel}{\rmfamily}
+\addtokomafont{chapter}{\rmfamily}
+\addtokomafont{chapterentry}{\rmfamily}
+\addtokomafont{chapterentrydots}{\rmfamily}
+\addtokomafont{chapterentrypagenumber}{\rmfamily}
+\addtokomafont{chapterprefix}{\rmfamily}
+\addtokomafont{date}{\rmfamily}
+\addtokomafont{dedication}{\rmfamily}
+\addtokomafont{descriptionlabel}{\rmfamily}
+\addtokomafont{dictum}{\rmfamily}
+\addtokomafont{dictumtext}{\rmfamily}
+\addtokomafont{footnote}{\rmfamily}
+\addtokomafont{footnotelabel}{\rmfamily}
+\addtokomafont{footnotereference}{\rmfamily}
+\addtokomafont{footnoterule}{\rmfamily}
+\addtokomafont{labelinglabel}{\rmfamily}
+\addtokomafont{labelingseparator}{\rmfamily}
+\addtokomafont{minisec}{\rmfamily}
+\addtokomafont{pagefoot}{\rmfamily}
+\addtokomafont{pagehead}{\rmfamily}
+\addtokomafont{pageheadfoot}{\rmfamily}
+\addtokomafont{pagenumber}{\rmfamily}
+\addtokomafont{pagination}{\rmfamily}
+\addtokomafont{paragraph}{\rmfamily}
+\addtokomafont{part}{\rmfamily}
+\addtokomafont{partentry}{\rmfamily}
+\addtokomafont{partentrypagenumber}{\rmfamily}
+\addtokomafont{partnumber}{\rmfamily}
+\addtokomafont{publishers}{\rmfamily}
+\addtokomafont{section}{\rmfamily}
+\addtokomafont{sectioning}{\rmfamily}
+\addtokomafont{subject}{\rmfamily}
+\addtokomafont{subparagraph}{\rmfamily}
+\addtokomafont{subsection}{\rmfamily}
+\addtokomafont{subsubsection}{\rmfamily}
+\addtokomafont{subtitle}{\rmfamily}
+\addtokomafont{title}{\rmfamily}
+\addtokomafont{titlehead}{\rmfamily}
+
   \faculty{Faculty of Computer Science}
   \department{}
   \institute{Institute of Systems Architecture}
