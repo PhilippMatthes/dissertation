@@ -36,21 +36,6 @@ Once the signal's distance and the prediction have been obtained, the task is to
 
 Finally, another question is how to combine the speed advisory with the proposed in-app routing system. The proposed solution in this work is to overlay a three-dimensional map view with the speed advisory. This solution is utilized to establish a clear link between the user's route and the traffic light for which a speed advisory is displayed. However, this comes with the challenges of always displaying a suitable region of the map, automatically calculating new routes on route deviations, and correcting GNSS errors. All of these challenges must be overcome to provide an overall good user experience.
 
-\subsection{Distance-to-Signal Estimation}
-
-In theory, the distance to the traffic light can be estimated directly along a straight line between the user and the signal. This may work if the speed advisory is enabled in proximity to the intersection, hereby assuming that the path to the traffic light is approximately straight. However, the goal is to enable the speed advisory as soon as possible, meaning that there may be multiple bends in the bike path until the user arrives at the signal. The linear distance alone is insufficient here as it underestimates the actual distance along the route curvature. 
-
-Thus, it is crucial to incorporate map material into the estimation process. This represents a significant problem for speed advisory systems that have no understanding of the user's route. These systems have three options: choose the inherently inaccurate linear distance, employ a speculative map-matching algorithm for trajectory prediction, or calculate the distance along the provided intersection topologies. All of these approaches come with their own drawbacks that ultimately limit their accuracy with more distance from the intersection. However, these problems are not a concern here. The distance estimation is obtained by following the route, which captures the curved path of the bike infrastructure. This method assumes that the route closely aligns with the actual bike infrastructure, ensuring an accurate estimation.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{images/distance-to-signal-estimation.pdf}
-\caption{Distance-to-signal estimation along the route curvature for speed recommendation.}
-\label{fig:distance-to-signal-estimation}
-\end{figure}
-
-The specific process is highlighted in \Cref{fig:distance-to-signal-estimation}. First, the user's location is snapped to the route geometry, and the subsequent route segments are traversed until reaching the snapped location of the upcoming signal. Along these route segments, Vincenty's formulae are employed to precisely calculate the distance for each segment. Through precalculation of each segment's distance to the next signal, it is only necessary to calculate the distance along the current segment, and then add this segment's distance to the next signal. Therefore, this process is also very computationally efficient. The estimation process is repeated dynamically each time a new user location is received, updating the current speed advisory.
-
 \subsection{Finding the Best Speed Advisory User Interface}
 
 With the estimated distance to the traffic light and the obtained traffic light prediction, the speed advisory can be calculated and displayed on the user interface. Related work has identified multiple distinct user interfaces for speed recommendation: displaying a target speed, mapping the predicted states onto a speedometer, and utilizing a multi-lane projection. However, so far, there are no conclusive results that would indicate that one of these user interfaces is the most suitable. To determine the most suitable approach, all three methods are investigated.
