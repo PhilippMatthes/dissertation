@@ -80,20 +80,9 @@ To counteract this problem, it is vital to look for other routing foundations th
 
 \begin{figure}[htbp]
 \centering
-\begin{subfigure}
-  \centering
-  \includegraphics[width=\linewidth]{images/legend-fig-1.png}
-\end{subfigure}
-\begin{subfigure}
-  \centering
-  \includegraphics[width=.49\linewidth]{images/osm-route.png}
-\end{subfigure}%
-\begin{subfigure}
-  \centering
-  \includegraphics[width=.49\linewidth]{images/drn-route.png}
-\end{subfigure}
-\caption{Alignment of OpenStreetMap vs. DRN with the intersection topology. Image source: [in print].}
-\label{fig:comparison}%
+\includegraphics[width=\linewidth]{images/routing-drn-osm-intersection.pdf}
+\caption{Alignment of OpenStreetMap vs. DRN with the intersection topology.}
+\label{fig:comparison}
 \end{figure}
 
 \Cref{fig:comparison} shows a specific example of OpenStreetMap routing on the road when no separate bike path geometry is captured. With DRN the bike path is not only captured as a separate geometry but also aligns more closely with the bike path's curvature. Thus, the speed advisory could also be more precise as the signal's distance may be estimated more accurately. \Cref{fig:comparison} also highlights that the DRN route may align more closely with the bike signal's geometry, while the OpenStreetMap route is closer to the car lanes. Assuming that a cyclist follows the designated bike path, less speculation is required as to which traffic light must be matched. 
@@ -160,6 +149,13 @@ As discussed in [in print], the final solution takes another approach. In the DR
 
 The DRN dataset's coverage ends at Hamburg's city border. This means that, although the dataset provides full coverage within the region of Hamburg, the dataset must be combined with another map foundation to provide routing outside the city. Here, it is possible to fall back to the OpenStreetMap dataset. However, the geometries of both datasets don't align. To provide continuous routing over the city border, both datasets must be stitched together. 
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{images/routing-drn-osm-border.pdf}
+\caption{.}
+\label{fig:}
+\end{figure}
+
 The conflation process presented in [in print] starts with matching the OpenStreetMap paths to the associated DRN paths along the city border. First, DRN nodes close (<20m) to the border are fetched. For each of these DRN nodes, the 5 nearest OpenStreetMap paths are treated as a possible match. However, the OpenStreetMap paths may traverse the city border without a node lying exactly on the border geometry, potentially leading to z-shaped connections between OpenStreetMap and DRN. To avoid this problem, the conflation process inserts artificial OpenStreetMap nodes at the intersection of the city border geometry. Finally, for each DRN node, the nearest (interpolated) OpenStreetMap node is selected and connected. As a result, the DRN paths are stitched to the OpenStreetMap paths along the city border.
 
 Finally, the error-corrected and stitched path network is exported in the OpenStreetMap format. The exported map data is integrated with GraphHopper and replaces the original OpenStreetMap-only GraphHopper routing engine utilized by the mobile application.
@@ -179,6 +175,13 @@ To evaluate if the DGM models provide an overall better height profile than SRTM
 To summarize, an end-to-end routing solution was developed and fine-tuned to the needs of a bike-GLOSA application. Providing route personalization is an integral part of the application design. In this context, a user interface was designed that maps user-defined preferences to specific routing profiles for the routing engine. With additional visualizations of route metadata or the current traffic situation, users can plan their route accordingly. Geocoding and the visualization of points of interest help users find specific locations on the map. To fulfill the high accuracy demands for routing, a more accurate bike routing foundation based on DRN is integrated. Finally, a digital elevation model is incorporated to allow for incline-avoiding routing profiles.
 
 \section{Results}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{images/routing-drn-osm-map.pdf}
+\caption{Mapping of metadata tags.}
+\label{fig:}
+\end{figure}
 
 \subsection{Alignment with Actual Cycling Infrastructure}
 
