@@ -111,61 +111,6 @@ To address prediction uncertainties, the speedometer incorporates a mapping of t
 
 To conclude this section, three identified visualization methods have been investigated and thoroughly tested. Observed disadvantages of other visualizations ultimately lead to the conclusion that the speedometer visualization is the best possible speed advisory visualization for cyclists. Thus, this design is selected as the final approach.
 
-\subsection{GNSS Error Correction}
-
-Geolocation inaccuracies pose a significant concern for the designed app as they result in unintended movements of the map's camera tracking the user. In the worst-case scenario, the user's position may deviate completely from the intended route and enter nearby buildings. Tests conducted in Dresden indicate that older devices (Android 6) struggle more with GNSS drift than newer devices. However, even the latest generation of Android and iOS smartphones, configured to provide the highest level of geolocation accuracy, still experience this problem. \Cref{fig:battery-efficient-gps-error-correction} conceives two possible solution approaches.
-
-\begin{figure}[htbp]
-\centering
-\resizebox{\linewidth}{!}{%
-\begin{tabular}{p{0.5\linewidth}p{0.5\linewidth}}
-  \multicolumn{1}{c}{\small{(a) Geolocation filtering.}} &
-  \multicolumn{1}{c}{\small{(b) Error correction through route snapping.}} \\
-  \includegraphics[width=\linewidth]{images/battery-efficient-gps-error-correction-1.pdf} &
-  \includegraphics[width=\linewidth]{images/battery-efficient-gps-error-correction-2.pdf}  \\
-\end{tabular}
-}
-\caption{Comparison of geolocation error correction approaches.}
-\label{fig:battery-efficient-gps-error-correction}
-\end{figure}
-
-Filter-based error correction systems, such as Kalman filters, utilize the smartphone's inertial measurement unit (accelerometer, magnetometer, gyrosensor) to approximate the user's actual movement \cite{US20200049837A1}. These filters are useful in case no ground truth (the actual trajectory) is known but may imply an additional energy impact on the application. However, in the case of a bike-GLOSA application, the user will most likely have no energy source connected, which makes the energy impact a primary usability concern. Here, we can again take advantage of the user's generated route.
-
-Assuming that the user strictly follows a predefined route, we can simply snap the user's location to the route, eliminating any GNSS scattering orthogonal to the route. Nonetheless, there are two notable issues with this approach. Firstly, there may be occasional errors in the route, requiring the routing to be as accurate to the bike path as possible. Secondly, geolocation scattering in the direction of the route is not eliminated. This effect can sometimes lead to problems at intersections. For instance, when approaching a traffic light slowly, the measured location may jump beyond the traffic light with respect to the route. 
-
-To mitigate this problem, GNSS drift at an intersection is detected as follows: if the user is moving at a speed less than 2 meters per second, the app reverts to the last traffic light if it is within 10 meters of the user and no other traffic light is closer. This approach was tested through field tests in Hamburg and was perceived to be sufficient to compensate for the observed problem. However, in case a traffic light is still overshot, the user also has the option to manually select a traffic light by tapping on it in the map view.
-
-\subsection{Rerouting Strategy}
-
-During a journey, users may occasionally deviate from the designated route. Since the app's speed recommendation relies heavily on the route, it is crucial to detect such deviations and recalculate the route dynamically. However, it is important to avoid triggering rerouting for minor GNSS errors when the user is still following the route accurately.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{images/rerouting-strategy.pdf}
-\caption{Schema of the rerouting procedure using a triggering threshold of 50 meters from the route.}
-\label{fig:rerouting-strategy}
-\end{figure}
-
-The developed approach operates as follows: while the user is on the move, their location is continuously compared to the route by aligning it with the route geometry. The distance between the aligned location and the actual location is measured against a threshold. When the user moves significantly away from the route, exceeding the threshold, the rerouting is automatically initiated. A challenge in this approach is determining the appropriate distance threshold that strikes a balance between prompt rerouting and avoiding unnecessary recalculations. In initial tests conducted in Hamburg, a threshold of 20 meters was used. However, it proved to be too low and resulted in excessive unnecessary reroutings during field tests. Consequently, the threshold was increased to 50 meters, which yielded a satisfactory balance.
-
-\begin{figure}[htbp]
-\centering
-\resizebox{\linewidth}{!}{%
-\begin{tabular}{p{0.5\linewidth}p{0.5\linewidth}}
-  \multicolumn{1}{c}{\small{(a) Rerouting via closest waypoint.}} &
-  \multicolumn{1}{c}{\small{(b) Rerouting via virtual waypoint connection.}} \\
-  \includegraphics[width=\linewidth]{images/rerouting-strategy-1.pdf} &
-  \includegraphics[width=\linewidth]{images/rerouting-strategy-2.pdf}  \\
-\end{tabular}
-}
-\caption{Schematic comparison of the initial and final rerouting algorithms.}
-\label{fig:rerouting-strategy-comparison}
-\end{figure}
-
-\paragraph{Selecting the Remaining Waypoints:} Another challenge in this approach is identifying the waypoints that have already been visited to prevent rerouting back to the starting point. To address this issue, only the remaining waypoints are selected when rerouting is triggered. Originally, the rerouting process involved selecting the nearest waypoint to the user and recalculating the route using that waypoint as a reference. However, this method was only effective half of the time, assuming the user's location was closer to the upcoming waypoint than to the previously visited waypoint. Consequently, this initial strategy often led to unnecessary backtracking.
-
-Another option considered was snapping the user's location to the route geometry and following that path to find the next waypoint. However, a challenge arose because the waypoints were not directly integrated into the route geometry data structure, which is returned from the routing framework. Although it is possible to align the waypoints with the route geometry for implementation, a simpler and faster approximation was employed in the app, consisting of three steps: (1) Drawing direct lines between waypoints to create a connected path roughly resembling the route. (2) Selecting the nearest line to the user's location. (3) Determining the waypoint at the end of this line as the next waypoint for recalculating the route. This approach assumes that the drawn lines approximately represent the general route structure and has so far delivered quick and reliable rerouting during test rides.
-
 \subsection{Camera Controller for Improved Traffic Light Visibility}
 
 The main purposes of the map view are to display the user's current route and to show which signals are along the way. In this way, the user sees if a traffic light is connected to the TLD system and for which traffic light the current speed advisory is displayed. Initially, a camera was implemented that strictly follows the user's position and heading at a fixed height. However, often, the currently selected traffic light was out of view, or the camera was too far away at an intersection or a specific turn. Thus, the map's camera has to dynamically adjust its height depending on the situation, but without being distractive.
@@ -182,30 +127,7 @@ Furthermore, there would be occasions when road bends were between the user and 
 
 During a ride, the app continuously checks if the user is approaching a traffic light by examining the route segments from the user's location. A turn is detected when a route segment is found that deviates at least 15° from the user's measured heading. As the user approaches a turn or traffic signal, the camera automatically zooms in to focus on the intersection, making it easier for users to locate a path entry or identify a corresponding signal. Additionally, the camera rotates slightly (up to a maximum of 20°) away from the user to ensure that the traffic lights remain within the view frustum. These threshold values have been determined empirically through extensive real-world testing. To prevent excessive zooming, the camera operates within specified maximum and minimum zoom levels, avoiding zooming too far out or too far in.
 
-\subsection{Summary of Methods for Speed Advisory}
-
-The custom camera controller finalizes the speed advisory concept. As discussed, there are often multiple options and solutions to address the practical problems of a bike-GLOSA app. It has become clear that a speed advisory system is a complex infrastructure between traffic light prediction infrastructure and in-app solutions that maximize the system's usability. There are many interlinked components that depend on the type of solution. Since a route-based solution is pursued, it is possible to leverage the route for GNSS error correction, traffic light selection, establishing a visual link to the traffic light along the route, distance-to-signal estimation, and more. Of course, many of the established solutions depend on a fully functional and highly accurate routing. Therefore, we will look at the established routing solutions next.
-
-As discussed in the previous sections, routing is a cornerstone of the overall solution. The route has to depict the cycling infrastructure as accurately as possible to allow for an accurate calculation of the speed advisory and an accurate traffic light matching. Furthermore, the user interface must provide a wide range of functionalities such that users can search and find locations. In addition to the route's time and distance, a cyclist's route choice may depend on many more environmental factors. Individuality plays a large role here, as cyclists using a racing bike will likely opt for a more smooth surface and accept minor detours, as opposed to cyclists with mountain bikes. Finally, some routes may have fewer signals supporting speed advisory than others. Thus, it is not only crucial to provide an accurate routing without unnecessary detours but also to inform users about the properties of the chosen bike path and its prediction availability. As a foundation, users are given the choice to personalize their routing profile.
-
-\subsection{Route Personalization} 
-
-Cyclist routes are highly individual and dependent on contextual circumstances. The problem is that there is a large variety of contextual factors, for example: elevation, grade of infrastructure separation, surface quality, traffic density, overall path length, speed limits, turn restrictions, or the number of traffic lights. The importance of these factors to the user may depend on additional factors such as personal habits, physique, bike type, or the type of activity (commute, sporting). As a result, providing the most suitable route can be stretched to an immensely complex modeling problem.
-
-Modeling bike routes and incorporating user data into the process has established a research field in itself. However, it is important to focus on the goals of this work. After all, the ultimate goal is to develop a user-friendly overall concept for a bike-GLOSA app. It, therefore, makes more sense to first integrate an existing routing framework and then systematically identify points for improvement. Fortunately, through the continued efforts in the routing community, open-source routing engines have been developed that incorporate highly complex and field-tested routing profiles. The goal of this work is to leverage one of the publicly available routing engines and, if required, tune it to the needs of the bike-GLOSA app. For this work, the GraphHopper routing engine was selected preliminarily.
-
-GraphHopper provides different \texttt{vehicle}s with individual path weights depending on the road's properties. Among these \texttt{vehicle}s are also various bike types such as \texttt{bike}, \texttt{bike2} (avoids inclines), \texttt{racingbike} or \texttt{mountainbike}. These profiles can be provided to the routing API to select a specific behavior, such as avoiding unpaved sections with the \texttt{racingbike} profile. The road network, together with metadata such as surface type, can be directly extracted from OpenStreetMap data. Since OpenStreetMap does not include height data, GraphHopper supports loading satellite-generated height maps. All in all, GraphHopper not only provides the option for personalized routing profiles but also for obtaining important metainformation about the route.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{images/routing-profile-mapping.pdf}
-\caption{Mapping of routing profiles for route personalization.}
-\label{fig:routing-profile-mapping}
-\end{figure}
-
-The GraphHopper routing profiles are mapped to user-definable route preferences, as illustrated in \Cref{fig:routing-profile-mapping}. Three options are given to the user: bike type, general preference (short, fast route), and whether inclines should be avoided. Based on the user selection, a suitable routing profile is selected and utilized for calculating the routes. In case users don't specify a routing profile, a default routing profile (\texttt{bike2}) is selected that avoids inclines and utilizes the \texttt{short\_fastest} weighting, which represents a compromise between the short and fast weightings.
-
-\subsection{Route Metadata}
+\subsection{Enhancing the Usability of Routing }
 
 There are several factors that can influence a cyclist's route choice. For instance, cyclists may opt for a slightly less optimal route if it offers better surface quality. One approach is to incorporate this information directly into the routing profile to ensure that each user receives an enhanced routing decision. This is already supported by GraphHopper's routing profiles, defining different speeds for each \texttt{vehicle} depending on the road segments' metadata. However, it is important to acknowledge that GraphHopper's routing profiles are mathematical models that make complex assumptions and, therefore, cannot always produce the ideal route. From the user's perspective, it can often be hard to understand a particular route choice without any further explanation as to why specific paths have been chosen. This is a problem for users, especially if they are familiar with the area and already have a preferred route. Thus, to build trust in the routing, it is vital to provide additional route details to allow users to make informed routing decisions.
 
@@ -218,9 +140,7 @@ There are several factors that can influence a cyclist's route choice. For insta
 
 To support users and make the route decision process more transparent, additional information is provided about the surface type, elevation, and road classes along the route so that the user can form their own opinions about the suitability of the chosen route. All of this information is fetched from the routing engine, as highlighted in \Cref{fig:graphhopper-data-flow}.
 
-\subsubsection{Traffic Flow Prediction}
-
-In addition to the path's surface information and inclination, the traffic density may also have a large impact on the ride's perceived comfortability and safety. Google Maps has addressed this problem by showing users a predicted traffic density for the following hours. The foundation for these calculations is floating data: "To determine popular times, wait times, and visit duration, Google uses aggregated and anonymized data from users who have opted in to Google Location History."\footnote{Source: \url{https://support.google.com/maps/answer/11323117?hl=en}} To adopt a similar solution without relying on a large user base, we can make use of open floating car data from the company INRIX provided through the TraffGo Road GmbH (see \Cref{fig:traffic-density-prediction}). The publicly available dataset "Verkehrslage Hamburg" is updated every five minutes and contains a current traffic density status for each path in Hamburg: free-flow, dense, heavy, and congested traffic. Based on this data, a traffic flow prediction for Hamburg is designed.
+\paragraph{Traffic Flow Prediction:} In addition to the path's surface information and inclination, the traffic density may also have a large impact on the ride's perceived comfortability and safety. Google Maps has addressed this problem by showing users a predicted traffic density for the following hours. The foundation for these calculations is floating data: "To determine popular times, wait times, and visit duration, Google uses aggregated and anonymized data from users who have opted in to Google Location History."\footnote{Source: \url{https://support.google.com/maps/answer/11323117?hl=en}} To adopt a similar solution without relying on a large user base, we can make use of open floating car data from the company INRIX provided through the TraffGo Road GmbH (see \Cref{fig:traffic-density-prediction}). The publicly available dataset "Verkehrslage Hamburg" is updated every five minutes and contains a current traffic density status for each path in Hamburg: free-flow, dense, heavy, and congested traffic. Based on this data, a traffic flow prediction for Hamburg is designed.
 
 \begin{figure}[htbp]
 \centering
@@ -242,9 +162,7 @@ The value of $\text{Flow}$ is always in $[0, 1]$, where 0 indicates complete con
 
 To predict the traffic flow, a history is persisted for every hour and weekday. Now, each hour is predicted through the arithmetic mean of all previously recorded hours on the same weekday. If the service starts freshly and has no recording of the same weekday, the hourly average is calculated by all other available weekdays. The generated prediction contains the current measured $\text{Flow}$ value, as well as predicted values for the previous, current, and next 5 hours. The continuously updated JSON data is served through a web proxy to the mobile app.
 
-\subsubsection{Prediction Availability}
-
-As discussed previously, predictions and, therefore, speed recommendations are not available for all intersections in Hamburg. Furthermore, traffic-adaptive signals or data outages may lead to low-quality or missing predictions. Therefore, it is crucial for the user to see along which route segments a speed advisory can be expected. To communicate the prediction availability to users, the route is highlighted in green wherever a "green wave" can be expected.
+\paragraph{Prediction Availability:} As discussed previously, predictions and, therefore, speed recommendations are not available for all intersections in Hamburg. Furthermore, traffic-adaptive signals or data outages may lead to low-quality or missing predictions. Therefore, it is crucial for the user to see along which route segments a speed advisory can be expected. To communicate the prediction availability to users, the route is highlighted in green wherever a "green wave" can be expected.
 
 \begin{figure}[htbp]
 \centering
@@ -255,9 +173,7 @@ As discussed previously, predictions and, therefore, speed recommendations are n
 
 To match the prediction qualities onto the route, two steps illustrated in \Cref{fig:routing-process-quality-mapping} are performed: First, the signals are matched along the route. Afterward, the obtained traffic light IDs along the route are utilized to fetch and map the prediction qualities generated by the prediction monitor. Finally, the route is colorized with respect to the prediction quality. No prediction means the route is not colored green. A prediction with less than 50\% quality is also not displayed as green since no speed advisory is activated. Upwards, the color is interpolated between the default route color (50\% quality) and green (100\% quality). 
 
-\subsubsection{Bike-Specific Points of Interest}
-
-Routes can only be calculated if the users define their destination or multiple waypoints. Thus, users have to be given the option to look up places through the app. One option is to pinpoint a location on the in-app map. Here, it is vital to provide more information than just the base map layer. For example, Google Maps highlights specific places, such as busy areas, to improve the map's informativeness. In the designed solution, the focus lies on bike-specific points of interest, such as repair shops, parking spots, rental stations, and air pumps. A traffic layer is also provided, which indicates congested roads. Velo routes and static bike green waves (at 18 km/h) are also displayed to highlight public initiatives to make cycling more attractive. Furthermore, construction sites and accident hotspots can be marked on the map, providing enhanced awareness of potentially dangerous spots.
+\paragraph{Bike-Specific Points of Interest:} Routes can only be calculated if the users define their destination or multiple waypoints. Thus, users have to be given the option to look up places through the app. One option is to pinpoint a location on the in-app map. Here, it is vital to provide more information than just the base map layer. For example, Google Maps highlights specific places, such as busy areas, to improve the map's informativeness. In the designed solution, the focus lies on bike-specific points of interest, such as repair shops, parking spots, rental stations, and air pumps. A traffic layer is also provided, which indicates congested roads. Velo routes and static bike green waves (at 18 km/h) are also displayed to highlight public initiatives to make cycling more attractive. Furthermore, construction sites and accident hotspots can be marked on the map, providing enhanced awareness of potentially dangerous spots.
 
 \begin{figure}[htbp]
 \centering
@@ -270,22 +186,7 @@ With this number of different points of interest, the risk of cluttering the map
 
 \paragraph{Accident hotspot extraction:} Under supervision, Markus Wieland \cite{wieland_2022} designed an accident hotspot extraction procedure based on the Unfallatlas\footnote{\url{https://unfallatlas.statistikportal.de/}} dataset. Bike accidents are extracted from the dataset and clustered, adding up the total number of bike accidents for each cluster. The resulting cluster accident counts are subjected to a threshold and, if exceeding this threshold, marked as accident hotspots.
 
-\subsubsection{Updating the Map Materials} 
-
-The routing data must dynamically adapt to changes in the real world. With OpenStreetMap, the advantage is that the underlying road network is continuously updated by the community. Other open datasets have defined update intervals, such as the construction site dataset, which is updated every seven days\footnote{\url{https://metaver.de/trefferanzeige?docuuid=7A3772AB-3044-4D8D-9A0E-3DC03DF0EA3D}}. To provide up-to-date routing and map overlays, the respective backend services must be updated and associated data reprocessed. 
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{images/multi-stage-continuous-deployment.png}
-\caption{Automated update pipeline for deployment services.}
-\label{fig:multi-stage-continuous-deployment}
-\end{figure}
-
-To automate the update process, a CI/CD pipeline is utilized. The pipeline is highlighted in \Cref{fig:multi-stage-continuous-deployment}. Through a nightly build, new map data is fetched and processed. The final data is persisted in a Docker image and stored in a Docker registry. An update executor on the deployment VM notices the updated Docker image and replaces the currently deployed service, ensuring that the running services work with the newest map materials.
-
-\subsection{Geocoding}
-
-To create human-readable waypoints and search for places, a geocoding service is required to convert textual input into geospatial coordinates (geocoding). Likewise, when the user taps on the map to add a new waypoint, a similar service is needed to translate the coordinates into an address for the route planning view (reverse geocoding).
+\paragraph{Geocoding:} To create human-readable waypoints and search for places, a geocoding service is required to convert textual input into geospatial coordinates (geocoding). Likewise, when the user taps on the map to add a new waypoint, a similar service is needed to translate the coordinates into an address for the route planning view (reverse geocoding).
 
 \begin{figure}[htbp]
 \centering
