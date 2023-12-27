@@ -86,10 +86,7 @@ In the second part of our concept, we focus on the routing's integration into ou
 
 \subsection{DRN Routing}
 
-- Der DRN datensatz ist ein authoritatives Routingnnetzwerk der Stadt Hamburg, welches speziell für Fahrradwege ausgelegt ist. Es wird von der Freie und Hansestadt Hamburg, Behörde für Verkehr und Mobilitätswende, (BVM) veröffentlicht und steht unter der Datenlizenz Deutschland Namensnennung 2.0 zur Verfügung
-- Unter den Angaben zur Periodizität ist angegeben, dass der Datensatz kontinuierlich aktualisiert wird und sich derzeit (Stand 27. Dezember 2023) in Produktion befindet
-- Die Wegsegmente können über eine öffentliche GML-Schnittstelle, aber auch in verschiedenen anderen Formaten (GeoJSON, CSV) kostenlos bezogen werden. Die Geometriedaten liegen im Koordinatensystem EPSG:25832\footnote{\url{https://epsg.io/25832}} vor.
-- Der Datensatz ist als routingfähig gekennzeichnet. Die Wegsegmente werden in einem zusammenhängenden Graphen erfasst. Es werden also auch Straßen erfasst, die zur Nutzung durch Radfahrer ausgewiesen sind, falls keine Fahrradwege zur Verfügung stehen. 
+Der DRN datensatz ist ein authoritatives Routingnnetzwerk der Stadt Hamburg, welches speziell für Fahrradwege ausgelegt ist. Es wird von der Freie und Hansestadt Hamburg, Behörde für Verkehr und Mobilitätswende, (BVM) veröffentlicht und steht unter der Datenlizenz Deutschland Namensnennung 2.0 zur Verfügung. Unter den Angaben zur Periodizität ist angegeben, dass der Datensatz kontinuierlich aktualisiert wird und sich derzeit (Stand 27. Dezember 2023) in Produktion befindet. Die Wegsegmente können über eine öffentliche Schnittstelle kostenlos bezogen werden. Der Datensatz ist als routingfähig gekennzeichnet. Die Wegsegmente werden also in einem zusammenhängenden Graphen erfasst. Es werden also auch Straßen erfasst, die zur Nutzung durch Radfahrer ausgewiesen sind, falls keine Fahrradwege zur Verfügung stehen. 
 
 \begin{figure}[htbp]
 \centering
@@ -98,35 +95,41 @@ In the second part of our concept, we focus on the routing's integration into ou
 \label{fig:comparison}
 \end{figure}
 
-- DRN unterscheidet sich auf vielen verschiedenen Ebenen von OpenStreetMap. Einer der wichtigsten Unterschiede ist die geometrische Struktur des DRN, die auch in \Cref{fig:comparison} gezeigt ist.
-- Die Pfadgeometrien überschneiden sich mehr mit den Ampelgeometrien, scheinen also auf den ersten Blick besser zur Radinfrastruktur zu passen. Wege in der Mitte stark befahrener Straßen fehlen, dafür sind die Radwege scheinbar 
+- DRN bringt also generell bereits eine sehr günstige Attribute mit, die ein Routing auf dem Datensatz erleichtern. Dadurch, dass der Datensatz die gesamte Fläche von Hamburg erfasst und nicht nur Teilbereiche, können wir die Wegsegmente von OpenStreetMap in den abgedeckten Bereichen verwerfen.
+- Dennoch gibt es einige Unterschiede, die eine direkte Verbindung der beiden Datensätze verhindern. Diese Unterschiede müssen wir überbrücken.
+- Der erste Unterschied ist die Sprache, in der DRN vorliegt. Die vielen eigens definierten Pfadkategorien von DRN müssen sinnvoll auf das OpenStreetMap Format abgebildet werden.
+- Auch die Geometrie des DRN ist anders gestaltet als die von OpenStreetMap. Wie in \Cref{fig:comparison} gezeigt, liegen Radwege konsequent als separate Geometrien vor, sind tendenziell besser mit Ampelgeometrien aligned, und es fehlen generell manche Nebenwege oder Straßen, die nicht von Radfahrern genutzt werden sollen. 
+- Die geometrische Diskrepanz in der Grenzregion zwischen DRN und OpenStreetMap werden wir mit einem Stitching-Verfahren lösen. Es gibt aber, wie wir in den nachfolgenden Sektionen sehen werden, auch andere Herausforderungen mit der geometrischen Struktur, die Lösungen erfordern.
+- Wenn wir die Metadaten und die geometrische Struktur harmonisiert haben, erhalten wir unsere finale Routing-Foundation, die innerhalb von Hamburg auf dem DRN Datensatz routet, und außerhalb auf OpenStreetMap.
 
 \subsubsection{Translation from DRN to OpenStreetMap}
 
-\begin{figure}[htbp]
+\begin{figure}[ht]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn.pdf}
 \caption{An overview of the DRN dataset and its bike path types, as of Dec 23, 2023.}
 \label{fig:drn-map}
 \end{figure}
 
-The DRN dataset can be downloaded in various geodata formats such as CSV, GeoJSON, or GML. Each contained data point refers to a path segment and is associated with metadata tags. Among others, the following properties are mapped\footnote{The displayed statistics represent a snapshot of the 23rd of August 2023.}:
+DRN speaks CSV, GeoJSON, or GML. Each contained data point refers to a path segment and is associated with metadata tags. Among others, the following properties are mapped\footnote{The displayed statistics represent a snapshot of the 27th of December 2023.}:
 
 \begin{itemize}
-    \item Direction of travel (49852 segments bidirectional and 47692 segments unidirectional)
+    \item Direction of travel (99626 segments bidirectional and 95212 segments unidirectional)
     \item Time restrictions (32 segments affected)
     \item Temporary paths such as pop-up lanes or detours (83 segments affected)
     \item If a segment is associated with a specific velo route or designated bike tours (Freizeitroute)
     \item Level (96237 flat, 1121 across bridges, 186 through tunnels)
-    \item Obstacles (456 impassable, 52 can be circumvented e.g. via footpath)
-    \item The type of bike path and its surface
+    \item Obstacles (456 impassable, 52 can be circumvented, e.g. via footpath)
+    \item The type of bike path and its surface, as illustrated in \Cref{fig:drn-map}
     \item Target and end node ID of the segment connecting the segments to a graph
-    \item The segment's coordinates
+    \item The segment's coordinates in EPSG:25832\footnote{\url{https://epsg.io/25832}}
 \end{itemize}
 
-Now, to calculate routes based on the dataset, it is necessary to make the dataset available to the routing engine. Here, it is possible to design a plugin for the routing engine that allows it to read the dataset's format. However, a better solution is to transform the DRN dataset into the OpenStreetMap format. In this way, the existing routing engine and its community-tested routing profiles can be reused without modifying the engine's internals. Furthermore, transforming the DRN dataset to OpenStreetMap simplifies merging both datasets together at the city border. Thus, a map transformer was designed in [in print] that converts the DRN format to OpenStreetMap.
+These properties are utilized to infer a corresponding OpenStreetMap class, transforming the DRN dataset into the OpenStreetMap format. This approach of format harmonization lays the foundation for merging both datasets together at the city border. In addition, it allows us to reuse existing data loaders for routing engines without having to write a custom plugin.
 
-The routing profiles utilize weights of the properties annotated to each OpenStreetMap path to calculate a personalized route. The challenge here is that DRN specifies other properties than OpenStreetMap. For example, DRN specifies three types for compacted surface: "befestigt - nicht genauer erkennbar", "befestigt - zu detailieren" and "Wassergebundene Decke". To resolve this problem, a mapping was developed that infers the OpenStreetMap tags from the DRN specification. This mapping includes the bike path's surface, level, direction, and type (as shown in \Cref{fig:drn-map}). In cases where the bike path's properties cannot be directly mapped to a suitable OpenStreetMap tag, the path is tagged with \texttt{highway = tertiary}. As noted in [in print], this follows established mapping practices in Germany. The result is an inferred set of tags for each path in the OpenStreetMap format.
+The challenge here is that there is no one-to-one match between all DRN properties and OpenStreetMap properties. For example, DRN specifies three types for compacted surface: "befestigt - nicht genauer erkennbar", "befestigt - zu detailieren" and "Wassergebundene Decke". To resolve this problem, a mapping was developed that assumes the OpenStreetMap tags from the DRN specification. 
+
+This mapping includes the bike path's surface, level, direction, and type. In cases where the bike path's properties cannot be directly mapped to a suitable OpenStreetMap tag, the path is tagged with \texttt{highway = tertiary}. This fallback corresponds to established mapping practices in Germany. The result is an inferred set of tags for each path in the OpenStreetMap format.
 
 \subsubsection{Error Correction Methods}
 
@@ -446,5 +449,7 @@ Generally problematic road crossings & 1 & 4 \\
 \caption{.}
 \label{fig:}
 \end{figure}
+
+% Vergleich mit 23rd of August 2023
 
 \section{Conclusions}
