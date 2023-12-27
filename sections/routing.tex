@@ -86,8 +86,9 @@ In the second part of our concept, we focus on the routing's integration into ou
 
 \subsection{DRN Routing}
 
-The DRN dataset is an authoritative routing network of the city of Hamburg, which is specially designed for cycle paths. It is published by the Free and Hanseatic City of Hamburg, Authority for Transport and Mobility Transition (BVM) and is available under the data license Deutschland Namensnennung 2.0. Under the information on periodicity, it is stated that the data set is continuously updated and is currently (as of December 27, 2023) in production. The route segments can be obtained free of charge via a public interface. The data set is marked as routable.
-This means that the road segments are recorded in a continuous graph.This means that roads designated for use by cyclists are also recorded if no cycle paths are available.
+The DRN dataset serves as an authoritative routing network for the city of Hamburg, specifically designed for bicycle paths. Published by the Free and Hanseatic City of Hamburg, Department for Traffic and Mobility Transition (BVM), it is made available under the Data License Germany Attribution 2.0. Notably, the dataset undergoes continuous updates and is currently in production as of December 27, 2023. Users can access the dataset through a public interface at no cost. 
+
+Distinguished by its routing capability, the dataset encompasses interconnected segments forming a graph, including roads designated for cyclists when dedicated bike paths are unavailable. Covering the entire area of Hamburg, it is possible to replace this area from OpenStreetMap with DRN data. Nevertheless, there are disparities between the two datasets that necessitate overcoming. The following sections will outline the necessary processing steps.
 
 \begin{figure}[htbp]
 \centering
@@ -96,14 +97,13 @@ This means that the road segments are recorded in a continuous graph.This means 
 \label{fig:comparison}
 \end{figure}
 
-- DRN bringt also generell bereits eine sehr günstige Attribute mit, die ein Routing auf dem Datensatz erleichtern. Dadurch, dass der Datensatz die gesamte Fläche von Hamburg erfasst und nicht nur Teilbereiche, können wir die Wegsegmente von OpenStreetMap in den abgedeckten Bereichen verwerfen.
-- Dennoch gibt es einige Unterschiede, die eine direkte Verbindung der beiden Datensätze verhindern. Diese Unterschiede müssen wir überbrücken.
-- Der erste Unterschied ist die Sprache, in der DRN vorliegt. Die vielen eigens definierten Pfadkategorien von DRN müssen sinnvoll auf das OpenStreetMap Format abgebildet werden.
-- Auch die Geometrie des DRN ist anders gestaltet als die von OpenStreetMap. Wie in \Cref{fig:comparison} gezeigt, liegen Radwege konsequent als separate Geometrien vor, sind tendenziell besser mit Ampelgeometrien aligned, und es fehlen generell manche Nebenwege oder Straßen, die nicht von Radfahrern genutzt werden sollen. 
-- Die geometrische Diskrepanz in der Grenzregion zwischen DRN und OpenStreetMap werden wir mit einem Stitching-Verfahren lösen. Es gibt aber, wie wir in den nachfolgenden Sektionen sehen werden, auch andere Herausforderungen mit der geometrischen Struktur, die Lösungen erfordern.
-- Wenn wir die Metadaten und die geometrische Struktur harmonisiert haben, erhalten wir unsere finale Routing-Foundation, die innerhalb von Hamburg auf dem DRN Datensatz routet, und außerhalb auf OpenStreetMap.
+Firstly, the specification in which DRN is presented poses a challenge, requiring a meaningful mapping of DRN's numerous custom path categories to the OpenStreetMap format. Additionally, the geometry of DRN differs from that of OpenStreetMap. Looking at \Cref{fig:comparison} to obtain an initial view of the differences between both datasets, bike paths are usually mapped as separate geometries, generally aligning better with traffic light geometries (denoted in red). However, some secondary paths or roads not intended for cyclists are absent in DRN, requiring additional attention.
 
-\subsubsection{Translation from DRN to OpenStreetMap}
+An area where the geometric discrepancy becomes problematic is the boundary between both datasets, demarcated by Hamburg's city border. A meaningful connection between the path segments needs to be established to support cross-border routing, even in the presence of imperfect alignments between the path networks. To address this challenge, a stitching procedure will be employed. However, as subsequent sections will reveal, we will face some more routing issues due to the special geometric properties of the DRN dataset. These will also be addressed to obtain a geometrically harmonized hybrid routing foundation. 
+
+Once metadata and geometric structures are harmonized, our final routing foundation will be established. This foundation will enable routing within Hamburg using the DRN dataset and beyond its borders on OpenStreetMap.
+
+\subsubsection{Metadata Harmonization}
 
 \begin{figure}[ht]
 \centering
@@ -112,7 +112,9 @@ This means that the road segments are recorded in a continuous graph.This means 
 \label{fig:drn-map}
 \end{figure}
 
-DRN speaks CSV, GeoJSON, or GML. Each contained data point refers to a path segment and is associated with metadata tags. Among others, the following properties are mapped\footnote{The displayed statistics represent a snapshot of the 27th of December 2023.}:
+A zoomed-out perspective on the DRN dataset is given in \Cref{fig:drn-map}. The dataset can be downloaded as CSV, GeoJSON, or GML. These formats are typical for geodata but require additional processing to translate them to the specialized \texttt{.osm} format, in which path geometries are given with specific OpenStreetMap attributes. The \texttt{.osm} format allows routing engines such as GraphHopper to understand bike surface properties and weigh them accordingly through bike-tailored routing profiles.  
+
+Thus, to establish a conversion process from DRN to the \texttt{.osm} format, not only the geometries have to be transformed. Providing the most accurate routing possible requires converting path properties as well. Among others, the following properties are mapped\footnote{The displayed statistics represent a snapshot of the 27th of December 2023.}:
 
 \begin{itemize}
     \item Direction of travel (99626 segments bidirectional and 95212 segments unidirectional)
@@ -126,15 +128,56 @@ DRN speaks CSV, GeoJSON, or GML. Each contained data point refers to a path segm
     \item The segment's coordinates in EPSG:25832\footnote{\url{https://epsg.io/25832}}
 \end{itemize}
 
-These properties are utilized to infer a corresponding OpenStreetMap class, transforming the DRN dataset into the OpenStreetMap format. This approach of format harmonization lays the foundation for merging both datasets together at the city border. In addition, it allows us to reuse existing data loaders for routing engines without having to write a custom plugin.
+These properties are utilized to infer a corresponding OpenStreetMap class, transforming the DRN dataset into the OpenStreetMap format. This approach of format harmonization lays the foundation for merging both datasets together at the city border. As another benefit, it allows us to reuse existing OpenStreetMap data loaders for routing engines without having to write a custom plugin.
 
 The challenge here is that there is no one-to-one match between all DRN properties and OpenStreetMap properties. For example, DRN specifies three types for compacted surface: "befestigt - nicht genauer erkennbar", "befestigt - zu detailieren" and "Wassergebundene Decke". To resolve this problem, a mapping was developed that assumes the OpenStreetMap tags from the DRN specification. 
 
-This mapping includes the bike path's surface, level, direction, and type. In cases where the bike path's properties cannot be directly mapped to a suitable OpenStreetMap tag, the path is tagged with \texttt{highway = tertiary}. This fallback corresponds to established mapping practices in Germany. The result is an inferred set of tags for each path in the OpenStreetMap format.
+\begin{table}[htbp]
+    \centering
+    \caption{Tag Mapping from DRN to OpenStreetMap}
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{p{8cm}p{16cm}}
+        \hline
+        \textbf{Tag in DRN} & \textbf{Mapped Tag in OpenStreetMap} \\
+        \hline
+        \textit{Aufgeweiteter Radaufstellstreifen} & \texttt{highway: tertiary} \\
+        \textit{Busfahrstreifen mit Radverkehr} & \texttt{cycleway: share\_busway, highway: service} \\
+        \textit{Fähre} & \texttt{route: ferry, bicycle: yes} \\
+        \textit{Fahrradstraße} & \texttt{bicycle\_road: yes, bicycle: designated, maxspeed: 30, source:maxspeed: DE:bicycle\_road, traffic\_sign: DE:244.1, highway: residential} \\
+        \textit{Fußgängerüberweg/-furt (Schiebestrecke)} & \texttt{highway: pedestrian} \\
+        \textit{Fußgängerzone - immer befahrbar} & \texttt{highway: pedestrian, bicycle: yes} \\
+        \textit{Fußgängerzone (meist zeitlich begrenzt)} & \texttt{highway: pedestrian} \\
+        \textit{Fußgängerzone - zeitlich begrenzt} & \texttt{highway: pedestrian} \\
+        \textit{Gehweg (Fahrrad frei)} & \texttt{highway: footway, foot: designated, bicycle: yes, traffic\_sign: DE:239,1022-10} \\
+        \textit{Gehweg (nur ZZ 1022-10)} & \texttt{highway: footway, foot: designated, bicycle: yes, traffic\_sign: DE:239,1022-10} \\
+        \textit{Gehweg (Schiebestrecke)} & \texttt{highway: footway} \\
+        \textit{Gemeinsamer Geh-/Radweg} & \texttt{highway: path, bicycle: designated, foot: designated, segregated: no} \\
+        \textit{Getrennter Geh-/Radweg} & \texttt{highway: path, bicycle: designated, foot: designated, segregated: yes} \\
+        \textit{Kommunaltrasse} & \texttt{cycleway: share\_busway, highway: tertiary} \\
+        \textit{Kopenhagener Radweg} & \texttt{highway: cycleway, bicycle: designated} \\
+        \textit{Protected Bike Lane} & \texttt{highway: cycleway, bicycle: designated} \\
+        \textit{Radfahrstreifen} & \texttt{highway: tertiary, cycleway:right: lane, cycleway:right:bicycle: designated} \\
+        \textit{Radweg (mit Grünstreifen vom Gehweg getrennt)} & \texttt{highway: path, bicycle: designated, foot: designated, segregated: yes} \\
+        \textit{Schutzstreifen} & \texttt{highway: tertiary, cycleway:right: lane, cycleway:lane: advisory, cycleway:protection:right: dashed\_line} \\
+        \textit{Straße mit Mischverkehr ab 50 km/h} & \texttt{highway: tertiary} \\
+        \textit{Straße mit Mischverkehr bis 30 km/h} & \texttt{highway: residential} \\
+        \textit{Verkehrsberuhigter Bereich / Befahrbarer Wohnweg} & \texttt{highway: living\_street} \\
+        \textit{Verkehrsberuhigter Geschäftsbereich} & \texttt{highway: living\_street} \\
+        \textit{Wege in Grünflächen} & \texttt{highway: path, bicycle: designated, foot: designated, segregated: no} \\
+        \textit{Wirtschaftsweg} & \texttt{highway: track} \\
+        \hline
+        
+    \end{tabular}
+    }
+\end{table}
 
-\subsubsection{Error Correction Methods}
+This mapping includes the bike path's surface, level, direction, and type. In cases where the bike path's properties cannot be directly mapped to a suitable OpenStreetMap tag, the path is tagged with \texttt{highway = tertiary}. This fallback corresponds to established mapping practices in Germany. The result is an inferred set of tags for each path in the OpenStreetMap format, completing the metadata harmonization process.
 
-After the map conversion into the OpenStreetMap format, there are still some problems with the map material that must be addressed. In [in print] two problems were identified when generating routes with the converted DRN network: detours resulting from duplicated nodes in the graph and detours because the road cannot be crossed.
+\subsubsection{Geometric Harmonization}
+
+After the conversion of metadata, we now focus on the geometric harmonization. 
+
+there are still some problems with the map material that must be addressed. Two problems were identified when generating routes with the converted DRN network: detours resulting from duplicated nodes in the graph and detours because the road cannot be crossed.
 
 \begin{figure}[htbp]
 \centering
