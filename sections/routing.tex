@@ -86,9 +86,10 @@ In the second part of our concept, we focus on the routing's integration into ou
 
 \subsection{DRN Routing}
 
-Routing with GraphHopper and OpenStreetMap has the advantages of worldwide support and frequent updates of the community. However, the quality and consistency of the map materials vary from location to location. Since OpenStreetMap is a general-purpose map foundation, bike paths are often not represented as separate geometries but instead merged with the nearby road. This leads to the problem that some roads have separate bike path geometries running alongside, and others don't. Hence, when calculating a bike route based on OpenStreetMap, the bike route often jumps on or off the road. This degrades the distance-to-signal estimation, traffic light matching, and overall in-app routing. Although the system may work with OpenStreetMap, this situation is still not ideal.
-
-To counteract this problem, it is vital to look for other routing foundations than OpenStreetMap that model the bike paths more accurately. As a solution, the dataset "Digitales Radverkehrsnetz Hamburg" (DRN) has been identified. The dataset is institutionally maintained and contains all bikeable paths in Hamburg. Based on preliminary comparisons with OpenStreetMap, the DRN dataset promises a more consistent and quality-assured depiction of bike paths.
+- Der DRN datensatz ist ein authoritatives Routingnnetzwerk der Stadt Hamburg, welches speziell für Fahrradwege ausgelegt ist. Es wird von der Freie und Hansestadt Hamburg, Behörde für Verkehr und Mobilitätswende, (BVM) veröffentlicht und steht unter der Datenlizenz Deutschland Namensnennung 2.0 zur Verfügung
+- Unter den Angaben zur Periodizität ist angegeben, dass der Datensatz kontinuierlich aktualisiert wird und sich derzeit (Stand 27. Dezember 2023) in Produktion befindet
+- Die Wegsegmente können über eine öffentliche GML-Schnittstelle, aber auch in verschiedenen anderen Formaten (GeoJSON, CSV) kostenlos bezogen werden. Die Geometriedaten liegen im Koordinatensystem EPSG:25832\footnote{\url{https://epsg.io/25832}} vor.
+- Der Datensatz ist als routingfähig gekennzeichnet. Die Wegsegmente werden in einem zusammenhängenden Graphen erfasst. Es werden also auch Straßen erfasst, die zur Nutzung durch Radfahrer ausgewiesen sind, falls keine Fahrradwege zur Verfügung stehen. 
 
 \begin{figure}[htbp]
 \centering
@@ -97,9 +98,8 @@ To counteract this problem, it is vital to look for other routing foundations th
 \label{fig:comparison}
 \end{figure}
 
-\Cref{fig:comparison} shows a specific example of OpenStreetMap routing on the road when no separate bike path geometry is captured. With DRN the bike path is not only captured as a separate geometry but also aligns more closely with the bike path's curvature. Thus, the speed advisory could also be more precise as the signal's distance may be estimated more accurately. \Cref{fig:comparison} also highlights that the DRN route may align more closely with the bike signal's geometry, while the OpenStreetMap route is closer to the car lanes. Assuming that a cyclist follows the designated bike path, less speculation is required as to which traffic light must be matched. 
-
-Due to these prospects, a system was created that allows for DRN-based bike routing inside Hamburg and OpenStreetMap-based bike routing outside Hamburg. To make DRN ready for routing, several processing steps were established as part of a publication at ITSC 2023 [in print], based on the supervised Diploma thesis of Max Lorenz (2022) \cite{lorenz_2022}: First, the DRN format must be translated into a data format that a routing engine understands. Then, the map's topology must be optimized such that routing errors are minimized. Finally, OpenStreetMap and DRN must be merged together at the city's border to allow a seamless transition.
+- DRN unterscheidet sich auf vielen verschiedenen Ebenen von OpenStreetMap. Einer der wichtigsten Unterschiede ist die geometrische Struktur des DRN, die auch in \Cref{fig:comparison} gezeigt ist.
+- Die Pfadgeometrien überschneiden sich mehr mit den Ampelgeometrien, scheinen also auf den ersten Blick besser zur Radinfrastruktur zu passen. Wege in der Mitte stark befahrener Straßen fehlen, dafür sind die Radwege scheinbar 
 
 \subsubsection{Translation from DRN to OpenStreetMap}
 
