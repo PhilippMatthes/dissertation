@@ -132,71 +132,46 @@ These properties are utilized to infer a corresponding OpenStreetMap class, tran
 
 The challenge here is that there is no one-to-one match between all DRN properties and OpenStreetMap properties. For example, DRN specifies three types for compacted surface: "befestigt - nicht genauer erkennbar", "befestigt - zu detailieren" and "Wassergebundene Decke". To resolve this problem, a mapping was developed that assumes the OpenStreetMap tags from the DRN specification. 
 
-\begin{table}[H]
-    \centering
-    \caption{Tag Mapping from DRN to OpenStreetMap}
-    \resizebox{\linewidth}{!}{%
-    \begin{tabular}{p{8.5cm}p{3cm}p{3cm}p{3cm}p{7cm}}
-        \hline
-        \textbf{Path Type in DRN} & \textbf{\texttt{\textcolor{ciblue}{highway}}} & \textbf{\texttt{\textcolor{ciblue}{bicycle}}} & \textbf{\texttt{\textcolor{ciblue}{foot}}} & \textbf{Other OpenStreetMap Tags} \\
-        \hline
-        Aufgeweiteter Radaufstellstreifen & \texttt{tertiary} & -- & -- & -- \\
-        Busfahrstreifen mit Radverkehr & \texttt{service} & \texttt{share\_busway} & -- & -- \\
-        Fähre & -- & \texttt{yes} & -- & \texttt{route=ferry} \\
-        Fahrradstraße & \texttt{residential} & \texttt{designated} & -- & \texttt{bicycle\_road=yes, maxspeed=30, source:maxspeed=DE:bicycle\_road, traffic\_sign=DE:244.1} \\
-        Fußgängerüberweg/-furt (Schiebestrecke) & \texttt{pedestrian} & -- & -- & -- \\
-        Fußgängerzone - immer befahrbar & \texttt{pedestrian} & \texttt{yes} & -- & -- \\
-        Fußgängerzone (meist zeitlich begrenzt) & \texttt{pedestrian} & -- & -- & -- \\
-        Fußgängerzone - zeitlich begrenzt & \texttt{pedestrian} & -- & -- & -- \\
-        Gehweg (Fahrrad frei) & \texttt{footway} & \texttt{yes} & \texttt{designated} & \texttt{traffic\_sign=DE:239,1022-10} \\
-        Gehweg (nur ZZ 1022-10) & \texttt{footway} & \texttt{yes} & \texttt{designated} & \texttt{traffic\_sign=DE:239,1022-10} \\
-        Gehweg (Schiebestrecke) & \texttt{footway} & -- & -- & -- \\
-        Gemeinsamer Geh-/Radweg & \texttt{path} & \texttt{designated} & \texttt{designated} & \texttt{segregated=no} \\
-        Getrennter Geh-/Radweg & \texttt{path} & \texttt{designated} & \texttt{designated} & \texttt{segregated=yes} \\
-        Kommunaltrasse & \texttt{tertiary} & \texttt{share\_busway} & -- & \texttt{cycleway=share\_busway} \\
-        Kopenhagener Radweg & \texttt{cycleway} & \texttt{designated} & -- & -- \\
-        Protected Bike Lane & \texttt{cycleway} & \texttt{designated} & -- & -- \\
-        Radfahrstreifen & \texttt{tertiary} & -- & -- & \texttt{cycleway:right=lane, cycleway:right:bicycle=designated} \\
-        Radweg (mit Grünstreifen vom Gehweg getrennt) & \texttt{path} & \texttt{designated} & \texttt{designated} & \texttt{segregated=yes} \\
-        Schutzstreifen & \texttt{tertiary} & -- & -- & \texttt{cycleway:right=lane, cycleway:lane=advisory, cycleway:protection:right=dashed\_line} \\
-        Straße mit Mischverkehr ab 50 km/h & \texttt{tertiary} & -- & -- & -- \\
-        Straße mit Mischverkehr bis 30 km/h & \texttt{residential} & -- & -- & -- \\
-        Verkehrsberuhigter Bereich / Befahrbarer Wohnweg & \texttt{living\_street} & -- & -- & -- \\
-        Verkehrsberuhigter Geschäftsbereich & \texttt{living\_street} & -- & -- & -- \\
-        Wege in Grünflächen & \texttt{path} & \texttt{designated} & \texttt{designated} & \texttt{segregated=no} \\
-        Wirtschaftsweg & \texttt{track} & -- & -- & -- \\
-        \hline
-    \end{tabular}\\
-    }
-    \resizebox{\linewidth}{!}{%
-    \begin{tabular}{p{8.5cm}p{3cm}p{3cm}p{7cm}}
-        \hline
-        \textbf{Surface Types in DRN} & \textbf{\texttt{\textcolor{ciblue}{highway}}} & \textbf{\texttt{\textcolor{ciblue}{surface}}} & \textbf{Other OpenStreetMap Tags} \\
-        \hline
-        befestigt - nicht genauer erkennbar & -- & \texttt{compacted} & -- \\
-        befestigt - zu detailieren & -- & \texttt{compacted} & -- \\
-        Wassergebundene Decke & -- & \texttt{compacted} & -- \\
-        unbefestigt & -- & \texttt{unpaved} & -- \\
-        Betonplatten & -- & \texttt{concrete:plates} & -- \\
-        Bituminöse Decke & -- & \texttt{asphalt} & -- \\
-        Holz & -- & \texttt{wood} & -- \\
-        Kunststein-Pflaster & -- & \texttt{paving\_stones} & -- \\
-        Metall & -- & \texttt{metal} & -- \\
-        Naturstein-Pflaster & -- & \texttt{cobblestone} & -- \\
-        \hline
-        \textbf{Other Tags in DRN} & \textbf{\texttt{\textcolor{ciblue}{highway}}} & \textbf{\texttt{\textcolor{ciblue}{surface}}} & \textbf{Other OpenStreetMap Tags} \\
-        \hline
-        Bahnübergang & -- & -- & \texttt{railway=level\_crossing} \\
-        Treppe & \texttt{steps} & -- & -- \\
-        Fahrradroute & -- & -- & \texttt{type=route, route=bicycle, network=lcn} \\
-        Brücke & -- & -- & \texttt{bridge=yes} \\
-        Tunnel & -- & -- & \texttt{tunnel=yes} \\
-        \hline
-    \end{tabular}
-    }
-\end{table}
+The final mapping highlighted in \Cref{tab:tag-mapping} includes the bike path's surface, level, direction, and type. In cases where the bike path's properties cannot be directly mapped to a suitable OpenStreetMap tag, the path is tagged with \texttt{highway = tertiary}. This fallback corresponds to established mapping practices in Germany. The result is an inferred set of tags for each path in the OpenStreetMap format, completing the metadata harmonization process.
 
-This mapping includes the bike path's surface, level, direction, and type. In cases where the bike path's properties cannot be directly mapped to a suitable OpenStreetMap tag, the path is tagged with \texttt{highway = tertiary}. This fallback corresponds to established mapping practices in Germany. The result is an inferred set of tags for each path in the OpenStreetMap format, completing the metadata harmonization process.
+\begin{table}[H]
+\centering
+\caption{Metadata mapping from DRN to OpenStreetMap.}\label{tab:tag-mapping}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{|p{8.5cm}p{3cm}p{3cm}p{3cm}p{6cm}|}
+    \hline
+    \textbf{Path Type in DRN} & \textbf{\texttt{highway}} & \textbf{\texttt{bicycle}} & \textbf{\texttt{foot}} & \textbf{Other OpenStreetMap Tags} \\
+    \hline
+    Aufgeweiteter Radaufstellstreifen & \texttt{\textcolor{ciblue}{tertiary}} & -- & -- & -- \\
+    Busfahrstreifen mit Radverkehr & \texttt{\textcolor{ciblue}{service}} & \texttt{\textcolor{ciblue}{share\_busway}} & -- & -- \\
+    Fähre & -- & \texttt{\textcolor{ciblue}{yes}} & -- & \texttt{route=\textcolor{ciblue}{ferry}} \\
+    Fahrradstraße & \texttt{\textcolor{ciblue}{residential}} & \texttt{\textcolor{ciblue}{designated}} & -- & \texttt{bicycle\_road=\textcolor{ciblue}{yes}, maxspeed=\textcolor{ciblue}{30}, source:maxspeed=\textcolor{ciblue}{\allowbreak DE:bicycle\_road}, traffic\_sign=\textcolor{ciblue}{DE:244.1}} \\
+    Fußgängerüberweg/-furt (Schiebestrecke) & \texttt{\textcolor{ciblue}{pedestrian}} & -- & -- & -- \\
+    Fußgängerzone - immer befahrbar & \texttt{\textcolor{ciblue}{pedestrian}} & \texttt{\textcolor{ciblue}{yes}} & -- & -- \\
+    Fußgängerzone (meist zeitlich begrenzt) & \texttt{\textcolor{ciblue}{pedestrian}} & -- & -- & -- \\
+    Fußgängerzone - zeitlich begrenzt & \texttt{\textcolor{ciblue}{pedestrian}} & -- & -- & -- \\
+    Gehweg (Fahrrad frei) & \texttt{\textcolor{ciblue}{footway}} & \texttt{\textcolor{ciblue}{yes}} & \texttt{\textcolor{ciblue}{designated}} & \texttt{traffic\_sign=\textcolor{ciblue}{DE:239,1022-10}} \\
+    Gehweg (nur ZZ 1022-10) & \texttt{\textcolor{ciblue}{footway}} & \texttt{\textcolor{ciblue}{yes}} & \texttt{\textcolor{ciblue}{designated}} & \texttt{traffic\_sign=\textcolor{ciblue}{DE:239,1022-10}} \\
+    Gehweg (Schiebestrecke) & \texttt{\textcolor{ciblue}{footway}} & -- & -- & -- \\
+    Gemeinsamer Geh-/Radweg & \texttt{\textcolor{ciblue}{path}} & \texttt{\textcolor{ciblue}{designated}} & \texttt{\textcolor{ciblue}{designated}} & \texttt{segregated=\textcolor{ciblue}{no}} \\
+    Getrennter Geh-/Radweg & \texttt{\textcolor{ciblue}{path}} & \texttt{\textcolor{ciblue}{designated}} & \texttt{\textcolor{ciblue}{designated}} & \texttt{segregated=\textcolor{ciblue}{yes}} \\
+    Kommunaltrasse & \texttt{\textcolor{ciblue}{tertiary}} & \texttt{\textcolor{ciblue}{share\_busway}} & -- & \texttt{cycleway=\textcolor{ciblue}{share\_busway}} \\
+    Kopenhagener Radweg & \texttt{\textcolor{ciblue}{cycleway}} & \texttt{\textcolor{ciblue}{designated}} & -- & -- \\
+    Protected Bike Lane & \texttt{\textcolor{ciblue}{cycleway}} & \texttt{\textcolor{ciblue}{designated}} & -- & -- \\
+    Radfahrstreifen & \texttt{\textcolor{ciblue}{tertiary}} & -- & -- & \texttt{cycleway:right=\textcolor{ciblue}{lane}, cycleway:right:bicycle=\textcolor{ciblue}{\allowbreak designated}} \\
+    Radweg (mit Grünstreifen vom Gehweg getrennt) & \texttt{\textcolor{ciblue}{path}} & \texttt{\textcolor{ciblue}{designated}} & \texttt{\textcolor{ciblue}{designated}} & \texttt{segregated=\textcolor{ciblue}{yes}} \\
+    Schutzstreifen & \texttt{\textcolor{ciblue}{tertiary}} & -- & -- & \texttt{cycleway:right=\textcolor{ciblue}{lane}, cycleway:lane=\textcolor{ciblue}{advisory}, cycleway:protection:\allowbreak right=\textcolor{ciblue}{dashed\_line}} \\
+    Straße mit Mischverkehr ab 50 km/h & \texttt{\textcolor{ciblue}{tertiary}} & -- & -- & -- \\
+    Straße mit Mischverkehr bis 30 km/h & \texttt{\textcolor{ciblue}{residential}} & -- & -- & -- \\
+    Verkehrsberuhigter Bereich / Befahrbarer Wohnweg & \texttt{\textcolor{ciblue}{living\_street}} & -- & -- & -- \\
+    Verkehrsberuhigter Geschäftsbereich & \texttt{\textcolor{ciblue}{living\_street}} & -- & -- & -- \\
+    Wege in Grünflächen & \texttt{\textcolor{ciblue}{path}} & \texttt{\textcolor{ciblue}{designated}} & \texttt{\textcolor{ciblue}{designated}} & \texttt{segregated=\textcolor{ciblue}{no}} \\
+    Wirtschaftsweg & \texttt{\textcolor{ciblue}{track}} & -- & -- & -- \\
+    \hline
+    \multicolumn{5}{p{23.5cm}}{\textbf{Additional Surface Mappings}: befestigt - nicht genauer erkennbar $\rightarrow$ \texttt{\textcolor{ciblue}{compacted}}, befestigt - zu detailieren $\rightarrow$ \texttt{\textcolor{ciblue}{compacted}}, Wassergebundene Decke $\rightarrow$ \texttt{\textcolor{ciblue}{compacted}}, unbefestigt $\rightarrow$ \texttt{\textcolor{ciblue}{unpaved}}, Betonplatten $\rightarrow$ \texttt{\textcolor{ciblue}{concrete:plates}}, Bituminöse Decke $\rightarrow$ \texttt{\textcolor{ciblue}{asphalt}}, Holz $\rightarrow$ \texttt{\textcolor{ciblue}{wood}}, Kunststein-Pflaster $\rightarrow$ \texttt{\textcolor{ciblue}{paving\_stones}}, Metall $\rightarrow$ \texttt{\textcolor{ciblue}{metal}}, Naturstein-Pflaster $\rightarrow$ \texttt{\textcolor{ciblue}{cobblestone}}}; \textbf{Feature Mappings}: Bahnübergang $\rightarrow$ \texttt{\textcolor{ciblue}{railway=level\_crossing}}, Treppe $\rightarrow$ \texttt{\textcolor{ciblue}{highway=steps}}, Fahrradroute $\rightarrow$ \texttt{\textcolor{ciblue}{type=route, route=bicycle, network=lcn}}, Brücke $\rightarrow$ \texttt{\textcolor{ciblue}{bridge=yes}}, Tunnel $\rightarrow$ \texttt{\textcolor{ciblue}{tunnel=yes}}}. \\
+\end{tabular}
+}
+\end{table}
 
 \subsubsection{Geometric Harmonization}
 
