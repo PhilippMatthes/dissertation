@@ -112,7 +112,7 @@ Once metadata and geometric structures are harmonized, our final routing foundat
 \label{fig:drn-map}
 \end{figure}
 
-A zoomed-out perspective on the DRN dataset is given in \Cref{fig:drn-map}. The dataset can be downloaded as CSV, GeoJSON, or GML. These formats are typical for geodata but require additional processing to translate them to the specialized \texttt{.osm} format, in which path geometries are given with specific OpenStreetMap attributes. The \texttt{.osm} format allows routing engines such as GraphHopper to understand bike surface properties and weigh them accordingly through bike-tailored routing profiles.  
+A zoomed-out perspective on the DRN dataset is given in \Cref{fig:drn-map}. The dataset can be downloaded as CSV, GeoJSON, or GML. These formats are typical for geodata but require additional processing to translate them to the specialized \texttt{.osm} format, in which path geometries are given with specific OpenStreetMap attributes. The \texttt{.osm} format allows routing engines to understand bike surface properties and weigh them accordingly through bike-tailored routing profiles.  
 
 Thus, to establish a conversion process from DRN to the \texttt{.osm} format, not only the geometries have to be transformed. Providing the most accurate routing possible requires converting path properties as well. Among others, the following properties are mapped\footnote{The displayed statistics represent a snapshot of the 27th of December 2023.}:
 
@@ -224,12 +224,12 @@ Additional changes resulting from quality assurance to the existing paths are al
 
 \subsection{Integration}
 
-The routing data must dynamically adapt to changes in the real world. With OpenStreetMap, the advantage is that the underlying road network is continuously updated by the community. Other open datasets have defined update intervals, such as the construction site dataset, which is updated every seven days\footnote{\url{https://metaver.de/trefferanzeige?docuuid=7A3772AB-3044-4D8D-9A0E-3DC03DF0EA3D}}. To provide up-to-date routing and map overlays, the respective backend services must be updated and associated data reprocessed. 
+Providing a routing service to users
 
-\begin{figure}[htbp]
+\begin{figure}[ht]
 \centering
-\includegraphics[width=\linewidth]{images/multi-stage-continuous-deployment.png}
-\caption{Automated update pipeline for deployment services.}
+\includegraphics[width=\linewidth]{images/load-distribution-containerization-preheating.pdf}
+\caption{CI/CD pipeline for automated rollouts of routing network updates.}
 \label{fig:multi-stage-continuous-deployment}
 \end{figure}
 
@@ -243,7 +243,7 @@ Modeling bike routes and incorporating user data into the process has establishe
 
 GraphHopper provides different \texttt{vehicle}s with individual path weights depending on the road's properties. Among these \texttt{vehicle}s are also various bike types such as \texttt{bike}, \texttt{bike2} (avoids inclines), \texttt{racingbike} or \texttt{mountainbike}. These profiles can be provided to the routing API to select a specific behavior, such as avoiding unpaved sections with the \texttt{racingbike} profile. The road network, together with metadata such as surface type, can be directly extracted from OpenStreetMap data. Since OpenStreetMap does not include height data, GraphHopper supports loading satellite-generated height maps. All in all, GraphHopper not only provides the option for personalized routing profiles but also for obtaining important metainformation about the route.
 
-\begin{figure}[htbp]
+\begin{figure}[ht]
 \centering
 \includegraphics[width=\linewidth]{images/routing-profile-mapping.pdf}
 \caption{Mapping of routing profiles for route personalization.}
