@@ -117,7 +117,7 @@ A zoomed-out perspective on the DRN dataset is given in \Cref{fig:drn-map}. The 
 Thus, to establish a conversion process from DRN to the \texttt{.osm} format, not only the geometries have to be transformed. Providing the most accurate routing possible requires converting path properties as well. Among others, the following properties are mapped\footnote{The displayed statistics represent a snapshot of the 27th of December 2023.}:
 
 \begin{itemize}
-    \item Direction of travel (99626 segments bidirectional and 95212 segments unidirectional)
+    \item Direction of travel (49813 segments bidirectional and 47606 segments unidirectional)
     \item Time restrictions (32 segments affected)
     \item Temporary paths such as pop-up lanes or detours (83 segments affected)
     \item If a segment is associated with a specific velo route or designated bike tours (Freizeitroute)
@@ -125,7 +125,7 @@ Thus, to establish a conversion process from DRN to the \texttt{.osm} format, no
     \item Obstacles (456 impassable, 52 can be circumvented, e.g. via footpath)
     \item The type of bike path and its surface, as illustrated in \Cref{fig:drn-map}
     \item Target and end node ID of the segment connecting the segments to a graph
-    \item The segment's coordinates in EPSG:25832\footnote{\url{https://epsg.io/25832}}
+    \item The segment's coordinates
 \end{itemize}
 
 These properties are utilized to infer a corresponding OpenStreetMap class, transforming the DRN dataset into the OpenStreetMap format. This approach of format harmonization lays the foundation for merging both datasets together at the city border. As another benefit, it allows us to reuse existing OpenStreetMap data loaders for routing engines without having to write a custom plugin.
