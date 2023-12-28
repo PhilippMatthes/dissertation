@@ -218,7 +218,7 @@ Having addressed the issues of duplicated nodes and detours due to non-crossable
 
 However, the OpenStreetMap paths may traverse the city border without a node lying exactly on the border geometry, potentially leading to z-shaped connections between OpenStreetMap and DRN. To avoid this problem, the conflation process inserts artificial OpenStreetMap nodes at the intersection of the city border geometry. These additional nodes are illustrated in \Cref{fig:routing-drn-osm-border} as helper points. Finally, for each DRN node, the nearest interpolated OpenStreetMap node is selected and connected. This process is highlighted in \Cref{fig:routing-drn-osm-border}, transitioning the DRN network over its original boundary into OpenStreetMap geometries, which can be clearly seen in the example.
 
-After the geometric harmonization is finished and all DRN path tags are converted into the OpenStreetMap format, the path network is exported in the \texttt{.osm} format. This step finishes the overall merging process, delivering a map file that can be loaded by any routing engine that supports the OpenStreetMap format. In the following sections, we will further investigate how the DRN dataset is integrated
+After the geometric harmonization is finished and all DRN path tags are converted into the OpenStreetMap format, the path network is exported in the \texttt{.osm} format. This step finishes the overall merging process, delivering a map file that can be loaded by any routing engine that supports the OpenStreetMap format. Inte
 
 \subsection{Integration}
 
