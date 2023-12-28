@@ -175,49 +175,50 @@ The final mapping highlighted in \Cref{tab:tag-mapping} includes the bike path's
 
 \subsubsection{Geometric Harmonization}
 
-After the conversion of metadata, we now focus on the geometric harmonization. 
+After the conversion of metadata, the second step is geometric harmonization. However, before we can merge both datasets together, there are still two issues that need further attention: detours resulting from duplicated nodes in the graph and detours because the road cannot be crossed. 
 
-there are still some problems with the map material that must be addressed. Two problems were identified when generating routes with the converted DRN network: detours resulting from duplicated nodes in the graph and detours because the road cannot be crossed.
-
-\begin{figure}[htbp]
+\begin{figure}[ht]
 \centering
 \includegraphics[width=\linewidth]{images/node-merging.png}
-\caption{Duplicated nodes (left) are merged together (right) to avoid detours. Source: [in print]}
+\caption{Duplicated nodes (left) are merged together (right) to avoid detours.}
 \label{fig:node-merging}
 \end{figure}
 
-\paragraph{Duplicated nodes:} Each individual path in the DRN dataset starts and ends in a node, which must be transformed into OpenStreetMap nodes that connect the individual paths to a graph structure\footnote{\url{https://wiki.openstreetmap.org/wiki/Node}}. To ease this process the DRN dataset provides node IDs for the start and end point of each path. Thus, two nodes are generated for each path based on the start and end coordinates given in the line geometry. Since there may be multiple paths that are connected to a node, the same node is generated multiple times during dataset processing. In theory, this is not a problem since the node ID can be utilized to avoid duplicates. In practice, however, sometimes there are nodes for which multiple different coordinates are found in the dataset. Due to presumably floating point or geographic projection inaccuracies in the dataset, the coordinates may be misaligned by a few centimeters.
+Each individual path in the DRN dataset starts and ends in a node, which must be transformed into OpenStreetMap nodes that connect the individual paths to a graph structure\footnote{\url{https://wiki.openstreetmap.org/wiki/Node}}. To ease this process, the DRN dataset provides node IDs for the start and end points of each path. Thus, two OpenStreetMap nodes need to be generated for each DRN path based on the start and end coordinates given in the line geometry. 
 
-As discussed in [in print], the developed solution involves calculating a center point for each node ID. Let $C_k = \{c_{k_1} = (lat_{k_1}, lng_{k_1}), \text{...} , c_{k_n} = (lat_{k_n}, lng_{k_n})\}$ be the collected coordinates for each node $k$. Then, the center point $\text{Center}_{\text{k}}$ is calculated as $\text{Center}_{\text{k}} = \left(n^{-1} * {\sum_{i=1}^{n} \text{{lat}}_{k_i}}, {n^{-1} * \sum_{i=1}^{n} \text{{lng}}_{k_i}}\right)$. The resulting coordinates are utilized to connect the generated paths. To validate this approach, the maximum relocation distance between all $\text{Center}_{\text{k}}$ and $c \in C_k$ was calculated as 8.3 centimeters using the haversine formula. Based on this result, no further points were falsely connected.
+Since there may be multiple DRN paths that are connected to a single OpenStreetMap node, the same node is generated multiple times during dataset processing. In theory, this should not be a problem since the node ID can be utilized to avoid duplicates. In practice, however, sometimes there are nodes for which multiple different coordinates are found in the dataset, presumably due to floating point inaccuracies of a preceding geographic projection step. As highlighted in \Cref{fig:node-merging}, this leads to the issue of duplicated OpenStreetMap nodes in the proximity of a few centimeters that are not properly connected.
 
-\paragraph{Non-crossable roads}: Since bike paths on both roadsides are captured as individual geometries in the DRN dataset, there may be long road segments with bike paths running in parallel. However, without interconnections between the roadsides, there is also no possibility for the route to cross the road. Sometimes, this represents a problem since side roads attached to the opposite roadside can only be reached by long detours. With OpenStreetMap, this is a lesser problem since roads are often captured as single-path geometries without a clear distinction between each roadside. 
+The developed solution involves merging all found coordinates for a specific node ID into a center point. Let $C_k = \{c_{k_1} = (lat_{k_1}, lng_{k_1}), \text{...} , c_{k_n} = (lat_{k_n}, lng_{k_n})\}$ be the collected coordinates for each node $k$. Then, the center point $\text{Center}_{\text{k}}$ is calculated as the mean of all coordinates for that node ID:
 
+\begin{equation}\text{Center}_{\text{k}} = \left(\frac{\sum_{i=1}^{|C_k|} \text{{lat}}_{k_i}}{|C_k|}, \frac{\sum_{i=1}^{|C_k|} \text{{lng}}_{k_i}}{|C_k|}\right)\end{equation}
+
+This method assumes small distances between the coordinates that are not noticeably affected by the curved WGS84 projection system. The maximum relocation distance between all $\text{Center}_{\text{k}}$ and $c \in C_k$ was calculated as 8.3 centimeters using the haversine formula. Based on this preliminary validation, no further points are falsely connected. Thus, this first issue could be resolved without any further challenges.
+
+The second issue in the DRN dataset requiring additional processing is non-crossable roads, as highlighted in \Cref{fig:oneway-travel-fix}. Since bike paths on both roadsides are captured as individual geometries in the DRN dataset, there may be long road segments with bike paths running in parallel. However, without interconnections between the roadsides, there is also no possibility for the route to cross the road. Sometimes, this represents a problem since side roads attached to the opposite roadside can only be reached by long detours. With OpenStreetMap, this is a lesser problem since roads are often captured as single-path geometries without a clear distinction between each roadside. 
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/oneway-travel-fix.png}
-\caption{Detour (left) that can be fixed by enabling opposite-direction one-way travel on foot (right), compared to OpenStreetMap route (blue). Source: [in print]}
+\caption{Detour (left) that can be fixed by enabling opposite-direction one-way travel on foot (right), compared to OpenStreetMap route (blue).}
 \label{fig:oneway-travel-fix}
 \end{figure}
 
-One solution explored in [in print] is the introduction of "virtual" paths connecting the roadsides. Using these paths, the route could traverse between roadsides and avoid detours. Although this concept may sound like a reasonable idea at first, the question is where to place these virtual paths. For example, one could place these paths in a fixed interval along a road between roadsides. However, there could always be a physical barrier between both roadsides, meaning that generated routes would guide users over impassable obstacles or potentially encourage dangerous maneuvers. Traversing a road at an arbitrary location may not always be safe or legal. Due to these reasons, the idea of inserting virtual paths was discarded.
+One explored solution is the introduction of "virtual" paths connecting the roadsides. Using these paths, the route could traverse between roadsides and avoid detours. Although this concept may sound like a reasonable idea at first, the question is where to place these virtual paths. For example, one could place these paths in a fixed interval along a road between roadsides. However, there could always be a physical barrier between both roadsides, meaning that generated routes would guide users over impassable obstacles or potentially encourage dangerous maneuvers. Traversing a road at an arbitrary location may not always be safe or legal. Due to these reasons, the idea of inserting virtual paths was discarded.
 
-As discussed in [in print], the final solution takes another approach. In the DRN dataset, bike paths are marked for travel in one direction or two directions. Here, the error source for detours is often the restricted one-way travel direction along the bike path. In cases where detours are observed due to long paths down the street until the next road crossing, it is likely that a similar road crossing lies closer up the street. Thus, a solution is to allow opposite-direction one-way travel on foot. This solution assumes that the bike can safely and legally be dismounted and walked in the opposite direction.
+The final solution takes another approach. In the DRN dataset, bike paths are marked for travel in one direction or two directions. Here, the error source for detours is often the restricted one-way travel direction along the bike path. In cases where detours are observed due to long paths down the street until the next road crossing, it is likely that a similar road crossing lies closer up the street. Thus, a solution is to allow opposite-direction one-way travel on foot. This solution assumes that the bike can safely and legally be dismounted and walked in the opposite direction.
 
-\subsubsection{Routing Outside of Hamburg}
+Having addressed the issues of duplicated nodes and detours due to non-crossable roads, no further issues have presented themselves. Thus, we can now focus on the merging of both datasets along the city border. The conflation process starts with matching the OpenStreetMap paths to the associated DRN paths along the city border. First, DRN nodes close (<20m) to the border are fetched. For each of these DRN nodes, the five nearest OpenStreetMap paths are treated as a possible match. 
 
-The DRN dataset's coverage ends at Hamburg's city border. This means that, although the dataset provides full coverage within the region of Hamburg, the dataset must be combined with another map foundation to provide routing outside the city. Here, it is possible to fall back to the OpenStreetMap dataset. However, the geometries of both datasets don't align. To provide continuous routing over the city border, both datasets must be stitched together. 
-
-\begin{figure}[htbp]
+\begin{figure}[ht]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-border.pdf}
 \caption{.}
-\label{fig:}
+\label{fig:routing-drn-osm-border}
 \end{figure}
 
-The conflation process presented in [in print] starts with matching the OpenStreetMap paths to the associated DRN paths along the city border. First, DRN nodes close (<20m) to the border are fetched. For each of these DRN nodes, the 5 nearest OpenStreetMap paths are treated as a possible match. However, the OpenStreetMap paths may traverse the city border without a node lying exactly on the border geometry, potentially leading to z-shaped connections between OpenStreetMap and DRN. To avoid this problem, the conflation process inserts artificial OpenStreetMap nodes at the intersection of the city border geometry. Finally, for each DRN node, the nearest (interpolated) OpenStreetMap node is selected and connected. As a result, the DRN paths are stitched to the OpenStreetMap paths along the city border.
+However, the OpenStreetMap paths may traverse the city border without a node lying exactly on the border geometry, potentially leading to z-shaped connections between OpenStreetMap and DRN. To avoid this problem, the conflation process inserts artificial OpenStreetMap nodes at the intersection of the city border geometry. These additional nodes are illustrated in \Cref{fig:routing-drn-osm-border} as helper points. Finally, for each DRN node, the nearest interpolated OpenStreetMap node is selected and connected. This process is highlighted in \Cref{fig:routing-drn-osm-border}, transitioning the DRN network over its original boundary into OpenStreetMap geometries, which can be clearly seen in the example.
 
-Finally, the error-corrected and stitched path network is exported in the OpenStreetMap format. The exported map data is integrated with GraphHopper and replaces the original OpenStreetMap-only GraphHopper routing engine utilized by the mobile application.
+After the geometric harmonization is finished and all DRN path tags are converted into the OpenStreetMap format, the path network is exported in the \texttt{.osm} format. This step finishes the overall merging process, delivering a map file that can be loaded by any routing engine that supports the OpenStreetMap format. In the following sections, we will further investigate how the DRN dataset is integrated
 
 \subsection{Integration}
 
