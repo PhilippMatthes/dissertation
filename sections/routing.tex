@@ -209,7 +209,7 @@ The final solution takes another approach. In the DRN dataset, bike paths are ma
 
 Having addressed the issues of duplicated nodes and detours due to non-crossable roads, no further issues have presented themselves. Thus, we can now focus on the merging of both datasets along the city border. The conflation process starts with matching the OpenStreetMap paths to the associated DRN paths along the city border. First, DRN nodes close (<20m) to the border are fetched. For each of these DRN nodes, the five nearest OpenStreetMap paths are treated as a possible match. 
 
-\begin{figure}[ht]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-border.pdf}
 \caption{.}
@@ -224,7 +224,9 @@ Additional changes resulting from quality assurance to the existing paths are al
 
 \subsection{Integration}
 
-So far, we have investigated how to establish a routing foundation based on the DRN dataset. However, the routing foundation itself is only one part of delivering accurate bike routes to users. Integrating this routing foundation as a service into the bike-GLOSA application requires a few additional steps. First, the routing foundation must be incorporated into a routing engine and deployed in a backend service. Afterward, specific routing profiles must be selected that enable personalized bike routing. Leveraging the inclination sensitivity of bike routing profiles requires selecting a suitable height provider. Finally, the routing can be applied inside the mobile application for distance-to-signal estimation and GNSS error correction. The end of this section discusses the employed rerouting strategy to ensure that users can still properly reach their destination even when deviating from the originally planned route.
+So far, we have investigated how to establish a routing foundation based on the DRN dataset. However, the routing foundation itself is only one part of delivering accurate bike routes to users. Integrating this routing foundation as a service into the bike-GLOSA application requires a few additional steps. First, the routing foundation must be incorporated into a routing engine and deployed in a backend service. Afterward, specific routing profiles must be selected that enable personalized bike routing. Leveraging the inclination sensitivity of bike routing profiles necessitates selecting a suitable height provider. Finally, the routing can be applied inside the mobile application for distance-to-signal estimation and GNSS error correction. The end of this section discusses the employed rerouting strategy to ensure that users can still properly reach their destination even when deviating from the originally planned route.
+
+\subsubsection{Automated Deployment}
 
 \begin{figure}[ht]
 \centering
@@ -237,9 +239,9 @@ As a routing engine, we will choose the state-of-the-art solution GraphHopper th
 
 Using the \texttt{.osm} format, we can simply configure GraphHopper to load our DRN routing. Then, the GraphHopper service is packaged together with the DRN routing data into a Docker image and deployed on our Docker Swarm backend. Through the pipeline highlighted in \Cref{fig:multi-stage-continuous-deployment}, we configure a nightly build of the Docker image, including fetching and merging the current DRN data. An update executor on the orchestrator machine notices the updated Docker image and replaces the currently deployed service using a rolling update, ensuring that the running services always work with the newest map materials. 
 
-Since GraphHopper requires time to preprocess the routing network on the first startup, the container startup is not immediate after it is rolled out to one of the replicated worker machines. Thus, allowing direct access to the starting routing engine could result in requests from clients failing. Two measures are employed to circumvent this issue. First, Traefik\footnote{\url{https://traefik.io/traefik/}} is utilized as a frontline proxy for the Docker Swarm, and configured to only direct requests to healthy containers. A health check is implemented on the routing Docker container, allowing requests only once the container is started up. Additionally, to further accelerate the startup of each routing service container, the Docker image is preheated. Starting up GraphHopper during the build process and waiting for its routing API to become available makes the routing engine available faster after rollout. 
+Since GraphHopper requires time to preprocess the routing network on the first startup, the container startup is not immediate after it is rolled out to one of the replicated worker machines. Thus, allowing direct access to the starting routing engine could result in requests from clients failing. Two measures are employed to circumvent this issue. First, Traefik\footnote{\url{https://traefik.io/traefik/}} is utilized as a frontline proxy for the Docker Swarm and configured to direct only requests to healthy containers. A health check is implemented on the routing Docker container, allowing requests only once the container is started up. Additionally, to further accelerate the startup of each routing service container, the Docker image is preheated. Starting up GraphHopper during the build process and waiting for its routing API to become available makes the routing engine available faster after rollout. 
 
-\subsubsection{Route Personalization and Inclination-Sensitive Routing}
+\subsubsection{Inclination-Sensitive and Personalizable Routing}
 
 When deployed, GraphHopper provides different \texttt{vehicle}s with individual path weights depending on the road's properties. Each \texttt{vehicle} represents a different routing profile. Among these \texttt{vehicle}s are also various bike types such as \texttt{bike}, \texttt{bike2} (avoids inclines), \texttt{racingbike} or \texttt{mountainbike}. These profiles can be provided to the routing API to select a specific behavior, such as avoiding unpaved sections with the \texttt{racingbike} profile. However, one challenge is selecting the best routing configuration for a user's needs. 
 
@@ -247,7 +249,7 @@ Initially, the idea existed to infer the best routing profile, or even a custom 
 
 Here, it should be noted that a short routing option was also provided preliminarily, in addition to fast and comfortable routing. However, routes generated with this routing profile would frequently lead over the wrong roadside since both roadsides are captured independently in DRN. The ported DRN network is configured with walking speeds in the opposite allowed direction, assuming users have to dismount their bicycles to correspond to road laws. As a result, another issue with routing on the opposite roadside was that travel times were increased significantly, reported as a bug by test users. Hence, the short routing profile was excluded from the available options. The other routing profiles do not have this problem since they also consider the travel time that is significantly increased traveling in the opposite direction.
 
-\begin{figure}[ht]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-profile-mapping.pdf}
 \caption{Mapping of routing profiles for route personalization.}
@@ -260,59 +262,43 @@ In Hamburg, inclinations may be less of a concern, but there are still several r
 
 SRTM-1 offers a horizontal resolution of approximately 30m (1 arcsecond). For specific areas, additional SRTM X-SAR 25m data is provided by the DLR. For the covered regions of the SRTM X-SAR 25m model, the vertical precision is specified at $\pm$ 6m (relative vertical error at 90\% confidence level)\footnote{SRTM X-SAR 25m specification: \url{https://geoservice.dlr.de/web/dataguide/srtm/}}. An even higher precision is offered by the DGM-1 model for Hamburg, in which the one stands for one meter of horizontal resolution. In DGM-1, the vertical resolution is specified as $\pm$ 15cm\footnote{\url{https://metaver.de/trefferanzeige?docuuid=A39B4E86-15E2-4BF7-BA82-66F9913D5640}}. The high precision is reached by airborne laser scanning. Downscaled resolutions are available as DGM-10 (10m) and DGM-25 (25m).
 
-To evaluate if the DGM models provide an overall better height profile than SRTM, cross-sections of the height models were analyzed. Another important question was how much resources the model consumes when loaded into the routing engine. The results show that the best tradeoff between resource usage and model accuracy is provided by the DGM-10 model. Thus, the DGM-10 model was integrated as the final digital elevation model into the GraphHopper routing engine using a custom tileset download and parsing plugin. The result is a GraphHopper routing engine that not only runs on the DRN dataset but also utilizes the DGM-10 model to provide accurate, personalized routing while consuming an acceptable amount of resources. 
+To evaluate if the DGM models provide an overall better height profile than SRTM, cross-sections of the height models were analyzed by Max Lorenz. Another important question was how much resources the model consumes when loaded into the routing engine. The results indicated that the best tradeoff between resource usage and model accuracy is provided by the DGM-10 model. Thus, the DGM-10 model was integrated as the final digital elevation model into the GraphHopper routing engine using a custom tileset download and parsing plugin. The result is a GraphHopper routing engine that not only runs on the DRN dataset but also utilizes the DGM-10 model to provide accurate, personalized routing while consuming an acceptable amount of resources. 
 
-\subsubsection{Distance-To-Signal Estimation and GNSS Error Correction}
+\subsubsection{Distance-to-Signal Estimation and Mitigating GNSS Inaccuracies}
 
-In theory, the distance to the traffic light can be estimated directly along a straight line between the user and the signal. This may work if the speed advisory is enabled in proximity to the intersection, hereby assuming that the path to the traffic light is approximately straight. However, the goal is to enable the speed advisory as soon as possible, meaning that there may be multiple bends in the bike path until the user arrives at the signal. The linear distance alone is insufficient here as it underestimates the actual distance along the route curvature. 
+Focusing further on the applications of the developed routing engine within our GLOSA application, a distance estimation method was designed that aims to be more accurate than just taking the direct (linear) distance to the user's position. This method assumes that the route closely aligns with the actual bike infrastructure, ensuring an accurate estimation.
 
-Thus, it is crucial to incorporate map material into the estimation process. This represents a significant problem for speed advisory systems that have no understanding of the user's route. These systems have three options: choose the inherently inaccurate linear distance, employ a speculative map-matching algorithm for trajectory prediction, or calculate the distance along the provided intersection topologies. All of these approaches come with their own drawbacks that ultimately limit their accuracy with more distance from the intersection. However, these problems are not a concern here. The distance estimation is obtained by following the route, which captures the curved path of the bike infrastructure. This method assumes that the route closely aligns with the actual bike infrastructure, ensuring an accurate estimation.
-
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/distance-to-signal-estimation.pdf}
 \caption{Distance-to-signal estimation along the route curvature for speed recommendation.}
 \label{fig:distance-to-signal-estimation}
 \end{figure}
 
-The specific process is highlighted in \Cref{fig:distance-to-signal-estimation}. First, the user's location is snapped to the route geometry, and the subsequent route segments are traversed until reaching the snapped location of the upcoming signal. Along these route segments, Vincenty's formulae are employed to precisely calculate the distance for each segment. Through precalculation of each segment's distance to the next signal, it is only necessary to calculate the distance along the current segment, and then add this segment's distance to the next signal. Therefore, this process is also very computationally efficient. The estimation process is repeated dynamically each time a new user location is received, updating the current speed advisory.
+The specific process is highlighted in \Cref{fig:distance-to-signal-estimation}. First, the user's location is snapped to the route geometry, and the subsequent route segments are traversed until reaching the snapped location of the upcoming traffic light. The locations of each traffic light are annotated to the route geometry using the traffic light matching method developed in \Cref{ch:matching}.
 
-Geolocation inaccuracies pose a significant concern for the designed app as they result in unintended movements of the map's camera tracking the user. In the worst-case scenario, the user's position may deviate completely from the intended route and enter nearby buildings. Tests conducted in Dresden indicate that older devices (Android 6) struggle more with GNSS drift than newer devices. However, even the latest generation of Android and iOS smartphones, configured to provide the highest level of geolocation accuracy, still experience this problem. \Cref{fig:battery-efficient-gps-error-correction} conceives two possible solution approaches.
+Along the precalculated route segments, the distance is determined using the Vincenty estimator, which provides a more accurate distance measure than the haversine distance through a more accurate representation of the earth's shape while being slightly more computationally expensive. To further optimize the computational overhead, the distances to each traffic light are precalculated along each route segment. With this approach, it is only necessary to calculate the distance along the current segment and then add this segment's distance to the next traffic light. The distance estimation process is repeated dynamically each time a new user location is received, updating the current speed advisory.
 
-\begin{figure}[htbp]
-\centering
-\resizebox{\linewidth}{!}{%
-\begin{tabular}{p{0.5\linewidth}p{0.5\linewidth}}
-  \multicolumn{1}{c}{\small{(a) Geolocation filtering.}} &
-  \multicolumn{1}{c}{\small{(b) Error correction through route snapping.}} \\
-  \includegraphics[width=\linewidth]{images/battery-efficient-gps-error-correction-1.pdf} &
-  \includegraphics[width=\linewidth]{images/battery-efficient-gps-error-correction-2.pdf}  \\
-\end{tabular}
-}
-\caption{Comparison of geolocation error correction approaches.}
-\label{fig:battery-efficient-gps-error-correction}
-\end{figure}
+A second application of the route geometry within the app is for GNSS error correction, which arose not only as one of the major challenges for GLOSA applications in related work but also during preliminary experiments of the mobile app. Tests conducted in Dresden indicated that older devices (Android 6) struggle more with GNSS drift than newer devices. Even the latest generation of Android and iOS smartphones, configured to provide the highest level of geolocation accuracy, seem to experience this problem.
 
-Filter-based error correction systems, such as Kalman filters, utilize the smartphone's inertial measurement unit (accelerometer, magnetometer, gyrosensor) to approximate the user's actual movement \cite{US20200049837A1}. These filters are useful in case no ground truth (the actual trajectory) is known but may imply an additional energy impact on the application. However, in the case of a bike-GLOSA application, the user will most likely have no energy source connected, which makes the energy impact a primary usability concern. Here, we can again take advantage of the user's generated route.
+Assuming that the user strictly follows a predefined route, we can simply snap the user's location to the route, eliminating any GNSS scattering orthogonal to the route. GNSS scattering in the direction of the route is not eliminated. Thus, route snapping alone has the drawback that, when approaching a traffic light slowly, the measured location may jump beyond the traffic light with respect to the route. 
 
-Assuming that the user strictly follows a predefined route, we can simply snap the user's location to the route, eliminating any GNSS scattering orthogonal to the route. Nonetheless, there are two notable issues with this approach. Firstly, there may be occasional errors in the route, requiring the routing to be as accurate to the bike path as possible. Secondly, geolocation scattering in the direction of the route is not eliminated. This effect can sometimes lead to problems at intersections. For instance, when approaching a traffic light slowly, the measured location may jump beyond the traffic light with respect to the route. 
+To mitigate this problem, GNSS drift at an intersection is detected as follows: if the user is moving at a GNSS speed less than 2 meters per second, the app reverts to the last traffic light if it is within 10 meters of the user and no other traffic light is closer. In case a traffic light is still overshot, the user also has the option to manually switch between traffic lights through the application's user interface. In case a user fully deviates from the designated route, automated rerouting is performed. Here, it is important to avoid triggering rerouting for minor GNSS errors when the user is still following the route accurately.
 
-To mitigate this problem, GNSS drift at an intersection is detected as follows: if the user is moving at a speed less than 2 meters per second, the app reverts to the last traffic light if it is within 10 meters of the user and no other traffic light is closer. This approach was tested through field tests in Hamburg and was perceived to be sufficient to compensate for the observed problem. However, in case a traffic light is still overshot, the user also has the option to manually select a traffic light by tapping on it in the map view.
+\subsubsection{Automated Rerouting}
 
-\subsubsection{Rerouting Strategy}
-
-During a journey, users may occasionally deviate from the designated route. Since the app's speed recommendation relies heavily on the route, it is crucial to detect such deviations and recalculate the route dynamically. However, it is important to avoid triggering rerouting for minor GNSS errors when the user is still following the route accurately.
-
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/rerouting-strategy.pdf}
 \caption{Schema of the rerouting procedure using a triggering threshold of 50 meters from the route.}
 \label{fig:rerouting-strategy}
 \end{figure}
 
-The developed approach operates as follows: while the user is on the move, their location is continuously compared to the route by aligning it with the route geometry. The distance between the aligned location and the actual location is measured against a threshold. When the user moves significantly away from the route, exceeding the threshold, the rerouting is automatically initiated. A challenge in this approach is determining the appropriate distance threshold that strikes a balance between prompt rerouting and avoiding unnecessary recalculations. In initial tests conducted in Hamburg, a threshold of 20 meters was used. However, it proved to be too low and resulted in excessive unnecessary reroutings during field tests. Consequently, the threshold was increased to 50 meters, which yielded a satisfactory balance.
+The developed rerouting approach operates as illustrated in \Cref{fig:rerouting-strategy}: while the user is on the move, their location is continuously compared to the route by aligning it with the route geometry. The distance between the aligned location and the actual location is measured against a threshold. When the user moves significantly away from the route, exceeding the threshold, the rerouting is automatically initiated. 
 
-\begin{figure}[htbp]
+A challenge in this approach is determining the appropriate distance threshold that strikes a balance between prompt rerouting and avoiding unnecessary recalculations. In initial tests conducted in Hamburg, a threshold of 20 meters was used. However, it proved to be too low and resulted in excessive unnecessary reroutings during field tests. Consequently, the threshold was increased to 50 meters, which yielded a satisfactory balance.
+
+\begin{figure}[t]
 \centering
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{p{0.5\linewidth}p{0.5\linewidth}}
@@ -326,9 +312,9 @@ The developed approach operates as follows: while the user is on the move, their
 \label{fig:rerouting-strategy-comparison}
 \end{figure}
 
-Another challenge in this approach is identifying the waypoints that have already been visited to prevent rerouting back to the starting point. To address this issue, only the remaining waypoints are selected when rerouting is triggered. Originally, the rerouting process involved selecting the nearest waypoint to the user and recalculating the route using that waypoint as a reference. However, this method was only effective half of the time, assuming the user's location was closer to the upcoming waypoint than to the previously visited waypoint. Consequently, this initial strategy often led to unnecessary backtracking.
+An additional challenge in this approach is identifying the waypoints that have already been visited to prevent rerouting back to the starting point. To address this issue, only the remaining waypoints are selected when rerouting is triggered. Originally, the rerouting process involved selecting the nearest waypoint to the user and recalculating the route using that waypoint as a reference. However, this method depicted in \Cref{fig:rerouting-strategy-comparison} on the left was only effective half of the time, assuming the user's location was closer to the upcoming waypoint than to the previously visited waypoint. Consequently, this initial strategy often led to unnecessary backtracking.
 
-Another option considered was snapping the user's location to the route geometry and following that path to find the next waypoint. However, a challenge arose because the waypoints were not directly integrated into the route geometry data structure, which is returned from the routing framework. Although it is possible to align the waypoints with the route geometry for implementation, a simpler and faster approximation was employed in the app, consisting of three steps: (1) Drawing direct lines between waypoints to create a connected path roughly resembling the route. (2) Selecting the nearest line to the user's location. (3) Determining the waypoint at the end of this line as the next waypoint for recalculating the route. This approach assumes that the drawn lines approximately represent the general route structure and has so far delivered quick and reliable rerouting during test rides.
+Another option considered was snapping the user's location to the route geometry and following that path to find the next waypoint. However, a challenge arose because the waypoints were not directly integrated into the route geometry data structure, which is returned from the routing framework. Although it is possible to align the waypoints with the route geometry for implementation, a simpler and faster approximation was employed in the app, consisting of three steps: (1) Drawing direct lines between waypoints to create a connected path roughly resembling the route. (2) Selecting the nearest line to the user's location. (3) Determining the waypoint at the end of this line as the next waypoint for recalculating the route. This approach assumes that the drawn lines approximately represent the general route structure.
 
 \begin{Summary}[Summary of Methods]
 
