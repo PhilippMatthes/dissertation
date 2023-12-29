@@ -324,14 +324,20 @@ The fully automated processing pipeline is utilized by the deployment infrastruc
 
 \section{Results}
 
+Whether the goal of a more accurate bike routing could be reached will be evaluated in three steps. First, we will investigate the general structure of the processed routing network and compare it to OpenStreetMap. Specifically, we will focus on the path categories that were mapped using our metadata mapping from the DRN format and compare these to the OpenStreetMap network. Afterward, a ground truth -- hand-drawn reference tracks -- will help us evaluate how well DRN routes align with actual cycling infrastructure. Analyzing an arbitrary sample of DRN routes, we will investigate how many routing errors are encountered.
+
+In the second part of our evaluation, we will revisit the traffic light matching results from \Cref{ch:matching}, retrain our matching models on a new ground truth, and investigate whether the accuracy can be improved. Studying the alignment between traffic light geometries and DRN routes, we further investigate the change in traffic light matching accuracy. In a more coarse-grained study, we also capture routing errors at intersections to find whether the problem of routing on the road instead of bike paths could be resolved. 
+
+After we have compared the routing accuracy to a hand-drawn ground truth and traffic light geometries, we validate our results with our users' recorded GNSS trajectories. In this study, we also compare our approach to distance-to-signal estimation with the linear distance approach to find in which situations our approach may perform better or worse. Finally, we will investigate where and how often users deviate from precalculated routes, together with its relationship to the preselected routing profile.
+
+\subsection{Alignment with Actual Cycling Infrastructure}
+
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-map.pdf}
 \caption{Mapping of metadata tags.}
 \label{fig:}
 \end{figure}
-
-\subsection{Alignment with Actual Cycling Infrastructure}
 
 \begin{figure}[htbp]
 \centering 
@@ -361,7 +367,7 @@ Reference Track & Signals & Hausdorff & Mean & Hausdorff & Mean \\ \hline
 \centering
 \begin{tabular}{lcc}
 \hline
-\textbf{Observed Error Cases} \\ \hline
+\textbf{Observed Error Cases} & DRN & OSM \\ \hline
 Continuous routing on the road & 0 & 10 \\
 Routing through buildings or stairs & 0 & 2 \\
 Intersection crossing using car lanes & 0 & 8 \\
@@ -487,6 +493,6 @@ Generally problematic road crossings & 1 & 4 \\
 \label{fig:}
 \end{figure}
 
-% Vergleich mit 23rd of August 2023
+- Rerouting
 
 \section{Conclusions}
