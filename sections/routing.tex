@@ -324,7 +324,7 @@ The fully automated processing pipeline is utilized by the deployment infrastruc
 
 \section{Results}
 
-Whether the goal of a more accurate bike routing could be reached will be evaluated in three steps. First, we will investigate the general structure of the processed routing network and compare it to OpenStreetMap. Specifically, we will focus on the path categories that were mapped using our metadata mapping from the DRN format and compare these to the OpenStreetMap network. Afterward, a ground truth -- hand-drawn reference tracks -- will help us evaluate how well DRN routes align with actual cycling infrastructure. Analyzing an arbitrary sample of DRN routes, we will investigate how many routing errors are encountered.
+Whether the goal of a more accurate bike routing could be reached will be evaluated in three steps. First, we will investigate the general structure of the processed routing network and compare it to OpenStreetMap. Specifically, we will focus on the path categories that were mapped using our metadata mapping from the DRN format and compare these to the OpenStreetMap network. Afterward, a ground truth -- hand-drawn reference tracks -- will help us evaluate how well DRN routes align with actual cycling infrastructure. Here, we will also compare DRN with Google Maps and Bing Maps. Analyzing an arbitrary sample of DRN routes, we will investigate how many routing errors are encountered.
 
 In the second part of our evaluation, we will revisit the traffic light matching results from \Cref{ch:matching}, retrain our matching models on a new ground truth, and investigate whether the accuracy can be improved. Studying the alignment between traffic light geometries and DRN routes, we further investigate the change in traffic light matching accuracy. In a more coarse-grained study, we also capture routing errors at intersections to find whether the problem of routing on the road instead of bike paths could be resolved. 
 
@@ -332,12 +332,20 @@ After we have compared the routing accuracy to a hand-drawn ground truth and tra
 
 \subsection{Alignment with Actual Cycling Infrastructure}
 
+Based on an analysis conducted by Max Lorenz, the converted DRN path network encompasses roughly 7,689 kilometers in comparison to OpenStreetMap, which covers approximately 10,557 kilometers. The reported coverage for OpenStreetMap excludes paths inaccessible for cyclists, marked with \texttt{highway=motorway}, \texttt{highway=motorway_line}, \texttt{highway=trunk_link}, \texttt{access=private}, or \texttt{bicycle=no}. Footpaths are also excluded unless bicycles are allowed with \texttt{bicycle=yes}. 
+
+The size difference is mainly due to additional accessory paths that are contained in OpenStreetMap but not on DRN. As a consequence, when generating 10,000 random routes throughout the city, the average distance that has to be traveled to the next available path segment varies slightly: 77.04 meters in DRN and 52.80 meters in OpenStreetMap. Even though the DRN network seems to encompass fewer paths, those that are captured are more detailed. The average path segment length in OpenStreetMap was calculated as 102.39 meters compared to 79.16 meters in DRN.
+
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-map.pdf}
-\caption{Mapping of metadata tags.}
-\label{fig:}
+\caption{Mapping of path types.}
+\label{fig:routing-drn-osm-map}
 \end{figure}
+
+The structural differences are highlighted in \Cref{fig:routing-drn-osm-map}. Here, it can not only be seen that OpenStreetMap provides more accessory paths, but also its remarkably higher diversity in path categories than present in the mapped DRN network. However, there are also large proportions of paths with an unclassified surface. Overall, only 66.4\% (7014,52 km) of paths in OpenStreetMap's representation of Hamburg are tagged with a surface, as opposed to 99.9\% (7682,24 km) in the DRN network. However, OpenStreetMap also contains an additional surface_quality
+
+Other metadata, such as road width, is even rarer in OpenStreetMap, with only 9.2\% of paths containing this information, in contrast to 99.9\% in the DRN routing foundation. 
 
 \begin{figure}[htbp]
 \centering 
@@ -508,13 +516,6 @@ Generally problematic road crossings & 1 & 4 \\
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-mapmatching-distance.pdf}
-\caption{.}
-\label{fig:}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering 
-\includegraphics[width=\linewidth]{images/routing-distance-traveled-on-off-route.pdf}
 \caption{.}
 \label{fig:}
 \end{figure}
