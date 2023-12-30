@@ -348,20 +348,32 @@ After we have compared the routing accuracy to a hand-drawn ground truth and tra
 
 \begin{table}[htbp]
 \centering
-\begin{tabular}{cccccc}
-\hline
-Hand-Drawn & Nr. of &\multicolumn{2}{c}{Cycling Network} & \multicolumn{2}{c}{OSM} \\
-Reference Track & Signals & Hausdorff & Mean & Hausdorff & Mean \\ \hline
-1 East-West ({1.0}{km}) & 4 & {6.89}{m} & {2.28}{m} & {10.52}{m} & {2.38}{m} \\
-1 West-East ({1.2}{km}) & 6 &{2.80}{m} & {1.29}{m} & {9.10}{m} & {5.78}{m} \\
-2 East-West ({2.2}{km}) & 12 & {3.49}{m} & {0.88}{m} & {18.22}{m} & {7.43}{m} \\
-2 West-East ({2.6}{km}) & 12 & {3.67}{m} & {0.95}{m} & {24.07}{m}  & {10.00}{m} \\
-3 East-West ({2.7}{km}) & 14 & {5.13}{m} & {0.91}{m} & {17.56}{m} & {8.00}{m} \\
-3 West-East ({2.5}{km}) & 10 & {5.39}{m} & {1.70}{m} & {24.45}{m} & {8.35}{m} \\ \hline
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lccccccccccccccc}
+\toprule
+\textbf{Ground}& \multicolumn{3}{c}{\textbf{DRN}}&\multicolumn{3}{c}{\textbf{OpenStreetMap}}&\multicolumn{3}{c}{\textbf{Bing Maps (Driving)}}&\multicolumn{3}{c}{\textbf{Bing Maps (Walking)}}&\multicolumn{3}{c}{\textbf{Google Maps}}\\
+\textbf{Truth}& \textbf{HD} & \textbf{Mean} & \textbf{W} & \textbf{HD} & \textbf{Mean} & \textbf{W} & \textbf{HD} & \textbf{Mean} & \textbf{W} & \textbf{HD} & \textbf{Mean} & \textbf{W} & \textbf{HD} & \textbf{Mean} & \textbf{W} \\
+\midrule
+1\_Ost\_West & 6.89 & 2.20 & 2 & 3.48 & 1.26 & 8 & 16.34 & 9.66 & 4 & 16.02 & 9.63 & 8 & 216.44 & 66.54 & 2 \\
+1\_West\_Ost & 2.80 & 1.20 & 2 & 9.05 & 5.99 & 2 & 14.75 & 9.02 & 7 & 14.75 & 9.02 & 7 & 8.67 & 6.09 & 9 \\
+2\_Ost\_West & 3.49 & 1.12 & 3 & 14.43 & 4.45 & 9 & 17.75 & 10.47 & 2 & 17.75 & 10.87 & 8 & 19.29 & 10.71 & 3 \\
+2\_West\_Ost & 3.67 & 1.05 & 3 & 10.62 & 2.90 & 7 & 26.93 & 11.36 & 2 & 67.44 & 16.78 & 2 & 26.28 & 10.46 & 2 \\
+3\_West\_Ost & 4.70 & 1.72 & 4 & 15.24 & 6.28 & 4 & 25.94 & 10.03 & 8 & 27.10 & 10.10 & 3 & 52.55 & 11.41 & 9 \\
+3\_Ost\_West & 7.83 & 1.43 & 3 & 15.97 & 4.75 & 8 & 18.13 & 8.47 & 8 & 41.57 & 13.38 & 6 & 16.72 & 7.64 & 3 \\
+\bottomrule
+\multicolumn{16}{p{20cm}}{Abbreviations: Hausdorff distance measured in EPSG:32633 (HD), Mean Vincenty distance in meters (Mean), Number of waypoints for best convergence with ground truth (W).}\\
 \end{tabular}
-\caption{Measured deviations from actual bike infrastructure. Distances are calculated in the EPSG:32633 projection.}%
+}
+\caption{Measured deviations from actual bike infrastructure.}%
 \label{tab:accuracy-comparison}%
 \end{table}
+
+\begin{figure}[htbp]
+\centering 
+\includegraphics[width=\linewidth]{images/routing-convergence.pdf}
+\caption{.}
+\label{fig:}
+\end{figure}
 
 \begin{table}[htbp]
 \centering
