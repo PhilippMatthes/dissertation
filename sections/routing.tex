@@ -513,11 +513,10 @@ Most matching traffic light geometries seem to reside directly over the DRN rout
 \label{fig:matching-constellations-osm-vs-drn}
 \end{figure}
 
-- In jedem Fall gibt es fast doppelt so viele Beispiele, bei denen die Routengeometrie fast identisch mit der traffic light geometry verläuft.
+- Wie \Cref{fig:matching-constellations-osm-vs-drn} zeigt gibt es in jedem Fall fast doppelt so viele Beispiele, bei denen die Routengeometrie fast identisch mit der traffic light geometry verläuft.
 - \Cref{fig:matching-constellations-osm-vs-drn} zeigt auch, dass deutlich seltener Routen versetzt zur Ampelgeometrie verlaufen. Dieser Fall wurde in OpenStreetMap vorallem dann beobachtet, wenn die Route auf die Straße führt obwohl ein Fahrradweg zur Verfügung steht. Die Fehlerfälle beim Matching wurden hier fast komplett eliminiert.
-- Weniger substanzielle Unterschiede ergeben sich bei Konstellationen, in denen die Route divergent oder konvergent zur Spurgeometrie verläuft -- auch dies kommt in DRN seltener vor. 
-
-- 5. Abschließend schauen wir uns nochmal an, wie viele Routenfehler an den Kreuzungen vorkommen, im Vergleich zwischen DRN und OSM. In einer detailliertern Analyse entlang ganzer Routen (nicht nur auf die Kreuzung bezogen) schauen wir uns nochmal genauere Routenfehlertypen an, und wie häufig diese im Vergleich vorkommen.
+- Ein ähnlicher Unterschied ist bei Situationen zu sehen, in denen die Route abbiegt, aber versetzt zur Route läuft. Dies passiert weniger häufig mit DRN, ist aber im Verhältnis zur Häufigkeit nach wie vor die Situation mit dem höchsten Fehlerpotenzial. Das ML-Modell handhabt diese Situation auch im DRN-Datensatz besser als das algorithmische Modell.
+- Mit dem neuen Routing ist aber auch eine neue Fehlersituation entstanden, speziell wenn die Route und die traffic light geometry fast identisch verlaufen. Hier gibt es also unter Umständen noch Verbesserungspotenzial für das Matching-Verfahren
 
 \begin{figure}[t]
 \centering 
@@ -526,11 +525,14 @@ Most matching traffic light geometries seem to reside directly over the DRN rout
 \label{fig:}
 \end{figure}
 
+- Auch mit Blick auf Routing-Fehler, die bei der Erstellung der Ground Truth unterteilt in vier Klassen mit angegeben wurden, hat sich eine deutliche Verbesserung ergeben.
+- Die Anzahl der Situationen ohne Routing fehler wurde fast verdreifacht, von 23\% in OpenStreetMap auf 64\% aller Samples in DRN. Der Hauptgrund für die Verbesserung ist, dass nun die Fahrradfurten und Fahrradwege viel häufiger korrekt genutzt werden, anstelle in der Mitte der Straße zu routen. Vollständig eliminiert werden konnte dieser Fall jedoch nicht. Außerdem wird deutlich seltener auf der falschen Straßenseite geroutet.
+
 \begin{table}[htbp]
 \centering
-\begin{tabular}{lrr}
+\begin{tabular}{@{}lrr@{}}
 \hline
-\textbf{Observed Error Cases} & DRN & OpenStreetMap \\ \hline
+\textbf{Observed Error Cases} & DRN & OSM \\ \hline
 Continuous routing on the road & 0 & 10 \\
 Routing through buildings or stairs & 0 & 2 \\
 Intersection crossing using car lanes & 0 & 8 \\
@@ -545,6 +547,8 @@ Generally problematic road crossings & 1 & 4 \\
 \caption{Observed error cases among arbitrary sample of 72 routes.}%
 \label{tab:accuracy-comparison}%
 \end{table}
+
+- Eine detailliertere Case Study, in der Max Lorenz 72 zufällige Routen untersucht hat, kommt zu ähnlichen Ergebnissen. Diese sind in \Cref{tab:accuracy-comparison} gezeigt.
 
 \subsection{Alignment with User Trajectories}
 
