@@ -378,7 +378,7 @@ One challenge during this process is a curved reference geometry such as \texttt
 \begin{table}[t]
 \centering
 \resizebox{\linewidth}{!}{%
-\begin{tabular}{llrrrrrr}
+\begin{tabular}{@{}llrrrrrr@{}}
 \toprule
 \textbf{Routing} & \textbf{Metric} & \rotatebox{0}{\textbf{\texttt{1\_Ost\_West}}} & \rotatebox{0}{\textbf{\texttt{1\_West\_Ost}}} & \rotatebox{0}{\textbf{\texttt{2\_Ost\_West}}} & \rotatebox{0}{\textbf{\texttt{2\_West\_Ost}}} & \rotatebox{0}{\textbf{\texttt{3\_West\_Ost}}} & \rotatebox{0}{\textbf{\texttt{3\_Ost\_West}}} \\
 \midrule
@@ -436,39 +436,29 @@ As it is likely that an origin for the observed detours is waypoints that reside
 
 \subsection{Alignment with Traffic Light Geometries}
 
-As discussed in \Cref{ch:matching}, georeferenced intersection topologies provide the foundation for traffic light matching in this work. Each intersection topology contains ingress, connection, and egress lane shapes for each traffic light. Since the traffic light geometries are designed to depict turn shapes at intersections as accurately as possible, they provide another option to evaluate the alignment of the developed routing network with a special focus on intersections. A close alignment is desired to enhance the accuracy of traffic light matching.
-
-As only one or a few traffic lights may match a given bike route at an intersection, we cannot directly compare all traffic light geometries with the routing foundation. As we have seen in \Cref{ch:matching}, many traffic lights are never a good option in the presence of a better alternative aligning closer with the bike path that predicts the cyclist's trajectory. Thus, we first calculate bike routes with DRN and manually select fitting traffic light geometries. Afterward, we can compare the traffic light geometries to the corresponding route to measure their alignment. 
-
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-drn.pdf}
 \caption{.}
 \label{fig:matching-ground-truth-drn}
 \end{figure}
 
-The DRN traffic light matching ground truth was developed according to the same procedures explained detailedly in \Cref{ch:matching}. The resulting mapping between generated DRN routes and traffic light geometries is depicted in \Cref{fig:matching-ground-truth-drn}. It contains 49 routes randomly distributed in Hamburg, for which 738 traffic light geometries have been selected in total to match the route geometry. These 738 selections can be mapped to 535 distinct traffic lights that were assigned to at least one route. 78.5\% (420) of traffic lights were assigned to only one route. 
+As discussed in \Cref{ch:matching}, georeferenced intersection topologies provide the foundation for traffic light matching in this work. Each intersection topology contains ingress, connection, and egress lane shapes for each traffic light. Since the traffic light geometries are designed to depict turn shapes at intersections as accurately as possible, they provide another option to evaluate the alignment of the developed routing network with a special focus on intersections. A close alignment is desired to enhance the accuracy of traffic light matching.
 
-- 2. Wir schauen uns an, ob die passenden Ampelgeometrien tendenziell näher an der generierten Route liegen, im Vergleich zu OpenStreetMap für das eine Ground Truth schon in \Cref{ch:matching} erstellt wurde
+As only one or a few traffic lights may match a given bike route at an intersection, we cannot directly compare all traffic light geometries with the routing foundation. As we have seen in \Cref{ch:matching}, many traffic lights are never a good option in the presence of a better alternative aligning closer with the bike path. Thus, we first calculate bike routes with DRN and manually select fitting traffic light geometries. Afterward, we can compare the traffic light geometries to the corresponding route to measure their alignment. 
 
-\begin{figure}[htbp]
+The DRN traffic light matching ground truth was developed according to the procedures explained detailedly in \Cref{ch:matching}. The resulting mapping between generated DRN routes and traffic light geometries is depicted in \Cref{fig:matching-ground-truth-drn}. It contains 49 routes randomly distributed in Hamburg, for which 738 traffic light geometries out of 4964 in proximity (20m) to the route have been selected to match the route geometry. These 738 selections can be mapped to 535 distinct traffic lights that were assigned to at least one route. 78.5\% (420) of all traffic lights were assigned to only one route, indicating a high diversity in samples.
+
+\begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-lane-alignment.pdf}
 \caption{.}
-\label{fig:}
+\label{fig:routing-lane-alignment}
 \end{figure}
 
-\begin{figure}[htbp]
-\centering 
-\begin{tabular}{ccc}
-\footnotesize{(b) Samples from OpenStreetMap Ground Truth (2023)} & \footnotesize{(b) Samples from DRN Ground Truth (2023)}  \\
-\includegraphics[width=0.46\linewidth]{images/routing-lane-alignment-examples-osm.pdf} & \includegraphics[width=0.46\linewidth]{images/routing-lane-alignment-examples-drn.pdf} \\
-\end{tabular}
-\caption{.}
-\label{fig:}
-\end{figure}
+Comparing the selected traffic lights to their assigned route geometries, the DRN routes are closer aligned than their OpenStreetMap counterpart. This result can be seen in \Cref{fig:routing-lane-alignment} where we compare our OpenStreetMap traffic light matching ground truths developed in \Cref{ch:matching} to the newly developed DRN ground truth. 
 
-- 3. Wir trainieren das Traffic Light Matching modell erneut auf der neuen DRN Ground Truth und schauen, ob dieses die Ampeln auf DRN akkurater matchen kann
+Most matching traffic light geometries seem to reside directly over the DRN route, while the distribution of distances between route and traffic light geometries in OpenStreetMap is much more evened out. Although the discrepancy between traffic light geometries and the generated bike routes is substantially lower, the maximum distance distribution indicates that a perfect overlap is still not given. For these examples with imperfect alignments, a more advanced matching strategy than a simple proximity-based lookup is still required. Nonetheless, the measured alignment represents a substantial improvement over the OpenStreetMap approach. 
 
 \begin{table}[h]
 \caption{Retrained model thresholds on the new routing.}
@@ -483,6 +473,12 @@ The DRN traffic light matching ground truth was developed according to the same 
 \end{tabular}
 \label{tab:hyperparameter-tuning-results-drn}
 \end{table}
+
+- Ob sich diese Verbesserung auch, wie erwartet, positiv auf die Matching-Genauigkeit auswirkt, sehen wir im nächsten Experiment. Hierfür trainieren wir zunächst das algorithmische Matching-Modell erneut auf der neu erstellten Ground truth.
+- Die gefundene Hyperparameter-Konfiguration mittels Hyperparameter-Optimierung ist in \Cref{tab:hyperparameter-tuning-results-drn} denen der OpenStreetMap-Modelle gegenübergestellt.
+- Die Thresholds wurden vom Optimierungs-Tool etwas strikter gewählt als zuvor in OpenStreetMap. Striktere Thresholds bedeuten, dass traffic light geometries schneller verworfen werden, wenn sie nicht gut zur Route passen.
+- Auch das Machine-Learning modell aus wird erneut wie in \Cref{ch:matching} mit stratified k-fold cross validation auf der DRN-Ground Truth trainiert.
+- Mit den beiden neu trainierten Modellen können wir uns nun den Score über die gesamte Ground Truth ansehen und mit OpenStreetMap vergleichen.
 
 \begin{table}[h]
 \caption{.}

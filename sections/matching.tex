@@ -586,12 +586,16 @@ Two models were designed: the algorithmic model and the ML model. Each model was
 
 The specific model configurations are detailed in \Cref{tab:hyperparameter-tuning-results}. The hyperparameter tuning process selected similar values for the initial thresholds along the filter pipeline. Ignoring the parameters of the overlap matchers initially, notable differences are observed only in the chosen bearing threshold $t_{bear}$ and the length filter. While the 2023 model is less strict in filtering steeply angled lane geometries, the length filter is configured more rigorously. This is not surprising, as both the bearing filter and the length filter pertain to similar properties between the route and the lane. The overlap matcher, which comes last in the filter pipeline, exhibits relatively large differences between the two model variants. 
 
-\begin{figure}[t]
+\begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-hpt-contour-topological-osm-updated.png}
 \caption{.}
 \label{fig:hyperparameter-contourplot}
 \end{figure}
+
+\Cref{fig:hyperparameter-contourplot} provides more detailed insights into the interpretation of the hyperparameter tuner regarding the direction in which the parameter configuration needs to be optimized to achieve the maximum F1 score. This plot was generated using the training history of the 2023 model.
+
+Several interesting conclusions can be drawn from the figure regarding the training and the general interpretation of a "good" match between a route and a traffic light geometry. Firstly, a clear trend is observed with Threshold 5, which decides whether inversely oriented traffic light geometries should be chosen as a match. The tendency is clearly towards "no," aligning with Rule 6 in the dataset creation, stating that traffic light geometries should never be chosen against the direction of travel. 
 
 \begin{figure}[H]
 \centering 
@@ -600,9 +604,7 @@ The specific model configurations are detailed in \Cref{tab:hyperparameter-tunin
 \label{fig:ml-model-decision-boundaries}
 \end{figure}
 
-\Cref{fig:hyperparameter-contourplot} provides more detailed insights into the interpretation of the hyperparameter tuner regarding the direction in which the parameter configuration needs to be optimized to achieve the maximum F1 score. This plot was generated using the training history of the 2023 model.
-
-Several interesting conclusions can be drawn from the figure regarding the training and the general interpretation of a "good" match between a route and a traffic light geometry. Firstly, a clear trend is observed with Threshold 5, which decides whether inversely oriented traffic light geometries should be chosen as a match. The tendency is clearly towards "no," aligning with Rule 6 in the dataset creation, stating that traffic light geometries should never be chosen against the direction of travel. This relationship was successfully reconstructed by the hyperparameter model. Clear gradients are also noticeable at other thresholds. The loss gradients for the overlap thresholds T7 to T9 appear somewhat diffuse, aligning with the variability observed in these parameters in the final models. Overall, the hyperparameter tuning seems to have captured essential relationships effectively. At least, no better model could be manually found.
+This relationship was successfully reconstructed by the hyperparameter model. Clear gradients are also noticeable at other thresholds. The loss gradients for the overlap thresholds T7 to T9 appear somewhat diffuse, aligning with the variability observed in these parameters in the final models. Overall, the hyperparameter tuning seems to have captured essential relationships effectively. At least, no better model could be manually found.
 
 The ML model was trained on the 2022 OSM dataset and is evaluated on both OSM ground truths. The training and evaluation of the ML model are structured more complexly to effectively address overfitting issues via regularization. The analysis of the ground truth revealed increased redundancy, especially in the 2022 OSM dataset. Since this is also the dataset on which the ML model is trained, 3092 out of 6440 redundant examples were identified and removed based on matching feature vectors before training. The model training was conducted using Stratified K-Fold Cross-Validation over 342 epochs.
 
