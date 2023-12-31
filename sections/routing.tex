@@ -436,19 +436,20 @@ As it is likely that an origin for the observed detours is waypoints that reside
 
 \subsection{Alignment with Traffic Light Geometries}
 
-Storyline
-- 1. Wir berechnen Routen mit DRN und wählen händisch dazu die passenden Ampelgeometrien aus -> Ground truth. Außerdem markieren wir uns die Typen von Konstellationen und Routing-Fehlern an den Kreuzungen
-- 2. Wir schauen uns an, ob die passenden Ampelgeometrien tendenziell näher an der generierten Route liegen, im Vergleich zu OpenStreetMap für das eine Ground Truth schon in \Cref{ch:matching} erstellt wurde
-- 3. Wir trainieren das Traffic Light Matching modell erneut auf der neuen DRN Ground Truth und schauen, ob dieses die Ampeln auf DRN akkurater matchen kann
-- 4. Wir schauen uns an, in welcher Konstellation DRN-Routen häufig über Ampelgeometrien verlaufen - also ob die geometrien gleicher verlaufen als mit OpenStreetMap.
-- 5. Abschließend schauen wir uns nochmal an, wie viele Routenfehler an den Kreuzungen vorkommen, im Vergleich zwischen DRN und OSM. In einer detailliertern Analyse entlang ganzer Routen (nicht nur auf die Kreuzung bezogen) schauen wir uns nochmal genauere Routenfehlertypen an, und wie häufig diese im Vergleich vorkommen.
+As discussed in \Cref{ch:matching}, georeferenced intersection topologies provide the foundation for traffic light matching in this work. Each intersection topology contains ingress, connection, and egress lane shapes for each traffic light. Since the traffic light geometries are designed to depict turn shapes at intersections as accurately as possible, they provide another option to evaluate the alignment of the developed routing network with a special focus on intersections. A close alignment is desired to enhance the accuracy of traffic light matching.
+
+As only one or a few traffic lights may match a given bike route at an intersection, we cannot directly compare all traffic light geometries with the routing foundation. As we have seen in \Cref{ch:matching}, many traffic lights are never a good option in the presence of a better alternative aligning closer with the bike path that predicts the cyclist's trajectory. Thus, we first calculate bike routes with DRN and manually select fitting traffic light geometries. Afterward, we can compare the traffic light geometries to the corresponding route to measure their alignment. 
 
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-drn.pdf}
 \caption{.}
-\label{fig:}
+\label{fig:matching-ground-truth-drn}
 \end{figure}
+
+The DRN traffic light matching ground truth was developed according to the same procedures explained detailedly in \Cref{ch:matching}. The resulting mapping between generated DRN routes and traffic light geometries is depicted in \Cref{fig:matching-ground-truth-drn}. It contains 49 routes randomly distributed in Hamburg, for which 738 traffic light geometries have been selected in total to match the route geometry. These 738 selections can be mapped to 535 distinct traffic lights that were assigned to at least one route. 78.5\% (420) of traf are assigned to only one route. 
+
+- 2. Wir schauen uns an, ob die passenden Ampelgeometrien tendenziell näher an der generierten Route liegen, im Vergleich zu OpenStreetMap für das eine Ground Truth schon in \Cref{ch:matching} erstellt wurde
 
 \begin{figure}[htbp]
 \centering 
@@ -467,14 +468,7 @@ Storyline
 \label{fig:}
 \end{figure}
 
-\begin{figure}[htbp]
-\centering 
-\begin{tabular}{cc}
-\includegraphics[width=0.45\linewidth]{images/matching-ground-truth-progression-drn.pdf} & \includegraphics[width=0.45\linewidth]{images/matching-ground-truth-lsas-per-route-drn.pdf} \\
-\end{tabular}
-\caption{.}
-\label{fig:}
-\end{figure}
+- 3. Wir trainieren das Traffic Light Matching modell erneut auf der neuen DRN Ground Truth und schauen, ob dieses die Ampeln auf DRN akkurater matchen kann
 
 \begin{table}[h]
 \caption{Retrained model thresholds on the new routing.}
@@ -511,12 +505,16 @@ Storyline
 \label{tab:model-scores-drn}
 \end{table}
 
+- 4. Wir schauen uns an, in welcher Konstellation DRN-Routen häufig über Ampelgeometrien verlaufen - also ob die geometrien gleicher verlaufen als mit OpenStreetMap.
+
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-constellations-osm-vs-drn.pdf}
 \caption{.}
 \label{fig:}
 \end{figure}
+
+- 5. Abschließend schauen wir uns nochmal an, wie viele Routenfehler an den Kreuzungen vorkommen, im Vergleich zwischen DRN und OSM. In einer detailliertern Analyse entlang ganzer Routen (nicht nur auf die Kreuzung bezogen) schauen wir uns nochmal genauere Routenfehlertypen an, und wie häufig diese im Vergleich vorkommen.
 
 \begin{figure}[htbp]
 \centering 
