@@ -477,8 +477,6 @@ Most matching traffic light geometries seem to reside directly over the DRN rout
 - Ob sich diese Verbesserung auch, wie erwartet, positiv auf die Matching-Genauigkeit auswirkt, sehen wir im nächsten Experiment. Hierfür trainieren wir zunächst das algorithmische Matching-Modell erneut auf der neu erstellten Ground truth.
 - Die gefundene Hyperparameter-Konfiguration mittels Hyperparameter-Optimierung ist in \Cref{tab:hyperparameter-tuning-results-drn} denen der OpenStreetMap-Modelle gegenübergestellt.
 - Die Thresholds wurden vom Optimierungs-Tool etwas strikter gewählt als zuvor in OpenStreetMap. Striktere Thresholds bedeuten, dass traffic light geometries schneller verworfen werden, wenn sie nicht gut zur Route passen.
-- Auch das Machine-Learning modell aus wird erneut wie in \Cref{ch:matching} mit stratified k-fold cross validation auf der DRN-Ground Truth trainiert.
-- Mit den beiden neu trainierten Modellen können wir uns nun den Score über die gesamte Ground Truth ansehen und mit OpenStreetMap vergleichen.
 
 \begin{table}[h]
 \caption{.}
@@ -501,18 +499,27 @@ Most matching traffic light geometries seem to reside directly over the DRN rout
 \label{tab:model-scores-drn}
 \end{table}
 
-- 4. Wir schauen uns an, in welcher Konstellation DRN-Routen häufig über Ampelgeometrien verlaufen - also ob die geometrien gleicher verlaufen als mit OpenStreetMap.
+- Auch das Machine-Learning modell aus wird erneut wie in \Cref{ch:matching} mit stratified k-fold cross validation auf der DRN-Ground Truth trainiert.
+- Als Ergebnis erreicht das machine learning modell während des Trainings einen F1-Score von 95.83\% und einen Test Score von 90.94\%. Während sich der Training Score also um fast 2 Prozentpunkte verbessert hat, liegt der Test score ca. 1\% unter dem Score auf OpenStreetMap. Eine Vergleichbarkeit zwischen den unterschiedlichen Splits herzustellen ist aber nicht ohne weiteres möglich. Der Test Score des OpenStreetMap modells kann auch dadurch höher gewesen sein, dass der Datensatz ca. drei mal so viele Routen beinhaltete, und nur ca. halb so viele traffic light geometries. 
+- \Cref{tab:model-scores-drn} zeigt: Über den gesamten Datensatz evaluiert liegt der F1-Score bei 94.0\% und damit ca. 2\% höher als auf den OpenStreetMap Daten. Der Recall konnte auf 97\% verbessert werden, es sind also weniger falsch-positive festzustellen.
+- Auch das algorithmische Modell konnte sich verbessern. Während das algorithmische Modell auf dem OpenStreetMap Datensatz aus 2022 sein bestes Ergebnis von 84.8\% erzielte, liegt das neu trainierte Modell auf DRN 3.2\% darüber bei 88.0\%.
+- Insgesamt manifestiert sich die messbare Verbesserung in der Genauigkeit des Fahrradroutings nicht nur in der stärkeren Striktheit des algorithmischen Modells, sondern auch generell in einer verbesserten Matching-Genauigkeit.
+- Da das algorithmische Modell mehr Genauigkeit hinzugewonnen hat als das Machine Learning modell, könnte man mutmaßen, ob dies vielleicht mit einer generellen Vereinfachung des Matching-Problems zusammenhängt. 
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-constellations-osm-vs-drn.pdf}
 \caption{.}
-\label{fig:}
+\label{fig:matching-constellations-osm-vs-drn}
 \end{figure}
+
+- In jedem Fall gibt es fast doppelt so viele Beispiele, bei denen die Routengeometrie fast identisch mit der traffic light geometry verläuft.
+- \Cref{fig:matching-constellations-osm-vs-drn} zeigt auch, dass deutlich seltener Routen versetzt zur Ampelgeometrie verlaufen. Dieser Fall wurde in OpenStreetMap vorallem dann beobachtet, wenn die Route auf die Straße führt obwohl ein Fahrradweg zur Verfügung steht. Die Fehlerfälle beim Matching wurden hier fast komplett eliminiert.
+- Weniger substanzielle Unterschiede ergeben sich bei Konstellationen, in denen die Route divergent oder konvergent zur Spurgeometrie verläuft -- auch dies kommt in DRN seltener vor. 
 
 - 5. Abschließend schauen wir uns nochmal an, wie viele Routenfehler an den Kreuzungen vorkommen, im Vergleich zwischen DRN und OSM. In einer detailliertern Analyse entlang ganzer Routen (nicht nur auf die Kreuzung bezogen) schauen wir uns nochmal genauere Routenfehlertypen an, und wie häufig diese im Vergleich vorkommen.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-route-errors-osm-vs-drn.pdf}
 \caption{.}
