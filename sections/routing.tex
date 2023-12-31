@@ -277,7 +277,7 @@ Focusing further on the applications of the developed routing engine within our 
 
 The specific process is highlighted in \Cref{fig:distance-to-signal-estimation}. First, the user's location is snapped to the route geometry, and the subsequent route segments are traversed until reaching the snapped location of the upcoming traffic light. The locations of each traffic light are annotated to the route geometry using the traffic light matching method developed in \Cref{ch:matching}.
 
-Along the precalculated route segments, the distance is determined using the Vincenty estimator, which provides a more accurate distance measure than the haversine distance through a more accurate representation of the earth's shape while being slightly more computationally expensive. To further optimize the computational overhead, the distances to each traffic light are precalculated along each route segment. With this approach, it is only necessary to calculate the distance along the current segment and then add this segment's distance to the next traffic light. The distance estimation process is repeated dynamically each time a new user location is received, updating the current speed advisory.
+Along the precalculated route segments, the distance is determined using the Vincenty estimator, which provides a more accurate distance measure (up to 0.5mm) than the haversine distance through a more accurate representation of the earth's shape while being slightly more computationally expensive. To further optimize the computational overhead, the distances to each traffic light are precalculated along each route segment. With this approach, it is only necessary to calculate the distance along the current segment and then add this segment's distance to the next traffic light. The distance estimation process is repeated dynamically each time a new user location is received, updating the current speed advisory.
 
 A second application of the route geometry within the app is for GNSS error correction, which arose not only as one of the major challenges for GLOSA applications in related work but also during preliminary experiments of the mobile app. Tests conducted in Dresden indicated that older devices (Android 6) struggle more with GNSS drift than newer devices. Even the latest generation of Android and iOS smartphones, configured to provide the highest level of geolocation accuracy, seem to experience this problem.
 
@@ -324,7 +324,7 @@ The fully automated processing pipeline is utilized by the deployment infrastruc
 
 \section{Results}
 
-Whether the goal of a more accurate bike routing could be reached will be evaluated in four steps. First, we will investigate the general structure of the processed routing network and compare it to OpenStreetMap. Specifically, we will focus on the path categories that were mapped using our metadata mapping from the DRN format and compare these to the OpenStreetMap network. 
+Whether the goal of a more accurate bike routing could be reached will be evaluated in four steps. First, we will investigate the general structure of the processed routing network and compare its completeness to OpenStreetMap. Specifically, we will focus on the path categories that were mapped using our metadata mapping from the DRN format and compare these to the OpenStreetMap network. 
 
 Afterward, a ground truth -- hand-drawn reference tracks -- will help us evaluate how well DRN routes align with actual cycling infrastructure. Here, we will also compare DRN with Google Maps and Bing Maps. Analyzing an arbitrary sample of DRN routes, we will investigate how many routing errors are encountered.
 
@@ -345,7 +345,7 @@ Based on an analysis conducted by Max Lorenz, the converted DRN path network enc
 
 The size difference is mainly due to additional accessory paths that are contained in OpenStreetMap but not on DRN. As a consequence, when generating 10,000 random routes throughout the city, the average distance that has to be traveled to the next available path segment varies slightly: 77.04 meters in DRN and 52.80 meters in OpenStreetMap. Even though the DRN network seems to encompass fewer paths, those that are captured are more detailed. The average path segment length in OpenStreetMap was calculated as 102.39 meters compared to 79.16 meters in DRN.
 
-The structural differences are highlighted in \Cref{fig:routing-drn-osm-map}. Here, it can not only be seen that OpenStreetMap provides more accessory paths, but also its remarkably higher diversity in path categories than present in the mapped DRN network. It can also be seen that DRN tends not to capture ways through green spaces. As a result, one minor drawback is that routes with DRN can be generated until the border of a park area, but not inside. The same is true for intermodal connections such as railroads and ferries, which are mapped as unclassified paths in the displayed example. DRN does not capture these connections.
+The structural differences are highlighted in \Cref{fig:routing-drn-osm-map}. Here, it can not only be seen that OpenStreetMap provides more accessory paths, but also its higher diversity in path categories than present in the mapped DRN network. It can also be seen that DRN tends not to capture ways through green spaces. As a result, one minor drawback is that routes with DRN can be generated until the border of a park area but not inside or throughout. The same is true for intermodal connections such as railroads and ferries, which are mapped as unclassified paths in the displayed example. DRN does not capture these connections.
 
 \begin{figure}[t]
 \centering
@@ -356,9 +356,13 @@ The structural differences are highlighted in \Cref{fig:routing-drn-osm-map}. He
 
 On the other hand, as seen in \Cref{fig:routing-drn-osm-map-surfaces}, OpenStreetMap contains large proportions of paths with an unclassified surface. Overall, only 66.4\% (7,014.52 km) of paths in OpenStreetMap's representation of Hamburg are tagged with a surface, as opposed to 99.9\% (7,682.24 km) in the DRN network. However, OpenStreetMap also contains an additional surface quality tag for 783.56 km (7.4\%), which is not mapped by our approach but can be parsed by GraphHopper as an additional source of information to estimate the path speed\footnote{\url{https://github.com/graphhopper/graphhopper/blob/71d2de049f2f4f52453a6fb1b7d558b9f0fa011f/core/src/main/java/com/graphhopper/routing/util/parsers/BikeCommonAverageSpeedParser.java\#L103}}. 
 
-Other metadata, such as road width, is even rarer in OpenStreetMap, with only 9.2\% (704.47 km) of paths containing this information, in contrast to 99.9\% (7,687.69 km) in the DRN routing foundation. An additional property analyzed is the coverage of velo routes, which resides at 1,794.55 km in OpenStreetMap and 1,149.8 km in DRN. Thus, 
+Other metadata, such as road width, is even rarer in OpenStreetMap, with only 9.2\% (704.47 km) of paths containing this information, in contrast to 99.9\% (7,687.69 km) in the DRN routing foundation. An additional property analyzed is the coverage of velo routes, which resides at 1,794.55 km in OpenStreetMap and 1,149.8 km in DRN.
+
+Overall, despite fewer paths being captured, the DRN network offers more detailed and well-documented path segments, with a higher percentage tagged with surface information, road width, and other valuable metadata. As it is the goal of DRN to capture bike paths accurately to their actual position, it is generally not a problem if intermodal connections are not contained. However, a higher coverage of green spaces and accessory paths could be desirable. 
 
 \subsection{Alignment with Actual Cycling Infrastructure}
+
+To measure the alignment of generated bike routes with actual cycling infrastructure, we create a separate ground truth by hand-drawing reference bike paths with the help of satellite imagery. Although we will not reach centimeter-level accuracy with this method, it will help measure general misalignments in the bike routes that we have encountered previously. This method generally assumes quite recent satellite image tiles that are aligned well with the actual position using an appropriate projection.
 
 \begin{figure}[htbp]
 \centering 
@@ -367,15 +371,21 @@ Other metadata, such as road width, is even rarer in OpenStreetMap, with only 9.
 \label{fig:routing-hand-drawn-ground-truth}
 \end{figure}
 
+Six reference tracks were created, containing three pairs of routes running in opposite directions: one from east to west and one from west to east. These reference tracks are depicted in \Cref{fig:routing-hand-drawn-ground-truth} as red cross-marks. Afterward, routes are generated by the map providers and compared for alignment with the reference geometry. Although it would be possible to use corresponding map-matching APIs here, the intention is to emulate user behavior in creating waypoints and check whether the generated route matches the reference geometry. 
 
+One challenge during this process is a curved reference geometry such as \texttt{2\_West\_Ost}, which tends to be shortcutted via a more direct connection between start and endpoints. Thus, assuming that a user wants to follow the reference track, the number of waypoints is gradually increased from 2 to 10 using the same interpolation across all compared providers. In each step, the alignment is measured, ultimately taking the best fit out of all attempts. In this way, not only the best alignment is measured, but also the tendency to deviate from an intended route.
+
+The alignment is measured by two metrics: the Hausdorff distance, an established measure to calculate two geometries' shapes, and the mean distance, as calculated through the Vincenty estimator, accurate up to 0.5mm. The Hausdorff distance is calculated through the Shapely\footnote{\url{https://github.com/shapely/shapely}} Python library in the EPSG:32633\footnote{\url{https://epsg.io/32633}} projection that utilizes meters as a distance unit.
+
+As depicted in \Cref{fig:routing-hand-drawn-ground-truth}, four routing providers are compared: our method DRN, OpenStreetMap using a GraphHopper, the Bing Maps routing API\footnote{\url{https://learn.microsoft.com/en-us/bingmaps/rest-services/routes/calculate-a-route}}, and the Google Maps routing API\footnote{\url{https://developers.google.com/maps/documentation/routes/reference/rest/v2/TopLevel/computeRoutes?hl=de}}. For DRN and OpenStreetMap, the GraphHopper routing profile \texttt{bike2} is utilized. For Google Maps, \texttt{travelMode=BICYCLE} is selected. Bing Maps is utilized by the modes \texttt{Driving} and \texttt{Walking} as no bike mode is provided, to determine which option is the best proxy for a bike route.
 
 \begin{table}[htbp]
 \centering
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lccccccccccccccc}
 \toprule
-\textbf{Ground}& \multicolumn{3}{c}{\textbf{DRN}}&\multicolumn{3}{c}{\textbf{OpenStreetMap}}&\multicolumn{3}{c}{\textbf{Bing Maps (Driving)}}&\multicolumn{3}{c}{\textbf{Bing Maps (Walking)}}&\multicolumn{3}{c}{\textbf{Google Maps}}\\
-\textbf{Truth}& \textbf{HD} & \textbf{Mean} & \textbf{W} & \textbf{HD} & \textbf{Mean} & \textbf{W} & \textbf{HD} & \textbf{Mean} & \textbf{W} & \textbf{HD} & \textbf{Mean} & \textbf{W} & \textbf{HD} & \textbf{Mean} & \textbf{W} \\
+\textbf{Reference}& \multicolumn{3}{c}{\textbf{DRN}}&\multicolumn{3}{c}{\textbf{OpenStreetMap}}&\multicolumn{3}{c}{\textbf{Bing Maps (Driving)}}&\multicolumn{3}{c}{\textbf{Bing Maps (Walking)}}&\multicolumn{3}{c}{\textbf{Google Maps}}\\
+\textbf{Track}& \textbf{HD} & \textbf{Mean} & \textbf{W} & \textbf{HD} & \textbf{Mean} & \textbf{W} & \textbf{HD} & \textbf{Mean} & \textbf{W} & \textbf{HD} & \textbf{Mean} & \textbf{W} & \textbf{HD} & \textbf{Mean} & \textbf{W} \\
 \midrule
 1\_Ost\_West & 6.89 & 2.20 & 2 & 3.48 & 1.26 & 8 & 16.34 & 9.66 & 4 & 16.02 & 9.63 & 8 & 216.44 & 66.54 & 2 \\
 1\_West\_Ost & 2.80 & 1.20 & 2 & 9.05 & 5.99 & 2 & 14.75 & 9.02 & 7 & 14.75 & 9.02 & 7 & 8.67 & 6.09 & 9 \\
