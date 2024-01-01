@@ -501,10 +501,12 @@ Most matching traffic light geometries seem to reside directly over the DRN rout
 
 - Auch das Machine-Learning modell aus wird erneut wie in \Cref{ch:matching} mit stratified k-fold cross validation auf der DRN-Ground Truth trainiert.
 - Als Ergebnis erreicht das machine learning modell während des Trainings einen F1-Score von 95.83\% und einen Test Score von 90.94\%. Während sich der Training Score also um fast 2 Prozentpunkte verbessert hat, liegt der Test score ca. 1\% unter dem Score auf OpenStreetMap. Eine Vergleichbarkeit zwischen den unterschiedlichen Splits herzustellen ist aber nicht ohne weiteres möglich. Der Test Score des OpenStreetMap modells kann auch dadurch höher gewesen sein, dass der Datensatz ca. drei mal so viele Routen beinhaltete, und nur ca. halb so viele traffic light geometries. 
-- \Cref{tab:model-scores-drn} zeigt: Über den gesamten Datensatz evaluiert liegt der F1-Score bei 94.0\% und damit ca. 2\% höher als auf den OpenStreetMap Daten. Der Recall konnte auf 97\% verbessert werden, es sind also weniger falsch-positive festzustellen.
+
+- \Cref{tab:model-scores-drn} zeigt ein gegenteiliges Bild: Über den gesamten Datensatz evaluiert liegt der F1-Score bei 94.0\% und damit ca. 2\% höher als auf den OpenStreetMap Daten. Der Recall konnte auf 97\% verbessert werden, es sind also weniger falsch-positive festzustellen.
 - Auch das algorithmische Modell konnte sich verbessern. Während das algorithmische Modell auf dem OpenStreetMap Datensatz aus 2022 sein bestes Ergebnis von 84.8\% erzielte, liegt das neu trainierte Modell auf DRN 3.2\% darüber bei 88.0\%.
-- Insgesamt manifestiert sich die messbare Verbesserung in der Genauigkeit des Fahrradroutings nicht nur in der stärkeren Striktheit des algorithmischen Modells, sondern auch generell in einer verbesserten Matching-Genauigkeit.
-- Da das algorithmische Modell mehr Genauigkeit hinzugewonnen hat als das Machine Learning modell, könnte man mutmaßen, ob dies vielleicht mit einer generellen Vereinfachung des Matching-Problems zusammenhängt. 
+
+- Insgesamt manifestiert sich also die messbare Verbesserung in der Genauigkeit des Fahrradroutings nicht nur in der stärkeren Striktheit des algorithmischen Modells, sondern auch generell in einer verbesserten Matching-Genauigkeit. Der meiste Fortschritt wurde allerdings bei dem weniger genauen algorithmischen Modell verzeichnet.
+- Da das algorithmische Modell mehr Genauigkeit hinzugewonnen hat als das Machine Learning modell, könnte man mutmaßen, ob dies vielleicht mit einer generellen Vereinfachung des Matching-Problems zusammenhängt. Daher lohnt sich hier ein Blick auf die Arten der Konstellationen zwischen Routen und traffic light geometries, die mit unterschiedlich schwierigen Entscheidungen für das Matching-Modell verbunden sind.
 
 \begin{figure}[t]
 \centering 
@@ -566,7 +568,7 @@ Generally problematic road crossings & 1 & 4 \\
 
 - Indem wir die GNSS-Trajektorien der Nutzer über beide Routennetzwerke legen, können wir sichtbar machen, ob die tatsächlichen Positionen eher mit dem OpenStreetMap-Netzwerk übereinstimmen oder mit dem DRN-Netzwerk. Zu beachten ist hierbei, dass die GNSS-Position natürlich um die tatsächliche Position streut. In der Masse der Tracks sollten wir aber eine Tendenz sichtbar machen können, unter der Annahme, dass das GNSS annähernd normalverteilt um die tatsächliche Position streut und Effekte wie GNSS Drift, die diese Streuung verschieben, vernachlässigbar sind.
 - Das Ergebnis ist in \Cref{fig:routing-mapmatching-distance} geplottet. Es handelt sich hierbei um zwei Kreuzungen aus dem Zentrumsbereich Hamburgs, die gewählt wurden, um Wohnorte oder ähnliche erkennbare personenbeziehbare Rückschlüsse in den Tracks weitestmöglich zu verhindern
-- Trotz der sichtbaren Streuung des GNSS lässt sich erkennen, dass die aufgezeichneten Nutzertrajektorien deutlich besser mit dem DRN-Pfadnetzwerk übereinstimmen als mit OpenStreetMap
+- Trotz der sichtbaren Streuung des GNSS lässt sich erkennen, dass die aufgezeichneten Radfahrtrajektorien deutlich besser mit dem DRN-Pfadnetzwerk übereinstimmen als mit OpenStreetMap.
 
 \begin{figure}[t]
 \centering 
@@ -574,6 +576,19 @@ Generally problematic road crossings & 1 & 4 \\
 \caption{.}
 \label{fig:routing-gnss-mapmatching-distribution}
 \end{figure}
+
+- Da dies natürlich nur einen Teil der Pfade visualisiert, führen wir noch einen aggregierten Vergleich aller Trajektorien mit dem Routennetzwerk durch. Dafür map-matchen wir die aufgezeichneten Tracks über die GraphHopper mapmatch API\footnote{\url{https://docs.graphhopper.com/#tag/Map-Matching-API}} welche das Verfahren von Newson and Krumm \cite{newson_hidden_2009} nutzt auf OpenStreetMap und DRN. Anschließend messen wir die Distanz von jedem GNSS-Punkt über den Vincenty-Estimator zum nächstgelegenen gemapmatchten Segment.
+- Als Ergebnis sehen wir auch hier wieder zwei schöne halbseitige Normalverteilungen, wobei die Positionen bei DRN im Median 2.90m vom nächsten Pfad und in OpenStreetMap 4.41m entfernt sind. Die Streuung ist in DRN auch deutlich geringer mit einem IQR von 5.40m vs. 7.09m in OpenStreetMap. Auch hier macht sich also die genauere und konsistentere Abbildung der Fahrradwege bemerkbar.
+- Für die GNSS-Korrektur, die über das Snapping auf die Route fungiert, bedeutet das insgesamt, dass die tatsächliche Position des Nutzers, auch zur Darstellung im User Interface, deutlich weniger verfälscht wird.
+
+
+\begin{figure}[t]
+\centering 
+\includegraphics[width=\linewidth]{images/routing-distance-distribution.pdf}
+\caption{.}
+\label{fig:routing-distance-distribution}
+\end{figure}
+
 
 
 \begin{figure}[t]
