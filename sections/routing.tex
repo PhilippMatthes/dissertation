@@ -474,9 +474,7 @@ Most matching traffic light geometries seem to reside directly over the DRN rout
 \label{tab:hyperparameter-tuning-results-drn}
 \end{table}
 
-- Ob sich diese Verbesserung auch, wie erwartet, positiv auf die Matching-Genauigkeit auswirkt, sehen wir im nächsten Experiment. Hierfür trainieren wir zunächst das algorithmische Matching-Modell erneut auf der neu erstellten Ground truth.
-- Die gefundene Hyperparameter-Konfiguration mittels Hyperparameter-Optimierung ist in \Cref{tab:hyperparameter-tuning-results-drn} denen der OpenStreetMap-Modelle gegenübergestellt.
-- Die Thresholds wurden vom Optimierungs-Tool etwas strikter gewählt als zuvor in OpenStreetMap. Striktere Thresholds bedeuten, dass traffic light geometries schneller verworfen werden, wenn sie nicht gut zur Route passen.
+In the next experiment, we will assess whether this improvement positively impacts the matching accuracy, as expected. To achieve this, we will retrain the algorithmic matching model on the newly created ground truth. The hyperparameter configuration identified through hyperparameter optimization is compared to that of the OpenStreetMap models in \Cref{tab:hyperparameter-tuning-results-drn}. Notably, the optimization tool applied stricter thresholds than those employed in OpenStreetMap. These stricter thresholds result in quicker dismissal of traffic light geometries that do not align well with the route.
 
 \begin{table}[h]
 \caption{.}
@@ -499,14 +497,11 @@ Most matching traffic light geometries seem to reside directly over the DRN rout
 \label{tab:model-scores-drn}
 \end{table}
 
-- Auch das Machine-Learning modell aus wird erneut wie in \Cref{ch:matching} mit stratified k-fold cross validation auf der DRN-Ground Truth trainiert.
-- Als Ergebnis erreicht das machine learning modell während des Trainings einen F1-Score von 95.83\% und einen Test Score von 90.94\%. Während sich der Training Score also um fast 2 Prozentpunkte verbessert hat, liegt der Test score ca. 1\% unter dem Score auf OpenStreetMap. Eine Vergleichbarkeit zwischen den unterschiedlichen Splits herzustellen ist aber nicht ohne weiteres möglich. Der Test Score des OpenStreetMap modells kann auch dadurch höher gewesen sein, dass der Datensatz ca. drei mal so viele Routen beinhaltete, und nur ca. halb so viele traffic light geometries. 
+Following the methodology outlined in \Cref{ch:matching}, the machine learning model is retrained on the DRN ground truth using stratified k-fold cross-validation. During training, the machine learning model achieved an F1-Score of 95.83\% and a test score of 90.94\%. While the training score improves by nearly two percentage points, the test score is approximately 1\% lower than that achieved on OpenStreetMap. Although this result may suggest a small decline in matching accuracy on DRN, it is generally challenging to directly compare different cross-validation splits, considering the differences in dataset size and the number of traffic light geometries. The 2022 OpenStreetMap dataset is created with 2414 traffic light geometries, while the 2023 DRN dataset already contains 5168 traffic light geometries that were added in the meantime.
 
-- \Cref{tab:model-scores-drn} zeigt ein gegenteiliges Bild: Über den gesamten Datensatz evaluiert liegt der F1-Score bei 94.0\% und damit ca. 2\% höher als auf den OpenStreetMap Daten. Der Recall konnte auf 97\% verbessert werden, es sind also weniger falsch-positive festzustellen.
-- Auch das algorithmische Modell konnte sich verbessern. Während das algorithmische Modell auf dem OpenStreetMap Datensatz aus 2022 sein bestes Ergebnis von 84.8\% erzielte, liegt das neu trainierte Modell auf DRN 3.2\% darüber bei 88.0\%.
+When measured over the entire dataset, as exhibited in \Cref{tab:model-scores-drn}, the F1-Score is 94.0\%, approximately 2\% higher than the OpenStreetMap data. The recall has improved by 3\% to 97\%, indicating fewer false positives. The algorithmic model also demonstrates improvement, surpassing its previous best result on the OpenStreetMap dataset from 2022 by 3.2\%, achieving an 88.0\% accuracy on DRN.
 
-- Insgesamt manifestiert sich also die messbare Verbesserung in der Genauigkeit des Fahrradroutings nicht nur in der stärkeren Striktheit des algorithmischen Modells, sondern auch generell in einer verbesserten Matching-Genauigkeit. Der meiste Fortschritt wurde allerdings bei dem weniger genauen algorithmischen Modell verzeichnet.
-- Da das algorithmische Modell mehr Genauigkeit hinzugewonnen hat als das Machine Learning modell, könnte man mutmaßen, ob dies vielleicht mit einer generellen Vereinfachung des Matching-Problems zusammenhängt. Daher lohnt sich hier ein Blick auf die Arten der Konstellationen zwischen Routen und traffic light geometries, die mit unterschiedlich schwierigen Entscheidungen für das Matching-Modell verbunden sind.
+The measurable improvement in routing accuracy is evident not only in the enhanced strictness of the algorithmic model but also in an overall improved matching accuracy. The most significant progress, however, is observed in the less sophisticated algorithmic model. Considering the greater accuracy gain in the algorithmic model compared to the machine learning model, it prompts speculation about a potential simplification of the matching problem induced by the closer alignment between DRN routes and the traffic light geometries. Hence, we examine the types of configurations between routes and traffic light geometries associated with varying degrees of matching complexity next.
 
 \begin{figure}[t]
 \centering 
@@ -515,10 +510,7 @@ Most matching traffic light geometries seem to reside directly over the DRN rout
 \label{fig:matching-constellations-osm-vs-drn}
 \end{figure}
 
-- Wie \Cref{fig:matching-constellations-osm-vs-drn} zeigt gibt es in jedem Fall fast doppelt so viele Beispiele, bei denen die Routengeometrie fast identisch mit der traffic light geometry verläuft.
-- \Cref{fig:matching-constellations-osm-vs-drn} zeigt auch, dass deutlich seltener Routen versetzt zur Ampelgeometrie verlaufen. Dieser Fall wurde in OpenStreetMap vorallem dann beobachtet, wenn die Route auf die Straße führt obwohl ein Fahrradweg zur Verfügung steht. Die Fehlerfälle beim Matching wurden hier fast komplett eliminiert.
-- Ein ähnlicher Unterschied ist bei Situationen zu sehen, in denen die Route abbiegt, aber versetzt zur Route läuft. Dies passiert weniger häufig mit DRN, ist aber im Verhältnis zur Häufigkeit nach wie vor die Situation mit dem höchsten Fehlerpotenzial. Das ML-Modell handhabt diese Situation auch im DRN-Datensatz besser als das algorithmische Modell.
-- Mit dem neuen Routing ist aber auch eine neue Fehlersituation entstanden, speziell wenn die Route und die traffic light geometry fast identisch verlaufen. Hier gibt es also unter Umständen noch Verbesserungspotenzial für das Matching-Verfahren
+As depicted in \Cref{fig:matching-constellations-osm-vs-drn}, there are nearly twice as many instances where the route geometry closely aligns with the traffic light geometry. Notably, situations where routes deviate from the traffic light geometry occur less frequently, especially in cases where the route directs onto the road despite the availability of a bicycle lane, a scenario where matching errors were nearly eliminated. A similar difference is observed in situations where the route turns but runs offset to the route, a case handled better by the machine learning model in the DRN dataset than the algorithmic model. However, a new error situation is seen to emerge, particularly when the route closely aligns with the traffic light geometry. This suggests potential room for improvement in the matching procedure in such cases.
 
 \begin{figure}[t]
 \centering 
@@ -527,11 +519,9 @@ Most matching traffic light geometries seem to reside directly over the DRN rout
 \label{fig:}
 \end{figure}
 
-- Auch mit Blick auf Routing-Fehler, die bei der Erstellung der Ground Truth unterteilt in vier Klassen mit angegeben wurden, hat sich eine deutliche Verbesserung ergeben.
-- Die Anzahl der Situationen ohne Routing fehler wurde fast verdreifacht, von 23\% in OpenStreetMap auf 64\% aller Samples in DRN. Der Hauptgrund für die Verbesserung ist, dass nun die Fahrradfurten und Fahrradwege viel häufiger korrekt genutzt werden, anstelle in der Mitte der Straße zu routen. 
-- Vollständig eliminiert werden konnte dieser Fall jedoch nicht. Außerdem wird deutlich seltener auf der falschen Straßenseite geroutet.
-- Eine detailliertere Fallstudie, in der Max Lorenz 72 zufällige Routen untersucht hat, kommt zu ähnlichen Ergebnissen. Diese sind in \Cref{tab:accuracy-comparison} gezeigt.
-- Auch in dieser Validierungsstudie zeigt sich, dass die Routingqualität deutlich verbessert werden konnte, indem deutlich weniger Fehler identifiziert werden konnten. Der größte Unterschied ergibt sich auch hier durch das kontinuierlichere Routing auf dem Fahrradweg, aber auch andere, seltenere Fehlerfälle wie das Routing durch nicht passierbare Hindernisse, Gebäude und Treppen konnten mitigiert werden. 
+An examination of routing errors, categorized into four classes during ground truth creation, reveals a significant enhancement. Instances without routing errors nearly tripled, rising from 23\% in OpenStreetMap to 64\% in DRN. This improvement primarily stems from more accurate utilization of bike lanes and paths, reducing routing in the middle of the road. However, complete elimination of this scenario was not achieved. Moreover, routing on the wrong side of the street occurs less frequently.
+
+A detailed case study analyzing 72 random routes by Max Lorenz corroborates these findings, as depicted in \Cref{tab:accuracy-comparison}. This validation study further supports the notable improvement in routing quality, marked by fewer identified errors. Continuous routing on the bicycle path contributes significantly to this improvement, along with mitigated occurrences of less common errors such as routing through impassable obstacles, buildings, and stairs.
 
 \begin{table}[htbp]
 \centering
@@ -553,11 +543,11 @@ Generally problematic road crossings & 1 & 4 \\
 \label{tab:accuracy-comparison}%
 \end{table}
 
-- Insgesamt zeigt sich also nicht nur, dass die DRN Routen deutlich näher auf der Fahrradinfrastruktur liegen. Auch das Alignment mit den Ampelgeometrien konnte deutlich gegenüber OpenStreetMap-Fahrradrouten verbessert werden. Die Ergebnisse suggerieren, dass dies auch das Traffic Light Matching begünstigt. Die Routen Fehlerrate an Kreuzungen konnte substantiell verringert werden. Auch bei Untersuchungen ganzer Routengeometrien fallen weniger Fehler auf.
+In conclusion, the DRN routes not only closely align with bicycle infrastructure but also exhibit enhanced alignment with traffic light geometries compared to OpenStreetMap bicycle routes. The results suggest that this alignment improvement positively influences traffic light matching. Substantial reductions in routing error rates at intersections and fewer errors in examining entire route geometries further support the effectiveness of the proposed approach.
 
 \subsection{Alignment with User Trajectories}
 
-- Abschließend betrachten wir noch, wie gut das DRN Netzwerk im Vergleich mit den Fahrten der Nutzer übereinstimmt. Außerdem schauen wir uns an, wie gut die routenbasiert abgeschätzte Distanz zur Ampel im Vergleich mit der tatsächlichen Distanz die zur Ampel zurückgelegt werden wird übereinstimmt, im Vergleich mit der direkten Luftlinie.
+In conclusion, we assess the alignment of the DRN network with user journeys and examine how well the route-based estimated distance to the traffic light matches the actual distance to be covered in comparison with the direct straight-line distance. Based on 1327 user tracks recorded during the Beta period in 2023, covering a total distance of 6,716.03 km, rerouting was triggered 7030 times, with a median rerouting frequency of 1.39 km. In 20.27\% of journeys, no rerouting was triggered.
 
 \begin{figure}[t]
 \centering 
@@ -566,9 +556,9 @@ Generally problematic road crossings & 1 & 4 \\
 \label{fig:routing-mapmatching-distance}
 \end{figure}
 
-- Indem wir die GNSS-Trajektorien der Nutzer über beide Routennetzwerke legen, können wir sichtbar machen, ob die tatsächlichen Positionen eher mit dem OpenStreetMap-Netzwerk übereinstimmen oder mit dem DRN-Netzwerk. Zu beachten ist hierbei, dass die GNSS-Position natürlich um die tatsächliche Position streut. In der Masse der Tracks sollten wir aber eine Tendenz sichtbar machen können, unter der Annahme, dass das GNSS annähernd normalverteilt um die tatsächliche Position streut und Effekte wie GNSS Drift, die diese Streuung verschieben, vernachlässigbar sind.
-- Das Ergebnis ist in \Cref{fig:routing-mapmatching-distance} geplottet. Es handelt sich hierbei um zwei Kreuzungen aus dem Zentrumsbereich Hamburgs, die gewählt wurden, um Wohnorte oder ähnliche erkennbare personenbeziehbare Rückschlüsse in den Tracks weitestmöglich zu verhindern
-- Trotz der sichtbaren Streuung des GNSS lässt sich erkennen, dass die aufgezeichneten Radfahrtrajektorien deutlich besser mit dem DRN-Pfadnetzwerk übereinstimmen als mit OpenStreetMap.
+By overlaying GNSS trajectories of users onto both routing networks, we can determine whether the actual positions align more closely with the OpenStreetMap network or the DRN network. It's important to note that GNSS positions naturally vary around the true position, but considering the mass of tracks, we should observe a discernible trend, assuming GNSS approximates a normal distribution around the true position, and effects like GNSS drift are negligible.
+
+The results are plotted in \Cref{fig:routing-mapmatching-distance}, depicting two intersections in the central area of Hamburg, chosen to minimize identifiable personal references in the tracks. Despite the visible dispersion of GNSS positions, it is evident that the recorded cycling trajectories align significantly better with the DRN path network than with OpenStreetMap.
 
 \begin{figure}[t]
 \centering 
@@ -577,10 +567,9 @@ Generally problematic road crossings & 1 & 4 \\
 \label{fig:routing-gnss-mapmatching-distribution}
 \end{figure}
 
-- Da dies natürlich nur einen Teil der Pfade visualisiert, führen wir noch einen aggregierten Vergleich aller Trajektorien mit dem Routennetzwerk durch. Dafür map-matchen wir die aufgezeichneten Tracks über die GraphHopper mapmatch API\footnote{\url{https://docs.graphhopper.com/\#tag/Map-Matching-API}} welche das Verfahren von Newson and Krumm \cite{newson_hidden_2009} nutzt auf OpenStreetMap und DRN. Anschließend messen wir die Distanz von jedem GNSS-Punkt über den Vincenty-Estimator zum nächstgelegenen gemapmatchten Segment.
-- Als Ergebnis sehen wir auch hier wieder zwei schöne halbseitige Normalverteilungen, wobei die Positionen bei DRN im Median 2.90m vom nächsten Pfad und in OpenStreetMap 4.41m entfernt sind. Die Streuung ist in DRN auch deutlich geringer mit einem IQR von 5.40m vs. 7.09m in OpenStreetMap. Auch hier macht sich also die genauere und konsistentere Abbildung der Fahrradwege bemerkbar.
-- Für die GNSS-Korrektur, die über das Snapping auf die Route fungiert, bedeutet das insgesamt, dass die tatsächliche Position des Nutzers, auch zur Darstellung im User Interface, deutlich weniger verfälscht wird.
+To provide a more comprehensive comparison of all trajectories with the routing network, we perform an aggregated comparison using the GraphHopper map match API\footnote{\url{https://docs.graphhopper.com/\#tag/Map-Matching-API}}, employing the method proposed by Newson and Krumm \cite{newson_hidden_2009} on both OpenStreetMap and DRN. Subsequently, we measure the distance from each GNSS point using the Vincenty estimator to the nearest map-matched segment.
 
+The results reveal two distinct half-normal distributions, with DRN positions at a median distance of 2.90m from the nearest path and OpenStreetMap positions at 4.41m. The dispersion in DRN is notably lower, with an interquartile range (IQR) of 5.40m compared to 7.09m in OpenStreetMap. This underscores the more accurate and consistent representation of bicycle paths in DRN. Consequently, the GNSS correction, facilitated through snapping onto the route, ensures that the actual user position, also displayed in the user interface, is significantly less distorted.
 
 \begin{figure}[t]
 \centering 
