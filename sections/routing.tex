@@ -577,7 +577,7 @@ Generally problematic road crossings & 1 & 4 \\
 \label{fig:routing-gnss-mapmatching-distribution}
 \end{figure}
 
-- Da dies natürlich nur einen Teil der Pfade visualisiert, führen wir noch einen aggregierten Vergleich aller Trajektorien mit dem Routennetzwerk durch. Dafür map-matchen wir die aufgezeichneten Tracks über die GraphHopper mapmatch API\footnote{\url{https://docs.graphhopper.com/#tag/Map-Matching-API}} welche das Verfahren von Newson and Krumm \cite{newson_hidden_2009} nutzt auf OpenStreetMap und DRN. Anschließend messen wir die Distanz von jedem GNSS-Punkt über den Vincenty-Estimator zum nächstgelegenen gemapmatchten Segment.
+- Da dies natürlich nur einen Teil der Pfade visualisiert, führen wir noch einen aggregierten Vergleich aller Trajektorien mit dem Routennetzwerk durch. Dafür map-matchen wir die aufgezeichneten Tracks über die GraphHopper mapmatch API\footnote{\url{https://docs.graphhopper.com/\#tag/Map-Matching-API}} welche das Verfahren von Newson and Krumm \cite{newson_hidden_2009} nutzt auf OpenStreetMap und DRN. Anschließend messen wir die Distanz von jedem GNSS-Punkt über den Vincenty-Estimator zum nächstgelegenen gemapmatchten Segment.
 - Als Ergebnis sehen wir auch hier wieder zwei schöne halbseitige Normalverteilungen, wobei die Positionen bei DRN im Median 2.90m vom nächsten Pfad und in OpenStreetMap 4.41m entfernt sind. Die Streuung ist in DRN auch deutlich geringer mit einem IQR von 5.40m vs. 7.09m in OpenStreetMap. Auch hier macht sich also die genauere und konsistentere Abbildung der Fahrradwege bemerkbar.
 - Für die GNSS-Korrektur, die über das Snapping auf die Route fungiert, bedeutet das insgesamt, dass die tatsächliche Position des Nutzers, auch zur Darstellung im User Interface, deutlich weniger verfälscht wird.
 
@@ -587,6 +587,14 @@ Generally problematic road crossings & 1 & 4 \\
 \includegraphics[width=\linewidth]{images/routing-distance-distribution.pdf}
 \caption{.}
 \label{fig:routing-distance-distribution}
+\end{figure}
+
+
+\begin{figure}[t]
+\centering 
+\includegraphics[width=\linewidth]{images/routing-distance-scatter.pdf}
+\caption{.}
+\label{fig:routing-distance-scatter}
 \end{figure}
 
 
