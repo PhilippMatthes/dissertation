@@ -526,17 +526,20 @@ Most matching traffic light geometries seem to reside directly over the DRN rout
 \end{figure}
 
 - Auch mit Blick auf Routing-Fehler, die bei der Erstellung der Ground Truth unterteilt in vier Klassen mit angegeben wurden, hat sich eine deutliche Verbesserung ergeben.
-- Die Anzahl der Situationen ohne Routing fehler wurde fast verdreifacht, von 23\% in OpenStreetMap auf 64\% aller Samples in DRN. Der Hauptgrund für die Verbesserung ist, dass nun die Fahrradfurten und Fahrradwege viel häufiger korrekt genutzt werden, anstelle in der Mitte der Straße zu routen. Vollständig eliminiert werden konnte dieser Fall jedoch nicht. Außerdem wird deutlich seltener auf der falschen Straßenseite geroutet.
+- Die Anzahl der Situationen ohne Routing fehler wurde fast verdreifacht, von 23\% in OpenStreetMap auf 64\% aller Samples in DRN. Der Hauptgrund für die Verbesserung ist, dass nun die Fahrradfurten und Fahrradwege viel häufiger korrekt genutzt werden, anstelle in der Mitte der Straße zu routen. 
+- Vollständig eliminiert werden konnte dieser Fall jedoch nicht. Außerdem wird deutlich seltener auf der falschen Straßenseite geroutet.
+- Eine detailliertere Fallstudie, in der Max Lorenz 72 zufällige Routen untersucht hat, kommt zu ähnlichen Ergebnissen. Diese sind in \Cref{tab:accuracy-comparison} gezeigt.
+- Auch in dieser Validierungsstudie zeigt sich, dass die Routingqualität deutlich verbessert werden konnte, indem deutlich weniger Fehler identifiziert werden konnten. Der größte Unterschied ergibt sich auch hier durch das kontinuierlichere Routing auf dem Fahrradweg, aber auch andere, seltenere Fehlerfälle wie das Routing durch nicht passierbare Hindernisse, Gebäude und Treppen konnten mitigiert werden. 
 
 \begin{table}[htbp]
 \centering
 \begin{tabular}{@{}lrr@{}}
 \hline
-\textbf{Observed Error Cases} & DRN & OSM \\ \hline
+\textbf{Observed Error Cases} & \textbf{DRN} & \textbf{OSM} \\ \hline
 Continuous routing on the road & 0 & 10 \\
 Routing through buildings or stairs & 0 & 2 \\
 Intersection crossing using car lanes & 0 & 8 \\
-Use of sidewalks on incorrect road side & 1 & 4 \\
+Use of sidewalks on incorrect roadside & 1 & 4 \\
 Missing permission for one-way streets & 0 & 1 \\
 Routing through other impassable obstacles & 0 & 2 \\
 Failure to consider turning restrictions & 0 & 1 \\
@@ -548,38 +551,45 @@ Generally problematic road crossings & 1 & 4 \\
 \label{tab:accuracy-comparison}%
 \end{table}
 
-- Eine detailliertere Case Study, in der Max Lorenz 72 zufällige Routen untersucht hat, kommt zu ähnlichen Ergebnissen. Diese sind in \Cref{tab:accuracy-comparison} gezeigt.
-- 
+- Insgesamt zeigt sich also nicht nur, dass die DRN Routen deutlich näher auf der Fahrradinfrastruktur liegen. Auch das Alignment mit den Ampelgeometrien konnte deutlich gegenüber OpenStreetMap-Fahrradrouten verbessert werden. Die Ergebnisse suggerieren, dass dies auch das Traffic Light Matching begünstigt. Die Routen Fehlerrate an Kreuzungen konnte substantiell verringert werden. Auch bei Untersuchungen ganzer Routengeometrien fallen weniger Fehler auf.
 
 \subsection{Alignment with User Trajectories}
 
-\begin{figure}[htbp]
-\centering 
-\includegraphics[width=\linewidth]{images/routing-distance-analysis.pdf}
-\caption{.}
-\label{fig:}
-\end{figure}
+- Abschließend betrachten wir noch, wie gut das DRN Netzwerk im Vergleich mit den Fahrten der Nutzer übereinstimmt. Außerdem schauen wir uns an, wie gut die routenbasiert abgeschätzte Distanz zur Ampel im Vergleich mit der tatsächlichen Distanz die zur Ampel zurückgelegt werden wird übereinstimmt, im Vergleich mit der direkten Luftlinie.
 
-
-\begin{figure}[htbp]
-\centering 
-\includegraphics[width=\linewidth]{images/routing-gnss-mapmatching-distribution.pdf}
-\caption{.}
-\label{fig:}
-\end{figure}
-
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-mapmatching-distance.pdf}
 \caption{.}
-\label{fig:}
+\label{fig:routing-mapmatching-distance}
 \end{figure}
 
-\begin{figure}[htbp]
+- Indem wir die GNSS-Trajektorien der Nutzer über beide Routennetzwerke legen, können wir sichtbar machen, ob die tatsächlichen Positionen eher mit dem OpenStreetMap-Netzwerk übereinstimmen oder mit dem DRN-Netzwerk. Zu beachten ist hierbei, dass die GNSS-Position natürlich um die tatsächliche Position streut. In der Masse der Tracks sollten wir aber eine Tendenz sichtbar machen können, unter der Annahme, dass das GNSS annähernd normalverteilt um die tatsächliche Position streut und Effekte wie GNSS Drift, die diese Streuung verschieben, vernachlässigbar sind.
+- Das Ergebnis ist in \Cref{fig:routing-mapmatching-distance} geplottet. Es handelt sich hierbei um zwei Kreuzungen aus dem Zentrumsbereich Hamburgs, die gewählt wurden, um Wohnorte oder ähnliche erkennbare personenbeziehbare Rückschlüsse in den Tracks weitestmöglich zu verhindern
+- Trotz der sichtbaren Streuung des GNSS lässt sich erkennen, dass die aufgezeichneten Nutzertrajektorien deutlich besser mit dem DRN-Pfadnetzwerk übereinstimmen als mit OpenStreetMap
+
+\begin{figure}[t]
+\centering 
+\includegraphics[width=\linewidth]{images/routing-gnss-mapmatching-distribution.pdf}
+\caption{.}
+\label{fig:routing-gnss-mapmatching-distribution}
+\end{figure}
+
+
+\begin{figure}[t]
+\centering 
+\includegraphics[width=\linewidth]{images/routing-distance-analysis.pdf}
+\caption{.}
+\label{fig:routing-distance-analysis}
+\end{figure}
+
+
+\begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-distance-comparison.pdf}
 \caption{.}
 \label{fig:}
 \end{figure}
+
 
 \section{Conclusions}
