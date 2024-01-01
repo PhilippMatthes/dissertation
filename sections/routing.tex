@@ -360,7 +360,7 @@ Other metadata, such as road width, is even rarer in OpenStreetMap, with only 9.
 
 Overall, despite fewer paths being captured, the DRN network offers more detailed and well documented path segments, with a higher percentage tagged with surface information, road width, and other valuable metadata. As it is the goal of DRN to capture bike paths accurately to their actual position, it is generally not a problem if intermodal connections are not contained. However, a higher coverage of green spaces and accessory paths could be desirable. 
 
-\subsection{Alignment with Actual Bike Paths}
+\subsection{Alignment with Actual Bike Paths}\label{sec:routing-alignment}
 
 To measure the alignment of generated bike routes with actual cycling infrastructure, we create a separate ground truth by hand-drawing reference bike paths with the help of satellite imagery. Although we will not reach centimeter-level accuracy with this method, it will help measure general misalignments in the bike routes that we have encountered previously. This method generally assumes quite recent satellite image tiles that are aligned well with the actual position using an appropriate projection.
 
@@ -575,16 +575,16 @@ To provide a more comprehensive comparison of all trajectories with the routing 
 
 The results reveal two distinct half-normal distributions, with DRN positions at a median distance of 2.90m from the nearest path and OpenStreetMap positions at 4.41m. The dispersion in DRN is notably lower, with an interquartile range of 5.40m compared to 7.09m in OpenStreetMap. This underscores the more accurate and consistent representation of bicycle paths in DRN. Consequently, our proposed GNSS correction, facilitated through snapping onto the route, is likely less distorted with DRN routes.
 
+To evaluate our approach for distance-to-signal estimation, we compare the distance estimated for each GNSS sample to the actual distance driven to the next traffic light. We calculate the actual distance by first determining the position at which the GNSS trajectory will pass the matched upcoming traffic light. Then, we trace the GNSS trajectory back to the current position and measure the Vincenty distance along the backtracked path. GNSS samples not having an upcoming traffic light, e.g., at the end of a track, are not considered here. This method assumes that cases in which users preliminarily deviate from their intended path over the traffic light are sufficiently rare and that the correct traffic light is matched sufficiently often. The GNSS is also expected to scatter in a normal distribution manner, slightly increasing the measured ground truth distance over the actual traveled distance. Thus, gaussian noise in the measurement is intended.
+
+Aggregating the measured differences in \Cref{fig:routing-distance-distribution}, we can see that both methods for distance estimation, our route-based method and the direct distance from the current position, center themselves around the zero-line that indicates a perfect distance estimation. Both methods over- or underestimate the distance to the next traffic light in some cases. However, it can also be seen that the direct distance estimation tends to underestimate the actual distance in noticeably more cases, as expected. Calculating the median of both distributions, the route-based distance estimation underestimates the actual distance by 0.53 meters for each GNSS sample, while the direct measurement underestimates the distance by 3.41 meters. A small underestimation is expected here due to the GNSS scattering.
+
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-distance-distribution.pdf}
 \caption{.}
 \label{fig:routing-distance-distribution}
 \end{figure}
-
-To evaluate our approach for distance-to-signal estimation, we compare the distance estimated for each GNSS sample to the actual distance driven to the next traffic light. We calculate the actual distance by first determining the position at which the GNSS trajectory will pass the matched upcoming traffic light. Then, we trace the GNSS trajectory back to the current position and measure the Vincenty distance along the backtracked path. GNSS samples not having an upcoming traffic light, e.g., at the end of a track, are not considered here. This method assumes that cases in which users preliminarily deviate from their intended path over the traffic light are sufficiently rare and that the correct traffic light is matched sufficiently often. The GNSS is also expected to scatter, slightly increasing the measured ground truth distance over the actual traveled distance. Thus, noise in the measurement is intended.
-
-Aggregating the measured differences in \Cref{fig:routing-distance-distribution}, we can see that both methods for distance estimation, our route-based method and the direct distance from the current position, center themselves around the zero-line that indicates a perfect distance estimation. Both methods over- or underestimate the distance to the next traffic light in some cases. However, it can also be seen that the direct distance estimation tends to underestimate the actual distance in noticeably more cases, as expected. Calculating the median of both distributions, the route-based distance estimation underestimates the actual distance by 0.53 meters for each GNSS sample, while the direct measurement underestimates the distance by 3.41 meters. A small underestimation is expected here due to the GNSS scattering.
 
 A more noticeable difference arises when calculating the interquartile ranges of the distributions. In at least 25\% of cases, the direct distance underestimates the actual traffic light distance by at least 24.47 meters, while the route-based distance estimation only underestimates by at least 5.87 meters. On the other hand, an overestimation is quite rare with the direct distance approach. In at least 25\% of cases, the direct distance approach only overestimates by at least 0.33 meters, while the route-based approach overestimates at least 4.36 meters. Nonetheless, the skewness of the direct distance approach's distribution, together with the larger interquartile range, shows clearly that the route-based approach provides a more even and stable distance estimation.
 
@@ -595,14 +595,33 @@ A more noticeable difference arises when calculating the interquartile ranges of
 \label{fig:routing-distance-scatter}
 \end{figure}
 
-In the previous experiment, we have considered every GNSS sample equally. However, the distance estimation is likely harder when being far away from the traffic light, due to the chance of additional road bends until the traffic light is reached. A view of the over- and underestimation in relation to the actual traffic light distance, as depicted in \Cref{fig:routing-distance-scatter}, reveals amongthat the direct distance estimation 
+In the previous experiment, we have considered every GNSS sample equally. However, the distance estimation is likely harder when being far away from the traffic light, due to the chance of additional road bends until the traffic light is reached. 
+
+A view of the over- and underestimation in relation to the actual traffic light distance, as depicted in \Cref{fig:routing-distance-scatter}, reveals among the expected noisiness that the direct distance estimation indeed tends to underestimate more with increased distances to the traffic light. While the route-based distance estimation tends to align around a perfect estimation even for higher distances, the direct distance approach tends to "bend down," supporting the hypothesis of a decreased accuracy with higher distances. 
+
+The black triangle on the lower left section of both plots indicates the area where the underestimation is limited by the actual distance to the traffic light. Other interesting patterns arise in the diagonal artifacts, which are visible with the route-based distance estimation approach. These lines likely indicate situations where users deviated using an orthogonally aligned side road from the route, considering the parallelity and similar running direction of these artifacts. With the direct-distance approach, the visible artifacts running from below toward the horizontal centerline indicate situations in which utilized ingress roads bend away from a straight line between the user and the traffic light, supporting the assumption that there are such situations in which road bends play a role for distance estimation.
+
+Overall, the initial assumptions concerning the accuracy of a direct-distance approach could be further explored, indicating that there are many situations in which a route-based approach is a better option for distance-to-signal estimation.
 
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-distance-comparison.pdf}
 \caption{.}
-\label{fig:}
+\label{fig:routing-distance-comparison}
 \end{figure}
 
+So far, we have evaluated in many ways how the accuracy, error-freeness, and consistency of our DRN bike routing foundation has improved, particularly over OpenStreetMap. However, what has not been considered is the overall route length. This property is also important as users want to reach their destination in a reasonably short way. As we have seen in the concept section, additional measures were required to diminish detours as a result of the separate depiction of bike paths on both roadsides and no interconnections. 
+
+In theory, we could evaluate the route length based on a random and, thus, representative sample of routes throughout the city, as we have done in previous sections. However, another interesting property would be to investigate the general route length which is driven by the applications users. Assuming a sufficient diversity in the user trajectories, we will combine both evaluations by calculating routes between the start and end GPS points of all recorded 1327 user trajectories. Routes are calculated using the same map providers and routing profiles as in \Cref{sec:routing-alignment}.
+
+As presented in \Cref{fig:routing-distance-comparison}, routes generated with DRN are a bit longer than OpenStreetMap routes. Measured by the median distance summed along all route segments using the Vincenty estimator, DRN routes are 4058 meters long (IQR: 4003m) compared to OpenStreetMap with 3907 meters (IQR: 3829m). Here, it needs to be considered that the segment length of DRN is also shorter at 25.93 meters (IQR: 6.76m) in relation to 36.57 meters (IQR: 10.62m) in OpenStreetMap. Thus, parts of this increased distance could also come from a more accurate depiction of road curviness. 
+
+The \texttt{Driving} profile of Bing Maps performs substantially worse, with a median route length of 4734 meters (IQR: 4224m), compared to the \texttt{Walking} profile, which seems to produce much shorter routes at a median of 3755 meters (IQR: 3759m). Although Bing Maps produces the shortest routes with the \texttt{Walking} profile, it must be considered here that we cannot verify whether shortcuts have been used that are accessible to cyclists. Furthermore, the route segment length in Bing Maps is also worse, with a median of 110.21 meters (\texttt{Driving}, IQR: 37.99m) or 87.57 meters (\texttt{Walking}, IQR: 45.57m), respectively. These results suggest that the depiction of road bends and intersection traversals is also less optimal, potentially negatively impacting a traffic light matching that depends on the turn shape's geometrical details. 
+
+Although detours have been detected in \Cref{sec:routing-alignment} with Google Maps, they seem to be less prevalent than suggested by our initial case study. The route length of Google Maps is a bit longer than DRN, residing at a median of 4114 meters (IQR: 3703m). Google Maps' segment length is comparable to OpenStreetMap, with a median segment length of 40.61m (IQR: 15.63m). Thus, Google Maps takes place three after DRN and OpenStreetMap, considering overall route length. With regard to the detailedness of path geometries, however, DRN is clearly the best option.
+
+\begin{Summary}[Summary of Results]
+
+\end{Summary}
 
 \section{Conclusions}
