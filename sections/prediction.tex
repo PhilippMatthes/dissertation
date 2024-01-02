@@ -188,7 +188,7 @@ Since the cycle-independent instability, however, does not necessarily capture t
 \rotatebox{90}{\footnotesize{\textbf{\hspace{0.18cm} Low cycle-independent instability}}} & A \includegraphics[width=0.42\linewidth]{images/predictability-cycles-3.pdf} & C \includegraphics[width=0.42\linewidth]{images/predictability-cycles-4.pdf} \\
 \hline
 \end{tabular}
-\caption{.}
+\caption{Patterns expected to be detectable by the cycle-dependent and -independent instability metrics.}
 \label{fig:types-of-instability}
 \end{figure}
 
@@ -386,7 +386,7 @@ Above the median cycle-dependent instability, given by the horizontal center of 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-heatmap.pdf}
-    \caption{.}\label{fig:predictability-heatmap}
+    \caption{Distribution of instabilities measured over all weekdays for all traffic lights.}\label{fig:predictability-heatmap}
 \end{figure}
 
 A more conjugated perspective on the instability is given in \Cref{fig:predictability-heatmap} in which the cycle-dependent metric is set in relation to the cycle-independent metric. The visualization employs hourly granularity, allowing us to accurately capture transitioning traffic lights between adaptive and non-adaptive programs. For instance, a traffic light that switches between adaptive and non-adaptive modes 50\% of the time is represented with both adaptive and non-adaptive hours in the diagram. Consequently, the color scale's maximum value exceeds $10^5$ measured hours on a histogram element, in which one traffic light typically encompasses a few hundred values.
@@ -402,7 +402,7 @@ Some recorded hours exhibit low cycle-independent instability but high cycle-dep
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-heatmap-hourly.pdf}
-    \caption{.}\label{fig:predictability-heatmap-hourly}
+    \caption{Distribution of measured instabilities by daytime.}\label{fig:predictability-heatmap-hourly}
 \end{figure}
 
 \Cref{fig:predictability-heatmap-hourly} further dissects the relationship between cycle-dependent and cycle-independent instability throughout the day. When comparing hours, a distinct difference is observed before 6 AM and after 6 AM, persisting until around 11 PM. The increase in adaptiveness during the day aligns with the moment when adaptivity, as shown in \Cref{fig:adaptiveness-weekdays-distance}, starts to increase. 
@@ -423,7 +423,7 @@ However, this interpretation should be handled with caution since 6 AM is also t
 \rotatebox{90}{\footnotesize{\textbf{\hspace{0.18cm} Cycle-independent instability <10\%}}} & A \includegraphics[width=0.42\linewidth]{images/predictability-rw-example-bottom_left.pdf} & C \includegraphics[width=0.42\linewidth]{images/predictability-rw-example-bottom_right.pdf} \\
 \hline
 \end{tabular}
-\caption{.}
+\caption{Examples of recorded traffic light histories, ordered by their classification according to our two metrics.}
 \label{fig:types-of-instability}
 \end{figure}
 
@@ -439,7 +439,7 @@ In conclusion, even with increased cycle-independent and cycle-dependent instabi
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-by-lanes.pdf}
-    \caption{.}\label{fig:predictability-by-lanes}
+    \caption{Measured cycle-dependent instability by served transport mode as extracted from the traffic light metadata.}\label{fig:predictability-by-lanes}
 \end{figure}
 
 Finally, let's examine the distribution of instability across individual modes of transportation and the spatial distribution. As depicted in \Cref{fig:predictability-by-lanes}, it is noteworthy that there are almost no differences in instability among different modes of transportation. Once again, the pattern emerges that traffic lights experience little to no persistent instability for the majority of the time. Overall, this implies that the predictability situation is similarly favorable for all modes of transportation.
@@ -447,7 +447,7 @@ Finally, let's examine the distribution of instability across individual modes o
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-map.pdf}
-    \caption{.}\label{fig:predictability-map}
+    \caption{Spatial distribution of measured cycle-dependent instability.}\label{fig:predictability-map}
 \end{figure}
 
 One possible explanation for this uniformity is that traffic lights for different modes of transportation may be interconnected, leading them to exhibit similar levels of instability. This relationship is further illustrated on the map in \Cref{fig:predictability-map}. The visualization demonstrates that instability often depends on the intersection. If individual traffic lights at a given intersection exhibit high instability, there is a significant chance that this behavior is mirrored in other traffic lights at the same intersection.

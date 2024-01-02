@@ -212,7 +212,7 @@ Having addressed the issues of duplicated nodes and detours due to non-crossable
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-border.pdf}
-\caption{.}
+\caption{Example of stitching around the DRN dataset's border.}
 \label{fig:routing-drn-osm-border}
 \end{figure}
 
@@ -367,7 +367,7 @@ To measure the alignment of generated bike routes with actual cycling infrastruc
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-hand-drawn-ground-truth.pdf}
-\caption{.}
+\caption{Best-fit routes for each routing provider in relation to the hand-drawn ground truth.}
 \label{fig:routing-hand-drawn-ground-truth}
 \end{figure}
 
@@ -422,7 +422,7 @@ The best fits are highlighted in \Cref{fig:routing-hand-drawn-ground-truth}. In 
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-convergence-process.pdf}
-\caption{.}
+\caption{Visualization of routing convergence depending on the number of waypoints interpolated along the desired trajectory.}
 \label{fig:routing-convergence-process}
 \end{figure}
 
@@ -439,7 +439,7 @@ As it is likely that an origin for the observed detours is waypoints that reside
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-drn.pdf}
-\caption{.}
+\caption{DRN 2023 traffic light matching ground truth.}
 \label{fig:matching-ground-truth-drn}
 \end{figure}
 
@@ -452,7 +452,7 @@ The DRN traffic light matching ground truth was developed according to the proce
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-lane-alignment.pdf}
-\caption{.}
+\caption{Comparison of traffic light geometry alignment with DRN and OpenStreetMap routes.}
 \label{fig:routing-lane-alignment}
 \end{figure}
 
@@ -477,7 +477,7 @@ Most matching traffic light geometries seem to reside directly over the DRN rout
 In the next experiment, we will assess whether this improvement positively impacts the matching accuracy, as expected. To achieve this, we will retrain the algorithmic matching model on the newly created ground truth. The hyperparameter configuration identified through hyperparameter optimization is compared to that of the OpenStreetMap models in \Cref{tab:hyperparameter-tuning-results-drn}. Notably, the optimization tool applied stricter thresholds than those employed in OpenStreetMap. These stricter thresholds result in quicker dismissal of traffic light geometries that do not align well with the route.
 
 \begin{table}[h]
-\caption{.}
+\caption{Model scores after retraining on DRN compared to preliminary results.}
 \begin{tabular}{@{}lllllllll@{}}
 \toprule
   \textbf{Model} & \textbf{Benchmark} & \textbf{Trained on} & \textbf{TP} & \textbf{FP} & \textbf{FN} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
@@ -508,7 +508,7 @@ The measurable improvement in routing accuracy is evident not only in the enhanc
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-constellations-osm-vs-drn.pdf}
-\caption{.}
+\caption{Constellations between traffic light geometries and routes in DRN relative to the OpenStreetMap results.}
 \label{fig:matching-constellations-osm-vs-drn}
 \end{figure}
 
@@ -519,11 +519,11 @@ A similar difference is observed in situations where the route turns but runs of
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-route-errors-osm-vs-drn.pdf}
-\caption{.}
-\label{fig:}
+\caption{Routing errors tagged for each constellation between traffic light and route, compared between OpenStreetMap and DRN.}
+\label{fig:matching-route-errors-osm-vs-drn}
 \end{figure}
 
-An examination of routing errors, categorized into four classes during ground truth creation, reveals a significant enhancement. Instances without routing errors nearly tripled, rising from 23\% in OpenStreetMap to 64\% in DRN. This improvement primarily stems from more accurate utilization of bike lanes and paths, reducing routing in the middle of the road. However, complete elimination of this scenario was not achieved. Moreover, routing on the wrong side of the street occurs less frequently.
+As depicted in \Cref{fig:matching-route-errors-osm-vs-drn}, an examination of routing errors, categorized into four classes during ground truth creation, reveals a significant enhancement. Instances without routing errors nearly tripled, rising from 23\% in OpenStreetMap to 64\% in DRN. This improvement primarily stems from more accurate utilization of bike lanes and paths, reducing routing in the middle of the road. However, complete elimination of this scenario was not achieved. Moreover, routing on the wrong side of the street occurs less frequently.
 
 A detailed case study analyzing 72 random routes by Max Lorenz confirms these findings, as depicted in \Cref{tab:accuracy-comparison}. This validation study further supports the notable improvement in routing quality, marked by fewer identified errors. Continuous routing on the bicycle path contributes significantly to this improvement, along with mitigated occurrences of less common errors such as routing through impassable obstacles, buildings, and stairs.
 
@@ -543,7 +543,7 @@ Skipping or crossing additional signals & 1 & 3 \\
 Generally problematic road crossings & 1 & 4 \\
 \hline
 \end{tabular}
-\caption{Observed error cases among arbitrary sample of 72 routes.}%
+\caption{Observed error cases among an arbitrary sample of 72 routes.}%
 \label{tab:accuracy-comparison}%
 \end{table}
 
@@ -556,7 +556,7 @@ Finally, we assess the alignment of the DRN network with user journeys and exami
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-mapmatching-distance.pdf}
-\caption{.}
+\caption{Alignment of user trajectories with DRN and OpenStreetMap paths.}
 \label{fig:routing-mapmatching-distance}
 \end{figure}
 
@@ -567,7 +567,7 @@ The results are plotted in \Cref{fig:routing-mapmatching-distance}, depicting tw
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-gnss-mapmatching-distribution.pdf}
-\caption{.}
+\caption{Distance of each GNSS sample in user trajectories when map-matched onto DRN and OpenStreetMap networks.}
 \label{fig:routing-gnss-mapmatching-distribution}
 \end{figure}
 

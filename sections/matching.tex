@@ -489,7 +489,7 @@ As of December 8, 2023, 85.6\% of the 791 available intersection nodes in the sy
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/lanes-map.pdf}
-\caption{.}
+\caption{Types of transport modes served by traffic lights as extracted from metadata.}
 \label{fig:lanes-map}
 \end{figure}
 
@@ -519,7 +519,7 @@ The development of the route-based matching method involved creating several gro
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-osm-old.pdf}
-\caption{.}
+\caption{OpenStreetMap 2022 ground truth for model training and evaluation.}
 \label{fig:matching-ground-truth-osm-old}
 \end{figure}
 
@@ -534,7 +534,7 @@ While only 549 unique connections are identified at least once as a "match," an 
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-osm.pdf}
-\caption{.}
+\caption{Additional OpenStreetMap 2023 ground truth for model training and evaluation.}
 \label{fig:matching-ground-truth-osm}
 \end{figure}
 
@@ -553,7 +553,7 @@ An implication of this is that there is a limit to the number of routes that can
 \includegraphics[width=0.45\linewidth]{images/matching-ground-truth-progression-osm-old.pdf} & \includegraphics[width=0.45\linewidth]{images/matching-ground-truth-progression-osm.pdf} \\
 \includegraphics[width=0.45\linewidth]{images/matching-ground-truth-lsas-per-route-osm-old.pdf} & \includegraphics[width=0.45\linewidth]{images/matching-ground-truth-lsas-per-route-osm.pdf} \\
 \end{tabular}
-\caption{.}
+\caption{Redundancy of each ground truth as indicated by new constellations and multiple assignments to routes.}
 \label{fig:ground-truth-routes-per-lanes-osm}
 \end{figure}
 
@@ -589,7 +589,7 @@ The specific model configurations are detailed in \Cref{tab:hyperparameter-tunin
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-hpt-contour-topological-osm-updated.png}
-\caption{.}
+\caption{Contour plot of the hyperparameter tuner's threshold search space indicating its gradient measurements for F1 score optimization.}
 \label{fig:hyperparameter-contourplot}
 \end{figure}
 
@@ -617,7 +617,7 @@ When the lane and the route are very close to each other (Point Dists), this is 
 Having explored the interpretability of the models, let's now focus on the achieved scores. These are presented in \Cref{tab:model-scores}.
 
 \begin{table}[h]
-\caption{.}
+\caption{Model evaluation scores.}
 \begin{tabular}{@{}lllllllll@{}}
 \toprule
   \textbf{Model} & \textbf{Benchmark} & \textbf{Trained on} & \textbf{TP} & \textbf{FP} & \textbf{FN} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
@@ -647,7 +647,7 @@ Instead, what we can do is carefully examine areas where improvement potential e
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-constellations-osm-old.pdf}
-\caption{.}
+\caption{Recorded types of constellation between route and traffic light geometry.}
 \label{fig:matching-constellations-osm}
 \end{figure}
 
@@ -662,7 +662,7 @@ These situations occur more frequently than expected and are closely related to 
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-route-errors-osm-old.pdf}
-\caption{.}
+\caption{Recorded types of routing errors annotated to each constellation between traffic light and route.}
 \label{fig:matching-routing-errors-osm}
 \end{figure}
 
