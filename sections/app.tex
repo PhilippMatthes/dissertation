@@ -10,23 +10,28 @@ This chapter is partially based on the following paper in which the author was t
 
 \section{Related Work}\label{sec:rw-uis}
 
+\subsection{User Interfaces}
+
 - State in simulations
 
-\subsection{Visual User Interfaces}
-
+- Visual User Interfaces
 - Usability analysis by Krause et al.
 - User Reviews on Traffic Pilot
 - Not many "production-ready" solutions!
 
-\subsection{Non-Visual User Interfaces}
-
+- Non-Visual User Interfaces
 - Vibrotactile: Cespedes et al. \url{https://ieeexplore.ieee.org/abstract/document/8535027}
 
-\subsection{User Interfaces for Cyclists}
-
+- User Interfaces for cyclists
 - FastTrack: Personalization
 
-\subsection{Transport Mode Detection}
+- Avoiding the usage of bike-GLOSA in a non-cycling context (Transport mode detection)
+
+\subsection{Impacts}
+
+- Impacts on Cars
+- Impacts on Cyclists
+- Simulations, Real-World Impacts
 
 \section{Concept}
 
@@ -36,7 +41,7 @@ Once the signal's distance and the prediction have been obtained, the task is to
 
 Finally, another question is how to combine the speed advisory with the proposed in-app routing system. The proposed solution in this work is to overlay a three-dimensional map view with the speed advisory. This solution is utilized to establish a clear link between the user's route and the traffic light for which a speed advisory is displayed. However, this comes with the challenges of always displaying a suitable region of the map, automatically calculating new routes on route deviations, and correcting GNSS errors. All of these challenges must be overcome to provide an overall good user experience.
 
-\subsection{Finding the Best Speed Advisory User Interface}
+\subsection{Preliminary and Final Speed Advisory User Interfaces}
 
 With the estimated distance to the traffic light and the obtained traffic light prediction, the speed advisory can be calculated and displayed on the user interface. Related work has identified multiple distinct user interfaces for speed recommendation: displaying a target speed, mapping the predicted states onto a speedometer, and utilizing a multi-lane projection. However, so far, there are no conclusive results that would indicate that one of these user interfaces is the most suitable. To determine the most suitable approach, all three methods are investigated.
 
@@ -96,9 +101,11 @@ To address prediction uncertainties, the speedometer incorporates a mapping of t
 
 To conclude this section, three identified visualization methods have been investigated and thoroughly tested. Observed disadvantages of other visualizations ultimately lead to the conclusion that the speedometer visualization is the best possible speed advisory visualization for cyclists. Thus, this design is selected as the final approach.
 
-\subsection{Camera Controller for Improved Traffic Light Visibility}
+\subsection{Avoidance of Usage in a Non-Cycling Context}
 
-The main purposes of the map view are to display the user's current route and to show which signals are along the way. In this way, the user sees if a traffic light is connected to the TLD system and for which traffic light the current speed advisory is displayed. Initially, a camera was implemented that strictly follows the user's position and heading at a fixed height. However, often, the currently selected traffic light was out of view, or the camera was too far away at an intersection or a specific turn. Thus, the map's camera has to dynamically adjust its height depending on the situation, but without being distractive.
+\subsection{Orientation and Wayfinding}
+
+\paragraph{Camera Controller for Improved Traffic Light Visibility:} The main purposes of the map view are to display the user's current route and to show which signals are along the way. In this way, the user sees if a traffic light is connected to the TLD system and for which traffic light the current speed advisory is displayed. Initially, a camera was implemented that strictly follows the user's position and heading at a fixed height. However, often, the currently selected traffic light was out of view, or the camera was too far away at an intersection or a specific turn. Thus, the map's camera has to dynamically adjust its height depending on the situation, but without being distractive.
 
 Furthermore, there would be occasions when road bends were between the user and the signal. In this case, since the heading of the user was strictly followed, the route would curve away from the map view, making it hard to see the upcoming signal. Through studying other navigation apps, it was observed that Apple Maps employs a slight rotation of the map to provide users with a better overview of upcoming turns. A screenshot of this behavior is highlighted in \Cref{fig:camera-controller}. This behavior, in addition to automated zooming, was adopted to improve the overall usability and self-sustainedness of the map view.
 
@@ -111,8 +118,6 @@ Furthermore, there would be occasions when road bends were between the user and 
 \end{figure}
 
 During a ride, the app continuously checks if the user is approaching a traffic light by examining the route segments from the user's location. A turn is detected when a route segment is found that deviates at least 15° from the user's measured heading. As the user approaches a turn or traffic signal, the camera automatically zooms in to focus on the intersection, making it easier for users to locate a path entry or identify a corresponding signal. Additionally, the camera rotates slightly (up to a maximum of 20°) away from the user to ensure that the traffic lights remain within the view frustum. These threshold values have been determined empirically through extensive real-world testing. To prevent excessive zooming, the camera operates within specified maximum and minimum zoom levels, avoiding zooming too far out or too far in.
-
-\subsection{Enhancing the Usability of Routing }
 
 There are several factors that can influence a cyclist's route choice. For instance, cyclists may opt for a slightly less optimal route if it offers better surface quality. One approach is to incorporate this information directly into the routing profile to ensure that each user receives an enhanced routing decision. This is already supported by GraphHopper's routing profiles, defining different speeds for each \texttt{vehicle} depending on the road segments' metadata. However, it is important to acknowledge that GraphHopper's routing profiles are mathematical models that make complex assumptions and, therefore, cannot always produce the ideal route. From the user's perspective, it can often be hard to understand a particular route choice without any further explanation as to why specific paths have been chosen. This is a problem for users, especially if they are familiar with the area and already have a preferred route. Thus, to build trust in the routing, it is vital to provide additional route details to allow users to make informed routing decisions.
 
@@ -182,16 +187,65 @@ With this number of different points of interest, the risk of cluttering the map
 
 Initially, Nominatim was chosen as a geocoding service based on OpenStreetMap. However, the solution has shown limitations when it comes to supporting partial queries, such as searching for "University" using "Univers", and its response time was perceived as too slow (often more than 2 seconds) during preliminary tests. Therefore, as shown in \Cref{fig:routing-view-geocoding}, the decision was made to switch to Photon (by Komoot) as an alternative open-source solution that supports partial queries and provides faster query execution based on an ElasticSearch database.
 
-\subsection{Usage Avoidance in a Non-Cycling Context}
+\subsection{Final Application Architecture and Design}
+
+\begin{figure}[htbp]
+\caption{Final application infrastructure.}\label{fig:architecture}
+\includegraphics[width=\linewidth]{images/architecture.png}
+\end{figure}
+
+\Cref{fig:architecture} highlights the final service infrastructure that combines the developed solutions. The first key solution to make a bike-GLOSA app practical in a real-world urban environment is handling massive amounts of traffic light data. A prediction infrastructure (blue) is proposed that maximizes data ingress stability and self-monitors prediction qualities and availability. These metrics are used within the mobile application to adapt the speed advisory user interface and inform users about data outages.
+
+A speed advisory user interface (the Ride View) is designed that utilizes the speedometer projection to give users a free choice of the desired speed. Uncertainties in the prediction are visualized to enhance the speed advisory's trustworthiness. To make the speed advisory practical, a user-defined route is used for distance-to-signal estimation, traffic light matching, battery-efficient GNSS error correction, and a camera controller for improved traffic light visibility. Combining the speed advisory system with a navigation solution is another key idea to enable these methods and make the mobile application useful in the absence of traffic light predictions.
+
+To deliver bike navigation, a routing infrastructure (orange) is implemented that provides personalized, accurate, and metadata-enhanced bike routing. Once waypoints are found using the Geocoding Service and the Map Data Service that delivers bike-specific points of interest, an accurate bike route is calculated through the developed DRN approach. Route metadata and the predicted traffic situation are visualized to allow for a more informed routing decision. Generated routes are marked green at spots where users can expect a speed advisory. The routing material's actuality is ensured through an automated update CI/CD pipeline. 
+
+The final key solution that connects the speed advisory to the routing is route-based traffic light matching. Multiple approaches were tested, coming to a final machine-learning-based method that compares geometric features between the traffic light geometries and the route geometry to decide which sequence of signals will be passed along the trajectory. To avoid giving a speed advisory for the wrong intersection, unconnected intersections are detected and also matched along the route.
+
+Finally, a tracking service is implemented that obtains ride statistics from users. The collected telemetry data is used to conduct post-hoc analyses on the actual impact of bike-GLOSA on ride behavior. \Cref{ch:results} will focus on the analysis of this data.
+
+\begin{figure}[htbp]
+\caption{The PrioBike app's main view flow.}\label{fig:app}
+\includegraphics[width=\linewidth]{images/app.png}
+\end{figure}
+
+What's visible to the user is an application similar to other navigation apps like Google Maps or Komoot, with added speed advisory functionality. \Cref{fig:app} shows how the designed user interface components are combined into a cohesive application flow concept. From the Home view, which allows users to inform themselves about the current prediction status, users can personalize their routing profile and open the Routing view. This view provides the described route planning functionality. Finally, users can start a ride to obtain the discussed speed advisory. A summary is given after the ride, together with the option to rate the application experience. This rating, together with the collected ride and prediction data, is sent to the tracking service in an optionally offloaded upload routine.
+
+The final application is distributed to real-world test users in Hamburg, who can freely use the app throughout the city to provide realistic experimental circumstances for the urban cycling setting. Based on the collected data, surveys, and other experiments, the next goal is to determine the impacts of such a solution. These aspects will be discussed in the following chapter.
 
 \section{Results}
 
-\subsection{System Usability Score}
+\subsection{Usability}
 
-\subsection{Interaction During Ride}
+- SUS Score
+- Interaction during ride
+- General user feedback
 
-\subsection{Resource-Accuracy Tradeoff for Transport Mode Detection}
+\subsection{Impact on Approach Speed, Stop Time, and Energy Expenditure}
 
-\subsection{Detected Transport Modes}
+\begin{figure}[t]
+\caption{T.}\label{fig:}
+\includegraphics[width=\linewidth]{images/impacts-activation-distances.pdf}
+\end{figure}
+
+\begin{figure}[t]
+\caption{T.}\label{fig:}
+\includegraphics[width=\linewidth]{images/impacts-adherence.pdf}
+\end{figure}
+
+\begin{figure}[t]
+\caption{T.}\label{fig:}
+\includegraphics[width=\linewidth]{images/impacts-approach-speed.pdf}
+\end{figure}
+
+\begin{figure}[t]
+\caption{T.}\label{fig:}
+\includegraphics[width=\linewidth]{images/impacts-approach-speed-heatmap.pdf}
+\end{figure}
+
+\begin{figure}[t]
+\caption{T.}\label{fig:}
+\includegraphics[width=\linewidth]{images/impacts-stop-time-adherence.pdf}
+\end{figure}
 
 \section{Conclusions}
