@@ -26,6 +26,7 @@ This chapter is partially based on the following paper in which the author was t
 - FastTrack: Personalization
 
 - Avoiding the usage of bike-GLOSA in a non-cycling context (Transport mode detection)
+- Resource/Energy impacts
 
 \subsection{Impacts}
 
@@ -84,7 +85,7 @@ These observations culminate in the following conclusion: in the context of bike
 
 \paragraph{Multi-lane projection:} The multi-lane projection involves displaying multiple parallel lanes for upcoming traffic lights, with the prediction projected onto these virtual lanes. The user's location and speed are rendered above these lanes, allowing the user to slow down or speed up to move the prediction underneath. As the intersection comes closer, the lane's end (stop line) moves toward the user. This approach can be implemented by looking up all signals on intersections along the route which match the route's direction. The process is depicted in \Cref{fig:multi-lane-view}. Since all possible speeds are displayed, the user can flexibly choose between possible speeds. Furthermore, not a single traffic light is matched but multiple parallel signals at the intersection. This means that the user can select the appropriate signal, simplifying the traffic light matching process.
 
-However, this approach comes with its own drawbacks. The main drawback is the visualization's readability while riding. With multiple parallel signals being displayed, users have to mentally correlate the shown lanes with the real-world situation ahead and process predictions for multiple parallel lanes simultaneously. Another challenge lies in moving the predicted traffic light colors intuitively towards the signal, resembling a flow in which the user can "jump on". A problem is choosing a suitable zoom scale for the prediction, such that users can differentiate when they will be "caught" or "run into" a red signal. Similar to the initial color-coded scale, users also have to get used to the direction of movement that they can induce when they speed up or slow down. Due to these concerns about the approach's usability and potential for distraction, another speed advisory user interface was tested: the speedometer projection.
+However, this approach comes with its own drawbacks. The main drawback is the visualization's readability while riding. With multiple parallel signals being displayed, users have to mentally correlate the shown lanes with the real-world situation ahead and process predictions for multiple parallel lanes simultaneously. Another challenge lies in moving the predicted traffic light colors intuitively towards the signal, resembling a flow in which the user can "jump on." A problem is choosing a suitable zoom scale for the prediction, such that users can differentiate when they will be "caught" or "run into" a red signal. Similar to the initial color-coded scale, users also have to get used to the direction of movement that they can induce when they speed up or slow down. Due to these concerns about the approach's usability and potential for distraction, another speed advisory user interface was tested: the speedometer projection.
 
 \begin{figure}[htbp]
 \centering
@@ -100,8 +101,6 @@ As confirmed preliminarily through initial field tests, this approach represents
 To address prediction uncertainties, the speedometer incorporates a mapping of these uncertainties by adjusting the opacity of the green or red colors. This adaption is also highlighted in \Cref{fig:speedometer-adaptions}, and conveys certain and uncertain parts of the prediction to the user. Although this opacity mapping is also possible with the multi-lane visualization, the speedometer's prediction arc utilizes the available screen space much more efficiently, which makes the prediction uncertainties more easily conceivable. To avoid users adapting to a poor speed recommendation, the speed advisory is only displayed if the prediction quality is above 50\%. Additionally, to compensate for fluctuations in the measured GNSS speed, a smooth animation is applied to the speedometer needle. On top, a time-to-green (or time-to-red) countdown has been included at the center of the speedometer. This countdown is hidden either 5 seconds before the traffic light switches or if the prediction quality is too low, avoiding jump starts or inadvertently running a red light. This idea was adopted from other time-to-green displays observed in Dresden that are mounted onto a traffic light and hide their countdown a few seconds before switching as well.
 
 To conclude this section, three identified visualization methods have been investigated and thoroughly tested. Observed disadvantages of other visualizations ultimately lead to the conclusion that the speedometer visualization is the best possible speed advisory visualization for cyclists. Thus, this design is selected as the final approach.
-
-\subsection{Avoidance of Usage in a Non-Cycling Context}
 
 \subsection{Orientation and Wayfinding}
 
