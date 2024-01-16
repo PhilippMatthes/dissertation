@@ -49,24 +49,24 @@
 \begin{pgfscope}%
 \pgfsetbuttcap%
 \pgfsetmiterjoin%
-\definecolor{currentfill}{rgb}{0.400000,0.760784,0.647059}%
+\definecolor{currentfill}{rgb}{0.701961,0.701961,0.701961}%
 \pgfsetfillcolor{currentfill}%
 \pgfsetlinewidth{0.000000pt}%
 \definecolor{currentstroke}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetstrokeopacity{0.000000}%
 \pgfsetdash{}{0pt}%
-\pgfpathmoveto{\pgfqpoint{4.517779in}{2.298583in}}%
-\pgfpathcurveto{\pgfqpoint{4.397198in}{2.368200in}}{\pgfqpoint{4.262427in}{2.409671in}}{\pgfqpoint{4.123568in}{2.419886in}}%
-\pgfpathcurveto{\pgfqpoint{3.984709in}{2.430101in}}{\pgfqpoint{3.845321in}{2.408799in}}{\pgfqpoint{3.715851in}{2.357576in}}%
-\pgfpathcurveto{\pgfqpoint{3.586381in}{2.306354in}}{\pgfqpoint{3.470148in}{2.226524in}}{\pgfqpoint{3.375865in}{2.124070in}}%
-\pgfpathcurveto{\pgfqpoint{3.281581in}{2.021616in}}{\pgfqpoint{3.211663in}{1.899164in}}{\pgfqpoint{3.171352in}{1.765893in}}%
-\pgfpathcurveto{\pgfqpoint{3.131041in}{1.632622in}}{\pgfqpoint{3.121369in}{1.491947in}}{\pgfqpoint{3.143063in}{1.354413in}}%
-\pgfpathcurveto{\pgfqpoint{3.164756in}{1.216879in}}{\pgfqpoint{3.217258in}{1.086011in}}{\pgfqpoint{3.296633in}{0.971618in}}%
-\pgfpathcurveto{\pgfqpoint{3.376008in}{0.857225in}}{\pgfqpoint{3.480222in}{0.762239in}}{\pgfqpoint{3.601464in}{0.693780in}}%
-\pgfpathcurveto{\pgfqpoint{3.722706in}{0.625321in}}{\pgfqpoint{3.857868in}{0.585143in}}{\pgfqpoint{3.996818in}{0.576259in}}%
-\pgfpathlineto{\pgfqpoint{4.055779in}{1.498376in}}%
-\pgfpathlineto{\pgfqpoint{4.517779in}{2.298583in}}%
+\pgfpathmoveto{\pgfqpoint{4.293015in}{2.379992in}}%
+\pgfpathcurveto{\pgfqpoint{4.160159in}{2.415590in}}{\pgfqpoint{4.021015in}{2.421079in}}{\pgfqpoint{3.885767in}{2.396057in}}%
+\pgfpathcurveto{\pgfqpoint{3.750520in}{2.371034in}}{\pgfqpoint{3.622550in}{2.316126in}}{\pgfqpoint{3.511225in}{2.235350in}}%
+\pgfpathcurveto{\pgfqpoint{3.399899in}{2.154575in}}{\pgfqpoint{3.308001in}{2.049952in}}{\pgfqpoint{3.242257in}{1.929139in}}%
+\pgfpathcurveto{\pgfqpoint{3.176513in}{1.808326in}}{\pgfqpoint{3.138566in}{1.674344in}}{\pgfqpoint{3.131194in}{1.536999in}}%
+\pgfpathcurveto{\pgfqpoint{3.123823in}{1.399653in}}{\pgfqpoint{3.147210in}{1.262379in}}{\pgfqpoint{3.199645in}{1.135223in}}%
+\pgfpathcurveto{\pgfqpoint{3.252080in}{1.008067in}}{\pgfqpoint{3.332251in}{0.894209in}}{\pgfqpoint{3.434291in}{0.801982in}}%
+\pgfpathcurveto{\pgfqpoint{3.536331in}{0.709754in}}{\pgfqpoint{3.657688in}{0.641464in}}{\pgfqpoint{3.789481in}{0.602108in}}%
+\pgfpathcurveto{\pgfqpoint{3.921273in}{0.562753in}}{\pgfqpoint{4.060205in}{0.553317in}}{\pgfqpoint{4.196108in}{0.574490in}}%
+\pgfpathlineto{\pgfqpoint{4.053866in}{1.487476in}}%
+\pgfpathlineto{\pgfqpoint{4.293015in}{2.379992in}}%
 \pgfpathclose%
 \pgfusepath{fill}%
 \end{pgfscope}%
@@ -80,13 +80,13 @@
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetstrokeopacity{0.000000}%
 \pgfsetdash{}{0pt}%
-\pgfpathmoveto{\pgfqpoint{4.074734in}{0.531274in}}%
-\pgfpathcurveto{\pgfqpoint{4.210704in}{0.522580in}}{\pgfqpoint{4.346929in}{0.544067in}}{\pgfqpoint{4.473622in}{0.594191in}}%
-\pgfpathcurveto{\pgfqpoint{4.600315in}{0.644315in}}{\pgfqpoint{4.714367in}{0.721846in}}{\pgfqpoint{4.807584in}{0.821214in}}%
-\pgfpathcurveto{\pgfqpoint{4.900802in}{0.920582in}}{\pgfqpoint{4.970897in}{1.039349in}}{\pgfqpoint{5.012835in}{1.168982in}}%
-\pgfpathcurveto{\pgfqpoint{5.054772in}{1.298615in}}{\pgfqpoint{5.067522in}{1.435934in}}{\pgfqpoint{5.050170in}{1.571072in}}%
-\pgfpathlineto{\pgfqpoint{4.133694in}{1.453391in}}%
-\pgfpathlineto{\pgfqpoint{4.074734in}{0.531274in}}%
+\pgfpathmoveto{\pgfqpoint{4.281733in}{0.548036in}}%
+\pgfpathcurveto{\pgfqpoint{4.414722in}{0.568756in}}{\pgfqpoint{4.541592in}{0.618285in}}{\pgfqpoint{4.653443in}{0.693149in}}%
+\pgfpathcurveto{\pgfqpoint{4.765295in}{0.768014in}}{\pgfqpoint{4.859449in}{0.866421in}}{\pgfqpoint{4.929303in}{0.981468in}}%
+\pgfpathcurveto{\pgfqpoint{4.999157in}{1.096515in}}{\pgfqpoint{5.043037in}{1.225448in}}{\pgfqpoint{5.057866in}{1.359222in}}%
+\pgfpathcurveto{\pgfqpoint{5.072694in}{1.492996in}}{\pgfqpoint{5.058116in}{1.628409in}}{\pgfqpoint{5.015154in}{1.755962in}}%
+\pgfpathlineto{\pgfqpoint{4.139491in}{1.461022in}}%
+\pgfpathlineto{\pgfqpoint{4.281733in}{0.548036in}}%
 \pgfpathclose%
 \pgfusepath{fill}%
 \end{pgfscope}%
@@ -100,11 +100,11 @@
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetstrokeopacity{0.000000}%
 \pgfsetdash{}{0pt}%
-\pgfpathmoveto{\pgfqpoint{5.054930in}{1.628287in}}%
-\pgfpathcurveto{\pgfqpoint{5.036817in}{1.769351in}}{\pgfqpoint{4.986377in}{1.904346in}}{\pgfqpoint{4.907551in}{2.022726in}}%
-\pgfpathcurveto{\pgfqpoint{4.828726in}{2.141105in}}{\pgfqpoint{4.723623in}{2.239702in}}{\pgfqpoint{4.600455in}{2.310813in}}%
-\pgfpathlineto{\pgfqpoint{4.138455in}{1.510606in}}%
-\pgfpathlineto{\pgfqpoint{5.054930in}{1.628287in}}%
+\pgfpathmoveto{\pgfqpoint{5.007285in}{1.813622in}}%
+\pgfpathcurveto{\pgfqpoint{4.958667in}{1.957968in}}{\pgfqpoint{4.875104in}{2.088077in}}{\pgfqpoint{4.764058in}{2.192329in}}%
+\pgfpathcurveto{\pgfqpoint{4.653013in}{2.296581in}}{\pgfqpoint{4.517894in}{2.371776in}}{\pgfqpoint{4.370771in}{2.411198in}}%
+\pgfpathlineto{\pgfqpoint{4.131622in}{1.518682in}}%
+\pgfpathlineto{\pgfqpoint{5.007285in}{1.813622in}}%
 \pgfpathclose%
 \pgfusepath{fill}%
 \end{pgfscope}%
@@ -179,61 +179,61 @@
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=3.348237in,y=1.712390in,,]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}47}}%
+\pgftext[x=3.315729in,y=1.527094in,,]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}47}}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=5.009751in, y=0.836422in, left, base]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}Real World}}%
+\pgftext[x=5.166247in, y=1.042463in, left, base]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}Real World}}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=5.009751in, y=0.684415in, left, base]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}\cite{iglesias_i2v_2008},\cite{schweiger_elisatm_2011},\cite{koukoumidis_signalguru_2011},\cite{koukoumidis_leveraging_2012},\cite{xia_field_2012},\cite{zweck_traffic_2013},\cite{suramardhana_driver-centric_2014},\cite{protschky_extensive_2014}}}%
+\pgftext[x=5.166247in, y=0.890457in, left, base]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}\cite{iglesias_i2v_2008},\cite{schweiger_elisatm_2011},\cite{koukoumidis_signalguru_2011},\cite{koukoumidis_leveraging_2012},\cite{xia_field_2012},\cite{zweck_traffic_2013},\cite{suramardhana_driver-centric_2014},\cite{protschky_extensive_2014}}}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=5.009751in, y=0.524693in, left, base]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}\cite{protschky_adaptive_2014},\cite{xu_bb_2015},\cite{bernais_design_2016},\cite{stahlmann_multi-hop_2017},\cite{wilson_driver_2017},\cite{sokolov_effects_2018},\cite{hao_eco-approach_2019},\cite{stahlmann_exploring_2018}}}%
+\pgftext[x=5.166247in, y=0.730735in, left, base]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}\cite{protschky_adaptive_2014},\cite{xu_bb_2015},\cite{bernais_design_2016},\cite{stahlmann_multi-hop_2017},\cite{wilson_driver_2017},\cite{sokolov_effects_2018},\cite{hao_eco-approach_2019},\cite{stahlmann_exploring_2018}}}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=5.009751in, y=0.364971in, left, base]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}\cite{marias_parella_design_2019},\cite{fickas_fast_2019},\cite{jacob_ivs-kom_2020},\cite{khan_eco-drive_2021},\cite{chen_developing_2022},\cite{schneegans_prediction_2023},\cite{yunex_traffic_v2x-kommunikation_2023}}}%
+\pgftext[x=5.166247in, y=0.571012in, left, base]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}\cite{marias_parella_design_2019},\cite{fickas_fast_2019},\cite{jacob_ivs-kom_2020},\cite{khan_eco-drive_2021},\cite{chen_developing_2022},\cite{schneegans_prediction_2023},\cite{yunex_traffic_v2x-kommunikation_2023}}}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=4.672806in,y=0.947649in,,]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}23}}%
+\pgftext[x=4.771341in,y=1.077379in,,]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}23}}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=5.138280in, y=2.301362in, left, base]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}Hybrid}}%
+\pgftext[x=4.953789in, y=2.519423in, left, base]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}Hybrid}}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=5.138280in, y=2.149356in, left, base]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}\cite{raubitschek_predictive_2011},\cite{mahler_reducing_2012},\cite{bodenheimer_enabling_2014},\cite{bodenheimer_glosa_2015},\cite{luo_green_2017},\cite{zhao_greendrive_2017},\cite{lu_enhancement_2018},\cite{xie_dynamic_2021}}}%
+\pgftext[x=4.953789in, y=2.367417in, left, base]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}\cite{raubitschek_predictive_2011},\cite{mahler_reducing_2012},\cite{bodenheimer_enabling_2014},\cite{bodenheimer_glosa_2015},\cite{luo_green_2017},\cite{zhao_greendrive_2017},\cite{lu_enhancement_2018},\cite{xie_dynamic_2021}}}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=5.138280in, y=1.989633in, left, base]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}\cite{bhattacharyya_assessing_2022},\cite{ding_speedadv_2023},\cite{typaldos_modified_2023},\cite{zhao_green_2023}}}%
+\pgftext[x=4.953789in, y=2.207695in, left, base]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}\cite{bhattacharyya_assessing_2022},\cite{coppola_integrated_2022},\cite{ding_speedadv_2023},\cite{typaldos_modified_2023},\cite{zhao_green_2023}}}%
 \end{pgfscope}%
 \begin{pgfscope}%
 \definecolor{textcolor}{rgb}{0.000000,0.000000,0.000000}%
 \pgfsetstrokecolor{textcolor}%
 \pgfsetfillcolor{textcolor}%
-\pgftext[x=4.753732in,y=1.920302in,,]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}12}}%
+\pgftext[x=4.637571in,y=2.057600in,,]{\color{textcolor}{\sffamily\fontsize{10.000000}{12.000000}\selectfont\catcode`\^=\active\def^{\ifmmode\sp\else\^{}\fi}\catcode`\%=\active\def%{\%}13}}%
 \end{pgfscope}%
 \end{pgfpicture}%
 \makeatother%
