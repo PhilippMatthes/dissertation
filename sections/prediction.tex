@@ -10,6 +10,21 @@ Despite these encouraging prospects, traffic light prediction is currently assoc
 
 Hence, a mobile system working across multiple intersections requires an interoperable data source. Here, the option exists to obtain the control programs directly, but without the current internal program state \cite{zweck_traffic_2013}. Since traffic-adaptive signals may only decide a few seconds before the next cycle how long the green phase will be switched \cite{islam_improved_2016}, this method is restricted to fixed-time traffic light control programs \cite{zweck_traffic_2013}. However, only 161 out of 1731 intersection nodes in Hamburg run a fixed-time program as of 2023. As seen in \Cref{tab:control-programs}, another factor hindering a prediction based on the engineering plans of control programs is the large variety of formats, in addition to the limited availability.
 
+% 3) VT-Steuerungsverfahren in Hamburg
+%    - OMTC (Open Method of Traffic Control) -> development environment for free logic (LISA+)
+%        supported strategy control (Local control, Fixed time control, Vehicle , adaptive control, Coordinate control, Co-operative control, 
+%    - COMTESS-Steuerung (Ist eine alte Bezeichnung von Schlothauer und Wauer für die LISA VA Logik. Daher gleichbedeutend mit OMTC und „LISA OML“. Das Standardverfahren in Hamburg ist LISA OML für alle neuen Steuerungen.)
+%    - FLUSS-Steuerung (bisher unbekannt und auch eine kurze Internetsuche hat nichts zutage gefördert)
+%    - TRELAN/TRENDS (Ist die VA Steuerung / Flussdiagramm – Sprache der Firma GEVAS. Es wird in ihrem Programm CROSSIG eingesetzt. Der Funktionsumfang ähnelt stark der LISA VA Planung. Es ist ein direkter Konkurrent zu LISA. TRELAN wird bei uns nur noch an wenigen alten Dambach M844 Steuergeräten eingesetzt (war innerhalb eines speziellen Projektes). Bei neuen Anlagen wird es nicht eingesetzt. Ebenso wird CROSSIG in Hamburg nicht eingesetzt. / TRENDS - Ist der „Steuerungskern“ der TRELAN VA, der im Lichtsignalsteuergerät implementiert ist.)
+%    - AF ohne Logi (Das sind in der Regel auch verkehrsabhängige Steuerungen. Die Verkehrsplanung selbst enthält dabei keine Logik, sondern nur Signalzeitenpläne mit einem Beschreibungstext. Aus den Texten und beispielhaften Signalzeitenplänen wird dann bei HHVA eine Logik erstellt. Letztendlich haben diese Anlagen also doch eine Logik, aber sie wird nicht vom Verkehrsplaner erstellt, sondern von Technikern bei HHVA. Der Regelfall heutzutage ist aber, dass der Verkehrsplaner möglichst immer eine vollständig lauffähige LISA Logik liefern soll. HHVA erstellt nur in Ausnahmefällen selber VA Logiken. Anlagen der Kategorie „AF ohne Logik“ sollte es in Zukunft daher immer weniger geben.)
+%    - VS-PLUS
+%        - verkehrsabhängige Steuerungsverfahren eignet sich für vollverkehrsabhängige Einzelanlagen und für koordinierte Netze mit Teilverkehrsabhängigkeit
+%        - seine Rahmenplantechnologie qualifiziert vsplus darüber hinaus besonders für adaptive Netzsteuerungsverfahren.
+%        - Parametertechnik
+%        - Funktionalität zur Förderung und Beschleunigung des öffentlichen Verkehrs
+%    - Festzeit ohne/mit Blindensignal 
+%        - Ergänzungslogik, die sich um die Tonsignale kümmert
+
 \begin{table}[htbp]
     \centering
     \begin{tabular}{lr}
