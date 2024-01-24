@@ -75,7 +75,7 @@ Thus, a combination of GLOSA and a navigation app seems to be a promising curren
 - Xu et al. (2015) \cite{xu_bb_2015} kommen zu 15.1\% Ersparnissen beim Test mit 3 Kreuzungen in Bejing, aber die Tests wurden bei Nacht ausgeführt um eine Interferenz mit anderen Fahrzeugen zu vermeiden.
 - Khan et al. (2021) \cite{khan_eco-drive_2021} messen eine Energieersparnis von 5\% beim Test mit 1187 Kreuzungen in Ottawa, Canada. Beim Test wurden 830 Fahrzeuge mit einer GLOSA-App ausgestattet und über 8 Wochen aufgezeichnete Fahrtdaten ausgewertet.
 
-- Für elektrische Fahrräder messen Tal et al. (2016) \cite{tal_vehicular-communications-based_2016} eine Ersparnis von 32 - 46\% per iTETRIS (SUMO) Simulation, getestet wurde eine Kreuzung. Die Energieersparnis wurde durch ein Energieverbrauchsmodell gemessen, welches den überwundenen Luftwiderstand, Neigung der Straße, und den Rollwiderstand berücksichtigt.
+- Für elektrische Fahrräder messen Tal et al. (2016) \cite{tal_vehicular-communications-based_2016} eine Ersparnis von 32 - 46\% per iTETRIS (SUMO) Simulation, getestet wurde eine Kreuzung. Die Energieersparnis wurde durch ein Energieverbrauchsmodell gemessen, welches den überwundenen Luftwiderstand, Neigung der Straße, und den Rollwiderstand berücksichtigt. Ein ähnliches Modell benutzen auch Dabiri et al. (2020) \cite{dabiri_optimized_2020}, nur, dass hier noch die Beschleunigung mit einfließt
 - Die tatsächliche Energieersparnis bei alltäglichen Fahrten wurde bisher bei Fahrradfahrern nicht gemessen.
 
 \begin{figure}
@@ -102,23 +102,13 @@ Thus, a combination of GLOSA and a navigation app seems to be a promising curren
 - Der gleiche Fall wurde auch in der fahrradbezogenen Studie von Fickas et al. (2019) \cite{fickas_fast_2019} von Probanden berichtet: andere Fahrradfahrer "verstopften" (clogging) die Radfahrspur, weshalb sich nicht an die Geschwindigkeitsempfehlung gehalten werden konnte, ohne gefährlich auszuweichen. Wie die generelle Nützlichkeit der App beurteilt wurde oder ob der Komfort verbessert werden konnte, wurde nicht abgefragt. Klar ist jedoch, dass einige Probanden gelegentlich das Gefühl hatten, aus der Komfort-Zone gedrängt zu werden um der für sie zu langsamen oder zu schnellen Geschwindigkeitsempfehlung zu folgen.
 
 - Die Effektivität der Geschwindigkeitsempfehlung hängt nicht nur von der subjektiven Bereitschaft ab, dieser zu folgen, sondern auch von vielen weiteren Kontextfaktoren. Sokolov et al. (2018) \cite{sokolov_effects_2018} führen daneben beispielsweise auch die Auswirkung auf andere Verkehrsteilnehmer als Einflussfaktor auf.
-- Preuk et al. (2016 -- )
+- Preuk et al. (2016 -- 2018) \cite{preuk_does_2016, preuk_should_2018} beschäftigen sich mit dieser Frage und kommen zu dem Schluss, dass andere Verkehrsteilnehmer ein durch die Geschwindigkeitsempfehlung angepasstes Fahrzeug als störend wahrnehmen, sofern sie nicht darüber informiert sind, dass dieses Fahrzeug eine Geschwindigkeitsempfehlung nutzt.
+- Generell funktioniert die Geschwindigkeitsempfehlung besser, je mehr Fahrzeuge eine solche Geschwindigkeitsempfehlung nutzen (Penetration Rate). Bhattacharyya et al. (2022) \cite{bhattacharyya_assessing_2022}: Energy/fuel savings 3\% - 5\% (MPR 30\%), 10\% (MPR 50\%), 15\% (MPR 100\%); Stop time reduction 3\% (30\% MPR), 62\% (500m), 75\% (1000m)
 
-- Klöppel et al. (2019) \cite{kloeppel_performance_2019}: Überschätzung durch viele Studien? Welche Faktoren beeinflussen die Effektivität der Geschwindigkeitsempfehlung?
+- Auch die Aktivierungsdistanz und die Transmissionsrate der Prognosenachrichten spielt eine große Rolle bei der Effektivität der Geschwindigkeitsempfehlung, wie Sharara et al. (2019) \cite{sharara_impact_2019} zeigen. Meist wird eine Aktivierungsdistanz im Bereich 200 bis 300 Meter angenommen \cite{xia_indirect_2011, raubitschek_predictive_2011, rakha_eco-driving_2011, rakha_aeris_2012, mahler_reducing_2012, tal_vehicular-communications-based_2016, xu_bb_2015, de_nunzio_eco-driving_2015, luo_green_2017, kloeppel_performance_2019, dabiri_optimized_2020, hu_lane-level_2023}. Dies deckt sich ungefähr mit Messungen aus der echten Welt \cite{bernais_design_2016}, obwohl die Aktivierungsdistanz ohne Relaying \cite{stahlmann_multi-hop_2017} Übertragungs- oder Baubedingt auch deutlich darunter liegen kann \cite{hao_eco-approach_2019}.
+- Manche Studien gehen aber auch in Teilen von Szenarien mit über 1000 Meter Anfahrtsweg aus \cite{tielert_impact_2010, asadi_predictive_2011, krajzewicz_preparing_2012, nguyen_efficient_2016, karoui_efficiency_2018, plianos_predictive_2018, sharara_impact_2019, simchon_real-time_2020, bhattacharyya_assessing_2022}.
 
-- Study scale.
-- Bhattacharyya et al. (2022) \cite{bhattacharyya_assessing_2022}: "Within the database, we can register around 30,469 GLOSA use cases" ... "After filtering, 1328 eligible use-cases were obtained from the CTD database and 130 eligible use-cases were obtained from the CoopITS database.", "Based on the results summarized in Table II, drivers were observed to be most responsive when the first speed advice is displayed between 200m and 150m from the stop line."
-
-- Art des verwendeten Simulationsmodells, auch Antriebstyp
-- Dabiri et al. (2020) \cite{dabiri_optimized_2020}: Very detailed discussion of cyclist modeling
-
-- Aktivierungsdistanz und Transmissionsrate der Prognosenachrichten
-- Sharara et al. (2019) \cite{sharara_impact_2019}
-- Pariota et al. (2019) \cite{pariota_green_2019}: "Indeed, we assumed a perfect communication between the infrastructure (RSU) and the vehicle with no occurrences of packet loss or delay due to the number of vehicles in the intersection or blind spot."
-
-- Penetration rate des Systems: 
-- Bhattacharyya et al. (2022) \cite{bhattacharyya_assessing_2022}: Energy/fuel savings 3\% - 5\% (MPR 30\%), 10\% (MPR 50\%), 15\% (MPR 100\%); Stop time reduction 3\% (30\% MPR), 62\% (500m), 75\% (1000m)
-- Xu et al. (2015) \cite{xu_bb_2015}: "To avoid the interference of other vehicles, the field tests were conducted in late night, which means that the algorithm was applied in free-flow conditions"
+- Abschließend lässt sich sagen, wie auch schon von Klöppel et al. (2019) \cite{kloeppel_performance_2019} als Kritik eingebracht, wurden zwar bereits viele Untersuchungen zur Auswirkung von Traffic Light Assistance Services auf Verkehrsteilnehmer durchgeführt. Viele Ergebnisse zum Impact sind aber vermutlich sehr optimistisch, da sie die Komplexität eines Tests bei alltäglichen Fahrten in der echten Welt unterschätzen. Da es deutlich weniger Fahrradstudien als Tests an Autos oder anderen größeren motorisierten Fahrzeugen gibt, ist das Forschungsdefizit hier noch viel deutlicher -- und die Impacts einer GLOSA auf Radfahrer in einer alltäglichen stadtweiten Nutzung noch weitestgehend ungeklärt.
 
 \section{Concept}
 
