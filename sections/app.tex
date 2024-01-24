@@ -71,8 +71,16 @@ Thus, a combination of GLOSA and a navigation app seems to be a promising curren
 \end{figure}
 
 - Der erste Impact, der ausführlich in verwandter Literatur untersucht wurde, ist die potenzielle Energieersparnis durch reduktion unnötiger Beschleunigung vor der Kreuzung.
-- CO2-Emission wird manchmal abgebildet auf die Fuel Consumption: Seredynski et al. (2013) \cite{seredynski_comparison_2013, seredynski_multi-segment_2013}: "In general, emissions of CO2 are linearly related to fuel consumption [11, 12]"
-- Werte reihen sich in einer sehr diversen Spanne ein, siehe \Cref{fig:related-work-energy-savings}. Der Median liegt bei 16\% (IQR: 26\%) Emissions/Energy Reduktion
+- Meist wird entweder direkt der Spritverbrauch gemessen, oder als Proxy die CO2-Emissionen. Es wird davon ausgegangen, dass die CO2-Emissionen linear mit dem Spritverbrauch zusammenhängen \cite{seredynski_comparison_2013, seredynski_multi-segment_2013}. Eine relative Ersparnis ohne und mit GLOSA sollte sich also vergleichen lassen, auch wenn sie natürlich vom experimentellen Setup abhängt.
+- Die ermittelten Werte reihen sich in einer sehr diversen Spanne ein, siehe \Cref{fig:related-work-energy-savings}. Der Median liegt bei 16\% (IQR: 26\%) Emissions/Energy Reduktion, aber es werden zum Teil auch deutlich höhere Energieersparnisse berichtet. Mögliche Erklärungen finden sich im experimentellen Aufbau
+- Li et al. (2014) \cite{li_multi-vehicles_2014}: 69.3\% Ersparnis - MATLAB Simulationen in Freeflow conditions mit einer Kreuzung - Aktivierungsdistanz wird als weit genug angenommen
+- Mahler et al. (2012) \cite{mahler_reducing_2012}: 60-66\% Ersparnis: Custom simulation environment, 3 intersections, no consideration of traffic during simulation
+- Asadi et al. (2011) \cite{asadi_predictive_2011}: 47\% less fuel with 56\% less CO2 emissions, single-vehicle (freeflow) mit 9-11 Kreuzungen, PSAT (MATLAB), Aktivierungsdistanz 1000m
+- Realistische Energeeinsparungen dürften deutlich darunter liegen.
+- Die höchste direkt an einem echten Fahrzeug gemessene Einsparnis sind 22.1\%, die von Chen et al. (2022) \cite{chen_developing_2022} gemessen wurden. Hierfür wurde aber auch ohne Verkehr mit einem Bus über eine Teststrecke mit 2 Testampeln gefahren.
+- Evaluationen im richtigen Straßenverkehr kommen zu Einsparnissen von 20.3\% \cite{koukoumidis_signalguru_2011}, 
+
+- Für elektrische Fahrräder messen Tal et al. (2016) \cite{tal_vehicular-communications-based_2016} eine Ersparnis von 32 - 46\% per iTETRIS (SUMO) Simulation, getestet wurde eine Kreuzung. Die Energieersparnis wurde durch ein Energieverbrauchsmodell gemessen, welches den überwundenen Luftwiderstand, Neigung der Straße, und den Rollwiderstand berücksichtigt.
 
 - Zweiter untersuchter Impact: Stop time/trip time reduction
 
