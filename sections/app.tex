@@ -61,6 +61,24 @@ Thus, a combination of GLOSA and a navigation app seems to be a promising curren
 \label{fig:related-work-energy-savings}
 \end{figure}
 
+- Studien zu Impacts können in zwei Aspekte aufgeteilt werden: Quantitative Messungen der Energieersparnis und Haltereduktion an Kreuzungen, und die Auswirkungen auf das subjektive Empfinden
+
+- Zur Messung der Energieersparnis wird meist entweder direkt der Spritverbrauch gemessen, oder als Proxy die CO2-Emissionen. Es wird davon ausgegangen, dass die CO2-Emissionen linear mit dem Spritverbrauch zusammenhängen \cite{seredynski_comparison_2013, seredynski_multi-segment_2013}. Eine relative Ersparnis ohne und mit GLOSA sollte sich also vergleichen lassen, auch wenn sie natürlich vom experimentellen Setup abhängt.
+- Die ermittelten Werte reihen sich in einer sehr diversen Spanne ein, siehe \Cref{fig:related-work-energy-savings}. Der Median liegt bei 16\% (IQR: 26\%) Emissions/Energy Reduktion, aber es werden zum Teil auch deutlich höhere Energieersparnisse berichtet. Mögliche Erklärungen finden sich im experimentellen Aufbau
+- Li et al. (2014) \cite{li_multi-vehicles_2014}: 69.3\% Ersparnis - MATLAB Simulationen in Freeflow conditions mit einer Kreuzung - Aktivierungsdistanz wird als weit genug angenommen
+- Mahler et al. (2012) \cite{mahler_reducing_2012}: 60-66\% Ersparnis: Custom simulation environment, 3 intersections, no consideration of traffic during simulation
+- Asadi et al. (2011) \cite{asadi_predictive_2011}: 47\% less fuel with 56\% less CO2 emissions, single-vehicle (freeflow) mit 9-11 Kreuzungen, PSAT (MATLAB), Aktivierungsdistanz 1000m
+
+- Die tatsächliche Energieersparnis bei der Anwendung des Empfehlungssystems in alltäglichen Situationen liegt für Autos und größere motorisierte Fahrzeuge deutlich darunter
+- Die höchste direkt an einem echten Fahrzeug gemessene Einsparnis sind 22.1\%, die von Chen et al. (2022) \cite{chen_developing_2022} gemessen wurden. Hierfür wurde aber auch ohne Verkehr mit einem Bus über eine Teststrecke mit 2 Testampeln gefahren. In einer anderen Teststrecken-Studie von Hao et al. (2019) wurden 6\% \cite{hao_eco-approach_2019} Ersparnis gemessen.
+- Evaluationen direkt im Straßenverkehr kommen zu Einsparnissen von 20.3\% \cite{koukoumidis_signalguru_2011} bzw. 13.59\% \cite{xia_field_2012}. Allerdings gibt es hiervon generell nur wenige Studien. Meist werden auch nur wenige bzw. eine einzelne Kreuzung berücksichtigt, dadurch keine wirklich alltägliche Fahrten untersucht
+- Xu et al. (2015) \cite{xu_bb_2015} kommen zu 15.1\% Ersparnissen beim Test mit 3 Kreuzungen in Bejing, aber die Tests wurden bei Nacht ausgeführt um eine Interferenz mit anderen Fahrzeugen zu vermeiden.
+- Khan et al. (2021) \cite{khan_eco-drive_2021} messen eine Energieersparnis von 5\% beim Test mit 1187 Kreuzungen in Ottawa, Canada. Beim Test wurden 830 Fahrzeuge mit einer GLOSA-App ausgestattet und über 8 Wochen aufgezeichnete Fahrtdaten ausgewertet.
+
+- Für elektrische Fahrräder messen Tal et al. (2016) \cite{tal_vehicular-communications-based_2016} eine Ersparnis von 32 - 46\% per iTETRIS (SUMO) Simulation, getestet wurde eine Kreuzung. Die Energieersparnis wurde durch ein Energieverbrauchsmodell gemessen, welches den überwundenen Luftwiderstand, Neigung der Straße, und den Rollwiderstand berücksichtigt.
+- Die tatsächliche Energieersparnis bei alltäglichen Fahrten wurde bisher bei Fahrradfahrern nicht gemessen.
+
+
 \begin{figure}
 \centering
 \resizebox{\linewidth}{!}{%
@@ -70,21 +88,14 @@ Thus, a combination of GLOSA and a navigation app seems to be a promising curren
 \label{fig:related-work-stops}
 \end{figure}
 
-- Der erste Impact, der ausführlich in verwandter Literatur untersucht wurde, ist die potenzielle Energieersparnis durch reduktion unnötiger Beschleunigung vor der Kreuzung.
-- Meist wird entweder direkt der Spritverbrauch gemessen, oder als Proxy die CO2-Emissionen. Es wird davon ausgegangen, dass die CO2-Emissionen linear mit dem Spritverbrauch zusammenhängen \cite{seredynski_comparison_2013, seredynski_multi-segment_2013}. Eine relative Ersparnis ohne und mit GLOSA sollte sich also vergleichen lassen, auch wenn sie natürlich vom experimentellen Setup abhängt.
-- Die ermittelten Werte reihen sich in einer sehr diversen Spanne ein, siehe \Cref{fig:related-work-energy-savings}. Der Median liegt bei 16\% (IQR: 26\%) Emissions/Energy Reduktion, aber es werden zum Teil auch deutlich höhere Energieersparnisse berichtet. Mögliche Erklärungen finden sich im experimentellen Aufbau
-- Li et al. (2014) \cite{li_multi-vehicles_2014}: 69.3\% Ersparnis - MATLAB Simulationen in Freeflow conditions mit einer Kreuzung - Aktivierungsdistanz wird als weit genug angenommen
-- Mahler et al. (2012) \cite{mahler_reducing_2012}: 60-66\% Ersparnis: Custom simulation environment, 3 intersections, no consideration of traffic during simulation
-- Asadi et al. (2011) \cite{asadi_predictive_2011}: 47\% less fuel with 56\% less CO2 emissions, single-vehicle (freeflow) mit 9-11 Kreuzungen, PSAT (MATLAB), Aktivierungsdistanz 1000m
-- Realistische Energeeinsparungen dürften deutlich darunter liegen.
-- Die höchste direkt an einem echten Fahrzeug gemessene Einsparnis sind 22.1\%, die von Chen et al. (2022) \cite{chen_developing_2022} gemessen wurden. Hierfür wurde aber auch ohne Verkehr mit einem Bus über eine Teststrecke mit 2 Testampeln gefahren.
-- Evaluationen im richtigen Straßenverkehr kommen zu Einsparnissen von 20.3\% \cite{koukoumidis_signalguru_2011}, 
-- Xu et al. ()
 
-- Für elektrische Fahrräder messen Tal et al. (2016) \cite{tal_vehicular-communications-based_2016} eine Ersparnis von 32 - 46\% per iTETRIS (SUMO) Simulation, getestet wurde eine Kreuzung. Die Energieersparnis wurde durch ein Energieverbrauchsmodell gemessen, welches den überwundenen Luftwiderstand, Neigung der Straße, und den Rollwiderstand berücksichtigt.
+- Zweiter untersuchter Impact: Reduktion der Stop time bzw. stop rate. 
+- Die Stop time reduction wurde bisher fast ausschließlich in Simulationen gemessen. Karoui et al. (2018) \cite{karoui_efficiency_2018}, Sharara et al. (2019) \cite{sharara_impact_2019} und Xie et al. (2021) \cite{xie_dynamic_2021} kommen auf eine Reduktion von bis zu 100\% in günstigen Bedingungen, also eine vollständige Vermeidung des Stehenbleibens an der Kreuzung.
+- Die meisten Messungen liegen aber deutlich darunter, bei einem Median von 61\% (IQR: 61\%). Auch hier ist es wahrscheinlich, dass die tatsächliche Einsparung der Haltezeit in der Realität deutlich geringer ausfällt.
+- Bisher gibt es dafür aber nur einen Datenpunkt von Suramardhana et al. (2014) \cite{suramardhana_driver-centric_2014}. Hier wurde bei der Zufahrt auf eine Teststrecken-Kreuzung in Korea eine Haltezeitreduktion von 23.9\% gemessen. Zur genauen Messung, auch bzgl. GNSS-Genauigkeit des Smartphones, ist jedoch nicht viel bekannt.
 
-- Zweiter untersuchter Impact: Stop time/trip time reduction
-
+- Subjective Impacts
+- Khan et al. (2021) \cite{khan_eco-drive_2021}: Driver Perceptions of the speed advisory, Compliance with the speed advisory
 - Impact analysis bei Cyclists bringt Comfort ins Spiel.
 - Tal et al. (2016) \cite{tal_vehicular-communications-based_2016}: "In addition, an analysis on comfort-related metrics has shown that the proposed solution can also contribute to improving the cycling experience."
 
