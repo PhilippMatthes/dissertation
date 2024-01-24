@@ -1,10 +1,10 @@
 \chapter{Speed Advisory}\label{ch:app}
 
-\begin{Summary}[Bibliographical Notes]
-This chapter is partially based on the following paper in which the author was the principal investigator:
+% \begin{Summary}[Bibliographical Notes]
+% This chapter is partially based on the following paper in which the author was the principal investigator:
 
-\cite{matthes2022selecting} \fullcite{matthes2022selecting}
-\end{Summary}
+% \cite{matthes2022selecting} \fullcite{matthes2022selecting}
+% \end{Summary}
 
 \section{Introduction}
 
@@ -61,7 +61,7 @@ Thus, a combination of GLOSA and a navigation app seems to be a promising curren
 \label{fig:related-work-energy-savings}
 \end{figure}
 
-- Studien zu Impacts können in zwei Aspekte aufgeteilt werden: Quantitative Messungen der Energieersparnis und Haltereduktion an Kreuzungen, und die Auswirkungen auf das subjektive Empfinden
+- Studien zu Impacts können in drei Aspekte aufgeteilt werden: Quantitative Messungen der Energieersparnis, gezeigt in \Cref{fig:related-work-energy-savings}, Quantitative Messungen der Haltereduktion an Kreuzungen, und die qualitativen Auswirkungen auf das subjektive Empfinden
 
 - Zur Messung der Energieersparnis wird meist entweder direkt der Spritverbrauch gemessen, oder als Proxy die CO2-Emissionen. Es wird davon ausgegangen, dass die CO2-Emissionen linear mit dem Spritverbrauch zusammenhängen \cite{seredynski_comparison_2013, seredynski_multi-segment_2013}. Eine relative Ersparnis ohne und mit GLOSA sollte sich also vergleichen lassen, auch wenn sie natürlich vom experimentellen Setup abhängt.
 - Die ermittelten Werte reihen sich in einer sehr diversen Spanne ein, siehe \Cref{fig:related-work-energy-savings}. Der Median liegt bei 16\% (IQR: 26\%) Emissions/Energy Reduktion, aber es werden zum Teil auch deutlich höhere Energieersparnisse berichtet. Mögliche Erklärungen finden sich im experimentellen Aufbau
@@ -89,10 +89,15 @@ Thus, a combination of GLOSA and a navigation app seems to be a promising curren
 \end{figure}
 
 
-- Zweiter untersuchter Impact: Reduktion der Stop time bzw. stop rate. 
+- Zweiter untersuchter Impact: Reduktion der Stop time bzw. stop rate wie in \Cref{fig:related-work-stops} gezeigt.
 - Die Stop time reduction wurde bisher fast ausschließlich in Simulationen gemessen. Karoui et al. (2018) \cite{karoui_efficiency_2018}, Sharara et al. (2019) \cite{sharara_impact_2019} und Xie et al. (2021) \cite{xie_dynamic_2021} kommen auf eine Reduktion von bis zu 100\% in günstigen Bedingungen, also eine vollständige Vermeidung des Stehenbleibens an der Kreuzung.
 - Die meisten Messungen liegen aber deutlich darunter, bei einem Median von 61\% (IQR: 61\%). Auch hier ist es wahrscheinlich, dass die tatsächliche Einsparung der Haltezeit in der Realität deutlich geringer ausfällt.
-- Bisher gibt es dafür aber nur einen Datenpunkt von Suramardhana et al. (2014) \cite{suramardhana_driver-centric_2014}. Hier wurde bei der Zufahrt auf eine Teststrecken-Kreuzung in Korea eine Haltezeitreduktion von 23.9\% gemessen. Zur genauen Messung, auch bzgl. GNSS-Genauigkeit des Smartphones, ist jedoch nicht viel bekannt.
+- Bisher gibt es dafür aber nur einen Datenpunkt von Suramardhana et al. (2014) \cite{suramardhana_driver-centric_2014}. Hier wurde bei der Zufahrt auf eine Teststrecken-Kreuzung in Korea eine Haltezeitreduktion von 23.9\% gemessen.
+- Zur Stopratenreduktion gibt es auch eine Handvoll Messungen, die im Median bei 45\% (IQR: 30\%) liegen. Direkt im Feld gemessen wurde aber nur in der Studie von Xu et al. (2015) \cite{xu_bb_2015} eine Reduktion von 21 auf 15 Stops (28.6\% Reduktion). Zu Berücksichtigen ist hierbei wieder, das bei Nacht gemessen wurde, und dass generell nur wenige Fahrten durchgeführt wurden.
+- Fickas et al. (2019) \cite{fickas_fast_2019}: Stop rate bei Fahrradfahrern nicht direkt gemessen, aber in den meisten Fällen konnte die App die Fahrradfahrer erfolgreich bei grün über die Ampel lotsen
+- Wie stark Halte bei alltäglichen Fahrten und über mehrere tausend Ampeln mithilfe einer GLOSA reduziert werden können, ist also noch weitestgehend offen, nicht nur für Fahrradfahrer
+
+- Klöppel et al. (2019) \cite{kloeppel_performance_2019}: Überschätzung durch viele Studien? Welche Faktoren beeinflussen die Effektivität der Geschwindigkeitsempfehlung?
 
 - Subjective Impacts
 - Khan et al. (2021) \cite{khan_eco-drive_2021}: Driver Perceptions of the speed advisory, Compliance with the speed advisory
