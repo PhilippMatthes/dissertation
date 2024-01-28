@@ -164,13 +164,15 @@ The designed speedometer visualization aims to integrate the strengths and mitig
 
 To address prediction uncertainties, the speedometer incorporates a mapping of these uncertainties by adjusting the opacity of the green or red colors. This adaption is also highlighted in \Cref{fig:speedometer-adaptions}, and conveys certain and uncertain parts of the prediction to the user. 
 
-In addition, to avoid users adapting to a poor traffic light prediction, the speed advisory is only displayed if the prediction quality is above 50\%. This quality threshold was initially defined quite low compared to other works \cite{protschky_extensive_2014, protschky_adaptive_2014}, assuming that the remaining prediction uncertainty above a quality of 50\% is sufficiently conveyable through the blurred prediction regions. The defined threshold can surely be optimized further based on the demand for more reliable or more available speed advisories.
+In addition, to avoid users adapting to a poor traffic light prediction, the speed advisory is only displayed if the prediction quality is above 50\%. This quality threshold is defined quite low compared to other works \cite{protschky_extensive_2014, protschky_adaptive_2014}, assuming that the remaining prediction uncertainty above a quality of 50\% is sufficiently conveyable through the blurred prediction regions. The defined threshold can surely be optimized further based on the demand for more reliable or more available speed advisories. 
 
-In the target speed approach, one issue was that the GNSS speed jumped after each measurement, leading to a perceived lack of responsiveness. To compensate for fluctuations in the measured GNSS speed, a smooth animation is applied to the speedometer needle. On top, a time-to-green (or time-to-red) countdown has been included at the center of the speedometer. This countdown is hidden either 5 seconds before the traffic light switches or if the prediction quality is too low, avoiding jump starts or inadvertently running a red light. This idea was adopted from other time-to-green displays observed in Dresden that are mounted onto a traffic light and hide their countdown a few seconds before switching as well.
+To provide additional information, especially when standing at an intersection, a traffic light countdown has been included at the center of the speedometer. Like in related works \cite{stahlmann_exploring_2018, sokolov_effects_2018}, this countdown is hidden 5 seconds before the traffic light switches. However, the countdown is also hidden if the prediction quality is below the defined quality threshold. In this way, users are demotivated to overly trust an inaccurate countdown and potentially cause accidents.
 
-To conclude this section, three identified visualization methods have been investigated and thoroughly tested. Observed disadvantages of other visualizations ultimately lead to the conclusion that the speedometer visualization is the best possible speed advisory visualization for cyclists. Thus, this design is selected as the final approach.
+Two more enhancements were implemented to account for smartphone GNSS accuracy and frequency, potentially varying between device vendors. First, to compensate for fluctuations in the measured GNSS speed, a smooth animation is applied to the speedometer needle. In this way, we establish a sense of responsiveness even in the presence of low-frequency GNSS sampling. Finally, additional buttons are given to switch to the next or previous traffic lights just in case the position cannot be accurately associated. This option is given in addition to the automated snapping method developed in \Cref{ch:routing}, which determines whenever a traffic light is overshot by the GNSS position and keeps the user associated with it.
 
-\subsection{Integration with Bike Routing}
+Concluding this section, three identified visualization methods have been investigated and thoroughly tested. Out of the three options, the speedometer visualization is considered the best option. The user interface is designed to account for different situations, such as bad predictions or poor GNSS accuracy. Automated self-adaption of the user interface is a large aspect here, so no active interaction during the ride is required in most instances.
+
+\subsection{Routing-Enhanced Speed Advisory}
 
 \paragraph{Camera Controller for Improved Traffic Light Visibility:} The main purposes of the map view are to display the user's current route and to show which signals are along the way. In this way, the user sees if a traffic light is connected to the TLD system and for which traffic light the current speed advisory is displayed. Initially, a camera was implemented that strictly follows the user's position and heading at a fixed height. However, often, the currently selected traffic light was out of view, or the camera was too far away at an intersection or a specific turn. Thus, the map's camera has to dynamically adjust its height depending on the situation, but without being distractive.
 
@@ -201,38 +203,6 @@ There are several factors that can influence a cyclist's route choice. For insta
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{images/graphhopper-data-flow.png}
-\caption{Visualization and fetching of alternative routes and other metadata.}
-\label{fig:graphhopper-data-flow}
-\end{figure}
-
-To support users and make the route decision process more transparent, additional information is provided about the surface type, elevation, and road classes along the route so that the user can form their own opinions about the suitability of the chosen route. All of this information is fetched from the routing engine, as highlighted in \Cref{fig:graphhopper-data-flow}.
-
-\paragraph{Traffic Flow Prediction:} In addition to the path's surface information and inclination, the traffic density may also have a large impact on the ride's perceived comfortability and safety. Google Maps has addressed this problem by showing users a predicted traffic density for the following hours. The foundation for these calculations is floating data: "To determine popular times, wait times, and visit duration, Google uses aggregated and anonymized data from users who have opted in to Google Location History."\footnote{Source: \url{https://support.google.com/maps/answer/11323117?hl=en}} To adopt a similar solution without relying on a large user base, we can make use of open floating car data from the company INRIX provided through the TraffGo Road GmbH (see \Cref{fig:traffic-density-prediction}). The publicly available dataset "Verkehrslage Hamburg" is updated every five minutes and contains a current traffic density status for each path in Hamburg: free-flow, dense, heavy, and congested traffic. Based on this data, a traffic flow prediction for Hamburg is designed.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{images/traffic-density-prediction.pdf}
-\caption{Data flow of traffic density prediction toward the app.}
-\label{fig:traffic-density-prediction}
-\end{figure}
-
-To obtain an overall traffic flow factor $\text{Flow}$ for Hamburg, the following algorithm is designed. Let $P$ be the set of all paths in the "Verkehrslage Hamburg" dataset, and $n$ be the number of paths in $P$. For each path $i$ in $P$, let:
-
-\begin{itemize}
-    \item $L_i$ be the length of path $i$.
-    \item $W_i$ be the weight associated with path $i$: congested $\rightarrow 0$, heavy $\rightarrow 1/3$, dense $\rightarrow 2/3$, and free-flow $\rightarrow 1$
-\end{itemize}
-
-The total length $L_\text{network}$ of all paths is given by: $L_\text{network} = \sum_{i \in P} L_i$. Then, the score $S_i$ of each path in relation to the complete network is calculated as $S_i = \frac{L_i}{L_\text{network}} \times W_i$. Now, the resulting $\text{Flow}$ is the sum of all scores: $\text{Flow} = \sum_{i \in P} S_i$. 
-
-The value of $\text{Flow}$ is always in $[0, 1]$, where 0 indicates complete congestion of all roads, and 1 indicates free flow on all roads. In Hamburg, typical values lie within 0.94 (maximum traffic) and 0.99 (minimum traffic). This empirically defined boundary defines the min-max scaling of the user interface as highlighted in \Cref{fig:traffic-density-prediction}. This means that values of 0.94 will be displayed as a full-height bar, and 0.99 will be displayed as a bar with 0 height. 
-
-To predict the traffic flow, a history is persisted for every hour and weekday. Now, each hour is predicted through the arithmetic mean of all previously recorded hours on the same weekday. If the service starts freshly and has no recording of the same weekday, the hourly average is calculated by all other available weekdays. The generated prediction contains the current measured $\text{Flow}$ value, as well as predicted values for the previous, current, and next 5 hours. The continuously updated JSON data is served through a web proxy to the mobile app.
-
-
-\begin{figure}[htbp]
-\centering
 \includegraphics[width=\linewidth]{images/home-view-prediction-quality.png}
 \caption{Prediction quality visualized in the GLOSA app for enhanced explainability.}
 \label{fig:home-view-prediction-quality}
@@ -240,36 +210,60 @@ To predict the traffic flow, a history is persisted for every hour and weekday. 
 
 Not all traffic lights in Hamburg are available for prediction. Those who are available may occasionally lose data, which error detection can partially address. Another important factor, however, is the user's perspective on the data availability. Since a degraded prediction availability will also negatively impact usability, some ideas must be found that mitigate potential disappointments on the user side. One idea implemented in the GLOSA app is increasing the explainability of the prediction system. The existing monitoring infrastructure is extended such that users can also access information about the current availability. Through the app, users can inform themselves about the current percentage of available predictions and the spatial distribution of good and bad predictions on the map. The resulting user interface shown in \Cref{fig:home-view-prediction-quality} is intended to allow users to identify faults at an early stage and then switch to an alternative app, avoiding frustration caused by missing or incorrect predictions.
 
-\paragraph{Bike-Specific Points of Interest:} Routes can only be calculated if the users define their destination or multiple waypoints. Thus, users have to be given the option to look up places through the app. One option is to pinpoint a location on the in-app map. Here, it is vital to provide more information than just the base map layer. For example, Google Maps highlights specific places, such as busy areas, to improve the map's informativeness. In the designed solution, the focus lies on bike-specific points of interest, such as repair shops, parking spots, rental stations, and air pumps. A traffic layer is also provided, which indicates congested roads. Velo routes and static bike green waves (at 18 km/h) are also displayed to highlight public initiatives to make cycling more attractive. Furthermore, construction sites and accident hotspots can be marked on the map, providing enhanced awareness of potentially dangerous spots.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{images/points-of-interest.png}
-\caption{Hierarchical fade-in schema for map layers.}
-\label{fig:points-of-interest}
-\end{figure}
-
-With this number of different points of interest, the risk of cluttering the map is high. Especially bike parking spots are present in large numbers all over the city. To circumvent this problem, the draw distances of map layers are ordered using a hierarchical schema. This hierarchical schema is highlighted in \Cref{fig:points-of-interest}. Points of interest that may potentially impact the cyclist's route choice are visible when zoomed out, while points of interest that are typically more relevant in proximity to the user are only displayed once zoomed in. Accident hotspots represent a special role and are displayed from farther out to further emphasize them on the map.
-
-\paragraph{Accident hotspot extraction:} Under supervision, Markus Wieland \cite{wieland_2022} designed an accident hotspot extraction procedure based on the Unfallatlas\footnote{\url{https://unfallatlas.statistikportal.de/}} dataset. Bike accidents are extracted from the dataset and clustered, adding up the total number of bike accidents for each cluster. The resulting cluster accident counts are subjected to a threshold and, if exceeding this threshold, marked as accident hotspots.
-
-\paragraph{Geocoding:} To create human-readable waypoints and search for places, a geocoding service is required to convert textual input into geospatial coordinates (geocoding). Likewise, when the user taps on the map to add a new waypoint, a similar service is needed to translate the coordinates into an address for the route planning view (reverse geocoding).
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{images/routing-view-geocoding.png}
-\caption{(Reverse) geocoding via Photon for location search and map pinning.}
-\label{fig:routing-view-geocoding}
-\end{figure}
-
-Initially, Nominatim was chosen as a geocoding service based on OpenStreetMap. However, the solution has shown limitations when it comes to supporting partial queries, such as searching for "University" using "Univers", and its response time was perceived as too slow (often more than 2 seconds) during preliminary tests. Therefore, as shown in \Cref{fig:routing-view-geocoding}, the decision was made to switch to Photon (by Komoot) as an alternative open-source solution that supports partial queries and provides faster query execution based on an ElasticSearch database.
-
 \subsection{Final Application Architecture and Design}
 
 \begin{figure}[htbp]
 \caption{Final application infrastructure.}\label{fig:architecture}
 \includegraphics[width=\linewidth]{images/architecture.png}
 \end{figure}
+
+%  \paragraph{Bike-Specific Points of Interest:} Routes can only be calculated if the users define their destination or multiple waypoints. Thus, users have to be given the option to look up places through the app. One option is to pinpoint a location on the in-app map. Here, it is vital to provide more information than just the base map layer. For example, Google Maps highlights specific places, such as busy areas, to improve the map's informativeness. In the designed solution, the focus lies on bike-specific points of interest, such as repair shops, parking spots, rental stations, and air pumps. A traffic layer is also provided, which indicates congested roads. Velo routes and static bike green waves (at 18 km/h) are also displayed to highlight public initiatives to make cycling more attractive. Furthermore, construction sites and accident hotspots can be marked on the map, providing enhanced awareness of potentially dangerous spots.
+
+% \begin{figure}[htbp]
+% \centering
+% \includegraphics[width=\linewidth]{images/points-of-interest.png}
+% \caption{Hierarchical fade-in schema for map layers.}
+% \label{fig:points-of-interest}
+% \end{figure}
+
+% With this number of different points of interest, the risk of cluttering the map is high. Especially bike parking spots are present in large numbers all over the city. To circumvent this problem, the draw distances of map layers are ordered using a hierarchical schema. This hierarchical schema is highlighted in \Cref{fig:points-of-interest}. Points of interest that may potentially impact the cyclist's route choice are visible when zoomed out, while points of interest that are typically more relevant in proximity to the user are only displayed once zoomed in. Accident hotspots represent a special role and are displayed from farther out to further emphasize them on the map.
+
+% \paragraph{Accident hotspot extraction:} Under supervision, Markus Wieland \cite{wieland_2022} designed an accident hotspot extraction procedure based on the Unfallatlas\footnote{\url{https://unfallatlas.statistikportal.de/}} dataset. Bike accidents are extracted from the dataset and clustered, adding up the total number of bike accidents for each cluster. The resulting cluster accident counts are subjected to a threshold and, if exceeding this threshold, marked as accident hotspots.
+
+% \paragraph{Geocoding:} To create human-readable waypoints and search for places, a geocoding service is required to convert textual input into geospatial coordinates (geocoding). Likewise, when the user taps on the map to add a new waypoint, a similar service is needed to translate the coordinates into an address for the route planning view (reverse geocoding).
+
+% \begin{figure}[htbp]
+% \centering
+% \includegraphics[width=\linewidth]{images/routing-view-geocoding.png}
+% \caption{(Reverse) geocoding via Photon for location search and map pinning.}
+% \label{fig:routing-view-geocoding}
+% \end{figure}
+
+% Initially, Nominatim was chosen as a geocoding service based on OpenStreetMap. However, the solution has shown limitations when it comes to supporting partial queries, such as searching for "University" using "Univers", and its response time was perceived as too slow (often more than 2 seconds) during preliminary tests. Therefore, as shown in \Cref{fig:routing-view-geocoding}, the decision was made to switch to Photon (by Komoot) as an alternative open-source solution that supports partial queries and provides faster query execution based on an ElasticSearch database.
+
+
+%  \paragraph{Traffic Flow Prediction:} In addition to the path's surface information and inclination, the traffic density may also have a large impact on the ride's perceived comfortability and safety. Google Maps has addressed this problem by showing users a predicted traffic density for the following hours. The foundation for these calculations is floating data: "To determine popular times, wait times, and visit duration, Google uses aggregated and anonymized data from users who have opted in to Google Location History."\footnote{Source: \url{https://support.google.com/maps/answer/11323117?hl=en}} To adopt a similar solution without relying on a large user base, we can make use of open floating car data from the company INRIX provided through the TraffGo Road GmbH (see \Cref{fig:traffic-density-prediction}). The publicly available dataset "Verkehrslage Hamburg" is updated every five minutes and contains a current traffic density status for each path in Hamburg: free-flow, dense, heavy, and congested traffic. Based on this data, a traffic flow prediction for Hamburg is designed.
+
+% \begin{figure}[htbp]
+% \centering
+% \includegraphics[width=\linewidth]{images/traffic-density-prediction.pdf}
+% \caption{Data flow of traffic density prediction toward the app.}
+% \label{fig:traffic-density-prediction}
+% \end{figure}
+
+% To obtain an overall traffic flow factor $\text{Flow}$ for Hamburg, the following algorithm is designed. Let $P$ be the set of all paths in the "Verkehrslage Hamburg" dataset, and $n$ be the number of paths in $P$. For each path $i$ in $P$, let:
+
+% \begin{itemize}
+%     \item $L_i$ be the length of path $i$.
+%     \item $W_i$ be the weight associated with path $i$: congested $\rightarrow 0$, heavy $\rightarrow 1/3$, dense $\rightarrow 2/3$, and free-flow $\rightarrow 1$
+% \end{itemize}
+
+% The total length $L_\text{network}$ of all paths is given by: $L_\text{network} = \sum_{i \in P} L_i$. Then, the score $S_i$ of each path in relation to the complete network is calculated as $S_i = \frac{L_i}{L_\text{network}} \times W_i$. Now, the resulting $\text{Flow}$ is the sum of all scores: $\text{Flow} = \sum_{i \in P} S_i$. 
+
+% The value of $\text{Flow}$ is always in $[0, 1]$, where 0 indicates complete congestion of all roads, and 1 indicates free flow on all roads. In Hamburg, typical values lie within 0.94 (maximum traffic) and 0.99 (minimum traffic). This empirically defined boundary defines the min-max scaling of the user interface as highlighted in \Cref{fig:traffic-density-prediction}. This means that values of 0.94 will be displayed as a full-height bar, and 0.99 will be displayed as a bar with 0 height. 
+
+% To predict the traffic flow, a history is persisted for every hour and weekday. Now, each hour is predicted through the arithmetic mean of all previously recorded hours on the same weekday. If the service starts freshly and has no recording of the same weekday, the hourly average is calculated by all other available weekdays. The generated prediction contains the current measured $\text{Flow}$ value, as well as predicted values for the previous, current, and next 5 hours. The continuously updated JSON data is served through a web proxy to the mobile app.
+
 
 \Cref{fig:architecture} highlights the final service infrastructure that combines the developed solutions. The first key solution to make a bike-GLOSA app practical in a real-world urban environment is handling massive amounts of traffic light data. A prediction infrastructure (blue) is proposed that maximizes data ingress stability and self-monitors prediction qualities and availability. These metrics are used within the mobile application to adapt the speed advisory user interface and inform users about data outages.
 
@@ -285,6 +279,8 @@ Finally, a tracking service is implemented that obtains ride statistics from use
 \caption{The PrioBike app's main view flow.}\label{fig:app}
 \includegraphics[width=\linewidth]{images/app.png}
 \end{figure}
+
+Additional services: bike route details, traffic flow prediction
 
 What's visible to the user is an application similar to other navigation apps like Google Maps or Komoot, with added speed advisory functionality. \Cref{fig:app} shows how the designed user interface components are combined into a cohesive application flow concept. From the Home view, which allows users to inform themselves about the current prediction status, users can personalize their routing profile and open the Routing view. This view provides the described route planning functionality. Finally, users can start a ride to obtain the discussed speed advisory. A summary is given after the ride, together with the option to rate the application experience. This rating, together with the collected ride and prediction data, is sent to the tracking service in an optionally offloaded upload routine.
 
