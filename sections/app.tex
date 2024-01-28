@@ -101,15 +101,7 @@ Impacts have been determined mainly through savings in energy expenditure, stop 
 
 \section{Concept}
 
-During the ride, the user travels along the preselected route and obtains predictions for the upcoming signals via MQTT. Now, the speed advisory can be calculated from these predictions by estimating when a user will arrive at a signal. In turn, if a given speed is predicted to pass the traffic light at green depends on the distance to the signal. Thus, an algorithm must be established that estimates the distance to the traffic light as precisely as possible.
-
-Once the signal's distance and the prediction have been obtained, the task is to provide the best possible speed advisory user interface. An important takeaway from the previous section is that the user interface must dynamically adapt itself to the prediction's quality and uncertainties. At the same time, it is crucial to design the speed advisory as intuitive and flexible as possible, to avoid distracting users from the real-world situation and provoking accidents.
-
-Finally, another question is how to combine the speed advisory with the proposed in-app routing system. The proposed solution in this work is to overlay a three-dimensional map view with the speed advisory. This solution is utilized to establish a clear link between the user's route and the traffic light for which a speed advisory is displayed. However, this comes with the challenges of always displaying a suitable region of the map, automatically calculating new routes on route deviations, and correcting GNSS errors. All of these challenges must be overcome to provide an overall good user experience.
-
-\subsection{Preliminary and Final Speed Advisory User Interfaces}
-
-With the estimated distance to the traffic light and the obtained traffic light prediction, the speed advisory can be calculated and displayed on the user interface. Related work has identified multiple distinct user interfaces for speed recommendation: displaying a target speed, mapping the predicted states onto a speedometer, and utilizing a multi-lane projection. However, so far, there are no conclusive results that would indicate that one of these user interfaces is the most suitable. To determine the most suitable approach, all three methods are investigated.
+\subsection{Prototypes}
 
 \begin{figure}[htbp]
 \centering
@@ -119,15 +111,6 @@ With the estimated distance to the traffic light and the obtained traffic light 
 \end{figure}
 
 \paragraph{Target speed recommendation:} As highlighted in \Cref{fig:graph-based-speed-recommendation}, a text-based speed recommendation is provided to the user, accompanied by a static color-coded scale indicating alignment with the green phase. This approach utilizes a simple speed recommendation algorithm developed for this purpose. The algorithm estimates the distance to the traffic light and projects the user's current speed onto predicted traffic light states, providing information about the second at which the user would reach the traffic light if they maintained their current speed. Subsequently, the algorithm checks whether the user would encounter a green phase or a red phase. If passing at a green phase is predicted, no speed adjustment is necessary. However, if passing at a red phase is anticipated, the algorithm selects the "closest" green phase, i.e., the phase with the least necessary speed adaption. To accomplish this, target speeds are calculated for reaching the beginning and end of each green phase. These target speeds are padded inward by one second to account for potential prediction inaccuracies. Finally, sanity checks are implemented to clamp the speed advisory to realistic speeds.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{images/multi-segment-approach.pdf}
-\caption{Initial idea of a graph alignment for multi-segment speed recommendation.}
-\label{fig:multi-segment-approach}
-\end{figure}
-
-The concept of target speed recommendation can be thought further by incorporating the predictions of multiple consecutive traffic lights. For this purpose, a multi-segment speed advisory algorithm was conceived. The multi-segment approach aims to align the starting and ending points of green phases in a graph structure. By calculating the necessary acceleration and deceleration using a cost function, an approximation of the optimal trajectory could be efficiently determined using a pathfinding algorithm. 
 
 In theory, this approach sounds very attractive, but it is not worth further investigating for cyclists due to the following limitations that were encountered during our preliminary real-world tests on a demo track in Dresden and the real-world deployment in Hamburg:
 
@@ -152,6 +135,8 @@ These observations culminate in the following conclusion: in the context of bike
 
 However, this approach comes with its own drawbacks. The main drawback is the visualization's readability while riding. With multiple parallel signals being displayed, users have to mentally correlate the shown lanes with the real-world situation ahead and process predictions for multiple parallel lanes simultaneously. Another challenge lies in moving the predicted traffic light colors intuitively towards the signal, resembling a flow in which the user can "jump on." A problem is choosing a suitable zoom scale for the prediction, such that users can differentiate when they will be "caught" or "run into" a red signal. Similar to the initial color-coded scale, users also have to get used to the direction of movement that they can induce when they speed up or slow down. Due to these concerns about the approach's usability and potential for distraction, another speed advisory user interface was tested: the speedometer projection.
 
+\subsection{Speedometer Projection with Countdown}
+
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/speedometer-adaptions.png}
@@ -159,7 +144,7 @@ However, this approach comes with its own drawbacks. The main drawback is the vi
 \label{fig:speedometer-adaptions}
 \end{figure}
 
-\paragraph{Speedometer projection:} The final speed advisory visualization aims to integrate the strengths and mitigate the weaknesses of both previous approaches. It involves building a visualization around a speedometer, a widely recognized and, thus, probably more intuitive instrument for representing speed. Unlike the multi-lane visualization, only one relevant traffic light is selected by matching a sequence of upcoming traffic lights through the route geometry.
+The final speed advisory visualization aims to integrate the strengths and mitigate the weaknesses of both previous approaches. It involves building a visualization around a speedometer, a widely recognized and, thus, probably more intuitive instrument for representing speed. Unlike the multi-lane visualization, only one relevant traffic light is selected by matching a sequence of upcoming traffic lights through the route geometry.
 
 As confirmed preliminarily through initial field tests, this approach represents a noticeable improvement over both other approaches. The speedometer allows users to focus more on the real-world situation and occasionally glance at the display to determine if they are within a green window. Similar to the multi-lane visualization, the choice of target speed is entirely externalized to the user, and no speed recommendation algorithm is required. Hence, users have the freedom to select any target speed based on their current physical and contextual circumstances. This means that there is no potential for recommendation error and no need for advanced speed recommendation models. The only challenge that comes with this approach is precisely selecting the upcoming traffic light along the pathway. Since only one traffic light (instead of multiple parallel signals) is focused, the traffic light selection process has to be much more advanced.
 
@@ -296,6 +281,8 @@ The final application is distributed to real-world test users in Hamburg, who ca
 - General user feedback
 
 \subsection{Impact on Approach Speed, Stop Time, and Energy Expenditure}
+
+- Nr of trajectories, how many users, usage over time, ...
 
 \begin{figure}[t]
 \caption{T.}\label{fig:}
