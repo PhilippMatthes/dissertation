@@ -392,7 +392,7 @@ The thresholds $t_{overlap\_pct}$, $t_{perfect\_match}$, and $t_{road\_side}$ ca
 
 \begin{table}[h]
 \caption{Summary of thresholds and search space.}
-\begin{tabular}{@{}lp{9.5cm}l@{}}
+\begin{tabular}{@{}lp{8cm}l@{}}
 \toprule
 \textbf{Hyperparameter}  & \textbf{Explanation} & \textbf{Search Interval} \\
 T1 ($t_{dist}$) & Traffic light geometries must be within this distance of the route. & $[1m, 100m]$ \\
@@ -573,14 +573,14 @@ The distribution overall indicates that there may be significantly more duplicat
 
 \begin{table}[h]
 \caption{Tuned hyperparameters for the algorithmic matching model.}
-\begin{tabular}{@{}llllllllll@{}}
+\resizebox{\linewidth}{!}{\begin{tabular}{@{}llllllllll@{}}
 \toprule
 \textbf{Ground Truth} & $t_{dist}$ & $t_{bear}$ & $t_{bear\_sum}$ & $t_{inv}$ & $t_{len}$ & $t_{len\_sum}$ & $t_{road\_side}$ &  $t_{perfect\_m.}$ & $t_{overlap}$ \\
   \midrule
   OSM (2022) & 20m & 33° & 79\% & False & 0.99 & 93\% & 59m & 50m & 43\% \\
   OSM (2023) & 19m & 50° & 78\% & False & 0.96 & 77\% & 95m & 46m & 5\% \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \label{tab:hyperparameter-tuning-results}
 \end{table}
 

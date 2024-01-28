@@ -462,7 +462,7 @@ Most matching traffic light geometries seem to reside directly over the DRN rout
 
 \begin{table}[h]
 \caption{Retrained model thresholds on the new routing.}
-\begin{tabular}{@{}llllllllll@{}}
+\resizebox{\linewidth}{!}{\begin{tabular}{@{}llllllllll@{}}
 \toprule
   \textbf{Ground Truth} & $t_{dist}$ & $t_{bear}$ & $t_{bear\_sum}$ & $t_{inv}$ & $t_{len}$ & $t_{len\_sum}$ & $t_{road\_side}$ &  $t_{perfect\_m.}$ & $t_{overlap}$ \\
   \midrule
@@ -470,7 +470,7 @@ Most matching traffic light geometries seem to reside directly over the DRN rout
   OSM (2023) & 19m & 50° & 78\% & False & 0.96 & 77\% & 95m & 46m & 5\% \\
   DRN (2023) & 17m & 27° & 73\% & False & 0.81 & 61\% & 48m & 43m & 59\% \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \label{tab:hyperparameter-tuning-results-drn}
 \end{table}
 
