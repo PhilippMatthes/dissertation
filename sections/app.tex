@@ -210,78 +210,24 @@ Now that we have looked at the many details of the speed recommendation, it is v
 \includegraphics[width=\linewidth]{images/architecture.png}
 \end{figure}
 
-% The traffic flow algorithm predicts traffic density in Hamburg by assigning weights to road paths based on congestion levels, calculating a normalized score relative to the path's length within the road network. Afterward, the normalized scores are summed to generate an overall traffic flow factor, ranging from 0 (complete congestion) to 1 (free flow). At its foundation, the traffic flow prediction algorithm utilizes open floating car data from INRIX, given through the "Verkehrslage Hamburg" dataset that is updated every 5 minutes.
-
-% Bike-specific points of interest such as air pumps, bike parking spots, repair shops, and rental stations are added through various open datasets from the city of Hamburg. The geodata is processed and distributed on a nightly basis, . Bike accident hotspots are also extracted from the Unfallatlas\footnote{\url{https://unfallatlas.statistikportal.de/}} dataset, clustered, and can be displayed in the mobile application.
-
-%  \paragraph{Bike-Specific Points of Interest:} Routes can only be calculated if the users define their destination or multiple waypoints. Thus, users have to be given the option to look up places through the app. One option is to pinpoint a location on the in-app map. Here, it is vital to provide more information than just the base map layer. For example, Google Maps highlights specific places, such as busy areas, to improve the map's informativeness. In the designed solution, the focus lies on bike-specific points of interest, such as repair shops, parking spots, rental stations, and air pumps. A traffic layer is also provided, which indicates congested roads. Velo routes and static bike green waves (at 18 km/h) are also displayed to highlight public initiatives to make cycling more attractive. Furthermore, construction sites and accident hotspots can be marked on the map, providing enhanced awareness of potentially dangerous spots.
-
-% \begin{figure}[htbp]
-% \centering
-% \includegraphics[width=\linewidth]{images/points-of-interest.png}
-% \caption{Hierarchical fade-in schema for map layers.}
-% \label{fig:points-of-interest}
-% \end{figure}
-
-% With this number of different points of interest, the risk of cluttering the map is high. Especially bike parking spots are present in large numbers all over the city. To circumvent this problem, the draw distances of map layers are ordered using a hierarchical schema. This hierarchical schema is highlighted in \Cref{fig:points-of-interest}. Points of interest that may potentially impact the cyclist's route choice are visible when zoomed out, while points of interest that are typically more relevant in proximity to the user are only displayed once zoomed in. Accident hotspots represent a special role and are displayed from farther out to further emphasize them on the map.
-
-% \paragraph{Accident hotspot extraction:} Under supervision, Markus Wieland \cite{wieland_2022} designed an accident hotspot extraction procedure based on the Unfallatlas\footnote{\url{https://unfallatlas.statistikportal.de/}} dataset. Bike accidents are extracted from the dataset and clustered, adding up the total number of bike accidents for each cluster. The resulting cluster accident counts are subjected to a threshold and, if exceeding this threshold, marked as accident hotspots.
-
-% \paragraph{Geocoding:} To create human-readable waypoints and search for places, a geocoding service is required to convert textual input into geospatial coordinates (geocoding). Likewise, when the user taps on the map to add a new waypoint, a similar service is needed to translate the coordinates into an address for the route planning view (reverse geocoding).
-
-% \begin{figure}[htbp]
-% \centering
-% \includegraphics[width=\linewidth]{images/routing-view-geocoding.png}
-% \caption{(Reverse) geocoding via Photon for location search and map pinning.}
-% \label{fig:routing-view-geocoding}
-% \end{figure}
-
-% Initially, Nominatim was chosen as a geocoding service based on OpenStreetMap. However, the solution has shown limitations when it comes to supporting partial queries, such as searching for "University" using "Univers", and its response time was perceived as too slow (often more than 2 seconds) during preliminary tests. Therefore, as shown in \Cref{fig:routing-view-geocoding}, the decision was made to switch to Photon (by Komoot) as an alternative open-source solution that supports partial queries and provides faster query execution based on an ElasticSearch database.
-
-
-%  \paragraph{Traffic Flow Prediction:} In addition to the path's surface information and inclination, the traffic density may also have a large impact on the ride's perceived comfortability and safety. Google Maps has addressed this problem by showing users a predicted traffic density for the following hours. The foundation for these calculations is floating data: "To determine popular times, wait times, and visit duration, Google uses aggregated and anonymized data from users who have opted in to Google Location History."\footnote{Source: \url{https://support.google.com/maps/answer/11323117?hl=en}} To adopt a similar solution without relying on a large user base, we can make use of open floating car data from the company INRIX provided through the TraffGo Road GmbH (see \Cref{fig:traffic-density-prediction}). The publicly available dataset "Verkehrslage Hamburg" is updated every five minutes and contains a current traffic density status for each path in Hamburg: free-flow, dense, heavy, and congested traffic. Based on this data, a traffic flow prediction for Hamburg is designed.
-
-% \begin{figure}[htbp]
-% \centering
-% \includegraphics[width=\linewidth]{images/traffic-density-prediction.pdf}
-% \caption{Data flow of traffic density prediction toward the app.}
-% \label{fig:traffic-density-prediction}
-% \end{figure}
-
-% To obtain an overall traffic flow factor $\text{Flow}$ for Hamburg, the following algorithm is designed. Let $P$ be the set of all paths in the "Verkehrslage Hamburg" dataset, and $n$ be the number of paths in $P$. For each path $i$ in $P$, let:
-
-% \begin{itemize}
-%     \item $L_i$ be the length of path $i$.
-%     \item $W_i$ be the weight associated with path $i$: congested $\rightarrow 0$, heavy $\rightarrow 1/3$, dense $\rightarrow 2/3$, and free-flow $\rightarrow 1$
-% \end{itemize}
-
-% The total length $L_\text{network}$ of all paths is given by: $L_\text{network} = \sum_{i \in P} L_i$. Then, the score $S_i$ of each path in relation to the complete network is calculated as $S_i = \frac{L_i}{L_\text{network}} \times W_i$. Now, the resulting $\text{Flow}$ is the sum of all scores: $\text{Flow} = \sum_{i \in P} S_i$. 
-
-% The value of $\text{Flow}$ is always in $[0, 1]$, where 0 indicates complete congestion of all roads, and 1 indicates free flow on all roads. In Hamburg, typical values lie within 0.94 (maximum traffic) and 0.99 (minimum traffic). This empirically defined boundary defines the min-max scaling of the user interface as highlighted in \Cref{fig:traffic-density-prediction}. This means that values of 0.94 will be displayed as a full-height bar, and 0.99 will be displayed as a bar with 0 height. 
-
-% To predict the traffic flow, a history is persisted for every hour and weekday. Now, each hour is predicted through the arithmetic mean of all previously recorded hours on the same weekday. If the service starts freshly and has no recording of the same weekday, the hourly average is calculated by all other available weekdays. The generated prediction contains the current measured $\text{Flow}$ value, as well as predicted values for the previous, current, and next 5 hours. The continuously updated JSON data is served through a web proxy to the mobile app.
-
-
-\Cref{fig:architecture} highlights the final service infrastructure that combines the developed solutions. The first key solution to make a bike-GLOSA app practical in a real-world urban environment is handling massive amounts of traffic light data. A prediction infrastructure (blue) is proposed that maximizes data ingress stability and self-monitors prediction qualities and availability. These metrics are used within the mobile application to adapt the speed advisory user interface and inform users about data outages.
-
-A speed advisory user interface (the Ride View) is designed that utilizes the speedometer projection to give users a free choice of the desired speed. Uncertainties in the prediction are visualized to enhance the speed advisory's trustworthiness. To make the speed advisory practical, a user-defined route is used for distance-to-signal estimation, traffic light matching, battery-efficient GNSS error correction, and a camera controller for improved traffic light visibility. Combining the speed advisory system with a navigation solution is another key idea to enable these methods and make the mobile application useful in the absence of traffic light predictions.
-
-To deliver bike navigation, a routing infrastructure (orange) is implemented that provides personalized, accurate, and metadata-enhanced bike routing. Once waypoints are found using the Geocoding Service and the Map Data Service that delivers bike-specific points of interest, an accurate bike route is calculated through the developed DRN approach. Route metadata and the predicted traffic situation are visualized to allow for a more informed routing decision. Generated routes are marked green at spots where users can expect a speed advisory. The routing material's actuality is ensured through an automated update CI/CD pipeline. 
-
-The final key solution that connects the speed advisory to the routing is route-based traffic light matching. Multiple approaches were tested, coming to a final machine-learning-based method that compares geometric features between the traffic light geometries and the route geometry to decide which sequence of signals will be passed along the trajectory. To avoid giving a speed advisory for the wrong intersection, unconnected intersections are detected and also matched along the route.
-
-Finally, a tracking service is implemented that obtains ride statistics from users. The collected telemetry data is used to conduct post-hoc analyses on the actual impact of bike-GLOSA on ride behavior. \Cref{ch:results} will focus on the analysis of this data.
+As seen in \Cref{fig:architecture}, the main application flow is divided into three views. The home view, serving as an entry point after opening the app, is intended to display the current data availability upfront. With the information fetched from the prediction service monitoring, users are directly informed about potential data outages. These can occur spontaneously, as we have seen in \Cref{ch:prediction}. A modification of the routing profile is also possible in the home view.
 
 \begin{figure}[t]
-\caption{The PrioBike app's main view flow.}\label{fig:app}
+\caption{The final mobile application distributed to users.}\label{fig:app}
 \includegraphics[width=\linewidth]{images/app.png}
 \end{figure}
 
-Additional services: bike route details, traffic flow prediction
+Afterward, users transition to the routing view. Here, users may select waypoints to generate a route, similar to other navigation apps like Google Maps, Komoot, or Strava. Along the bike route generated with the DRN routing from \Cref{ch:routing}, traffic lights are matched through the service from \Cref{ch:matching}. The route's prediction coverage is fetched and displayed to the user. Additional path metadata from our routing is also displayed, including path inclination, to enable a more informed routing decision. How this looks on the smartphone's screen is presented in \Cref{fig:app}. In the routing view, three more convenience services are added: a simple traffic predictor, a geocoding service, and a map data service.
 
-What's visible to the user is an application similar to other navigation apps like Google Maps or Komoot, with added speed advisory functionality. \Cref{fig:app} shows how the designed user interface components are combined into a cohesive application flow concept. From the Home view, which allows users to inform themselves about the current prediction status, users can personalize their routing profile and open the Routing view. This view provides the described route planning functionality. Finally, users can start a ride to obtain the discussed speed advisory. A summary is given after the ride, together with the option to rate the application experience. This rating, together with the collected ride and prediction data, is sent to the tracking service in an optionally offloaded upload routine.
+The traffic flow algorithm predicts traffic density in Hamburg by assigning weights to road paths based on congestion levels, calculating a normalized score relative to the path's length within the road network. Afterward, the normalized scores are summed to generate an overall traffic flow factor, ranging from 0 (complete congestion) to 1 (free flow). At its foundation, the traffic flow prediction algorithm utilizes open floating car data from INRIX, given through the "Verkehrslage Hamburg" dataset that is updated every 5 minutes.
 
-The final application is distributed to real-world test users in Hamburg, who can freely use the app throughout the city to provide realistic experimental circumstances for the urban cycling setting. Based on the collected data, surveys, and other experiments, the next goal is to determine the impacts of such a solution. These aspects will be discussed in the following chapter.
+To find addresses, a geocoding service is also added to the deployment. Initially, Nominatim was chosen as a geocoding service based on OpenStreetMap. However, the solution has shown limitations when it comes to supporting partial queries, such as searching for "University" using "Univers," and its response time was perceived as too slow (often more than 2 seconds) during preliminary tests. Therefore, we switched to Photon (by Komoot) as an alternative open-source solution that supports partial queries and provides faster query execution.
+
+Bike-specific points of interest, such as air pumps, bike parking spots, repair shops, and rental stations, are added through various open datasets from the city of Hamburg. The geodata is processed and distributed on a nightly basis, similar to the routing engine. Bike accident hotspots are also extracted from the Unfallatlas\footnote{\url{https://unfallatlas.statistikportal.de/}} dataset and clustered. Afterward, they can be fetched through a map data service and displayed in the mobile application.
+
+Having started the ride, the user transitions to the ride view. Here, the speed advisory is displayed together with the calculated route. Based on the estimated route-based distance to the upcoming (preselected) traffic light, the traffic light prediction is mapped over the speedometer and displayed as a countdown. The prediction is obtained during the ride by subscribing to the MQTT topic for the specific traffic light ID on which new predictions are published. Other route-based services for camera adaption and GNSS error correction run in the background to provide smooth and stable navigation. As users deviate from the route, the developed approach for rerouting ensures that a route is recalculated as needed.
+
+Finally, a tracking service is implemented that obtains ride statistics from users. The collected telemetry data is used to conduct post-hoc analyses on the actual impact of bike-GLOSA on ride behavior.
 
 \section{Results}
 
