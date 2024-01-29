@@ -174,13 +174,7 @@ Concluding this section, three identified visualization methods have been invest
 
 \subsection{Routing-Enhanced Speed Advisory}
 
-The integrated routing is utilized to enhance two aspects of the speed advisory. First, the traffic light for which a speed advisory is displayed can be shown along the route on the smartphone's display. The goal is to avoid confusion when a false traffic light is selected. Secondly, the route is utilized to convey for which parts of the planned trajectory a speed advisory will be given. This additional information is intended to help users plan routes with higher speed advisory coverage, as not all intersections are connected to the system. In addition, intersections not sending data are shown, so that a user understands why they may not receive a speed advisory at the moment, enhancing the overall explainability.
-
-Displaying the upcoming traffic light on the map is quite trivial -- no further consideration is needed here. However, often, the currently selected traffic light or next turn is out of view when the camera strictly follows the user's position and heading at a fixed height. To improve this aspect of responsiveness and avoid users attempt to pan/zoom during bike rides, the map's camera is dynamically adjusted its height depending on the situation, but without being distractive.
-
-Furthermore, there would be occasions when road bends were between the user and the signal. In this case, since the heading of the user was strictly followed, the route would curve away from the map view, making it hard to see the upcoming signal. Through studying other navigation apps, it was observed that Apple Maps employs a slight rotation of the map to provide users with a better overview of upcoming turns. A screenshot of this behavior is highlighted in \Cref{fig:camera-controller}. This behavior, in addition to automated zooming, was adopted to improve the overall usability and self-sustainedness of the map view.
-
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/camera-controller-1.png}
 \includegraphics[width=\linewidth]{images/camera-controller-2.pdf}
@@ -188,36 +182,37 @@ Furthermore, there would be occasions when road bends were between the user and 
 \label{fig:camera-controller}
 \end{figure}
 
-During a ride, the app continuously checks if the user is approaching a traffic light by examining the route segments from the user's location. A turn is detected when a route segment is found that deviates at least 15° from the user's measured heading. As the user approaches a turn or traffic signal, the camera automatically zooms in to focus on the intersection, making it easier for users to locate a path entry or identify a corresponding signal. Additionally, the camera rotates slightly (up to a maximum of 20°) away from the user to ensure that the traffic lights remain within the view frustum. These threshold values have been determined empirically through extensive real-world testing. To prevent excessive zooming, the camera operates within specified maximum and minimum zoom levels, avoiding zooming too far out or too far in.
+The integrated routing is utilized to enhance two aspects of the speed advisory. First, the traffic light for which a speed advisory is displayed can be shown along the route on the smartphone's display. The goal is to avoid confusion when a false traffic light is selected. Secondly, the route is utilized to convey for which parts of the planned trajectory a speed advisory will be given. This additional information is intended to help users plan routes with higher speed advisory coverage, as not all intersections are connected to the system. In addition, intersections not sending data are shown, so that a user understands why they may not receive a speed advisory at the moment, enhancing the overall explainability.
 
-\paragraph{Prediction Availability:} As discussed previously, predictions and, therefore, speed recommendations are not available for all intersections in Hamburg. Furthermore, traffic-adaptive signals or data outages may lead to low-quality or missing predictions. Therefore, it is crucial for the user to see along which route segments a speed advisory can be expected. To communicate the prediction availability to users, the route is highlighted in green wherever a "green wave" can be expected.
+Displaying the upcoming traffic light on the map is quite trivial -- no further consideration is needed here. However, often, the currently selected traffic light or next turn is out of view when the camera strictly follows the user's position and heading at a fixed height. To improve this aspect of responsiveness and avoid users attempting to pan/zoom during bike rides, the map's camera is automatically adjusted to focus on traffic lights and close turns. This feature was adopted from Apple Maps, as seen in \Cref{fig:camera-controller}, which also incorporates the route's curvature to suitably orient the map's camera.
 
-\begin{figure}[htbp]
+The specific process is as follows. During a ride, the app continuously checks if the user is approaching a traffic light by examining the route segments from the user's location. A turn is detected when a route segment is found that deviates at least 15° from the user's measured heading. As the user approaches a turn or traffic light, the camera automatically zooms in to focus on the intersection, making it easier for users to locate a path entry or identify a corresponding signal. Additionally, the camera rotates slightly (up to a maximum of 20°) away from the user to ensure that the traffic lights remain within the view frustum. These threshold values have been determined empirically through extensive real-world testing. To prevent excessive zooming, the camera operates within specified maximum and minimum zoom levels, avoiding zooming too far out or too far in.
+
+In addition to the camera controller, the prediction availability is also mapped across the route. As seen in \Cref{fig:camera-controller}, route segments with speed advisory are colored green, indicating these segments provide a "green wave." 
+
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-process-quality-mapping.png}
 \caption{Visualization of traffic light groups and prediction quality along the calculated route.}
 \label{fig:routing-process-quality-mapping}
 \end{figure}
 
-To match the prediction qualities onto the route, two steps illustrated in \Cref{fig:routing-process-quality-mapping} are performed: First, the signals are matched along the route. Afterward, the obtained traffic light IDs along the route are utilized to fetch and map the prediction qualities generated by the prediction monitor. Finally, the route is colorized with respect to the prediction quality. No prediction means the route is not colored green. A prediction with less than 50\% quality is also not displayed as green since no speed advisory is activated. Upwards, the color is interpolated between the default route color (50\% quality) and green (100\% quality). 
+To match the prediction qualities onto the route, two steps illustrated in \Cref{fig:routing-process-quality-mapping} are performed: First, the traffic lights are matched along the route, using the approach developed in \Cref{ch:matching}. Afterward, the obtained traffic light IDs along the route are utilized to fetch and map the prediction qualities generated by our prediction monitoring. Finally, the route is colorized with respect to the prediction quality. No prediction means the route is not colored green. A prediction with less than 50\% quality is also not displayed as green since no speed advisory is activated. Upwards, the color is interpolated between the default route color (50\% quality) and green (100\% quality).
 
-There are several factors that can influence a cyclist's route choice. For instance, cyclists may opt for a slightly less optimal route if it offers better surface quality. One approach is to incorporate this information directly into the routing profile to ensure that each user receives an enhanced routing decision. This is already supported by GraphHopper's routing profiles, defining different speeds for each \texttt{vehicle} depending on the road segments' metadata. However, it is important to acknowledge that GraphHopper's routing profiles are mathematical models that make complex assumptions and, therefore, cannot always produce the ideal route. From the user's perspective, it can often be hard to understand a particular route choice without any further explanation as to why specific paths have been chosen. This is a problem for users, especially if they are familiar with the area and already have a preferred route. Thus, to build trust in the routing, it is vital to provide additional route details to allow users to make informed routing decisions.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{images/home-view-prediction-quality.png}
-\caption{Prediction quality visualized in the GLOSA app for enhanced explainability.}
-\label{fig:home-view-prediction-quality}
-\end{figure}
-
-Not all traffic lights in Hamburg are available for prediction. Those who are available may occasionally lose data, which error detection can partially address. Another important factor, however, is the user's perspective on the data availability. Since a degraded prediction availability will also negatively impact usability, some ideas must be found that mitigate potential disappointments on the user side. One idea implemented in the GLOSA app is increasing the explainability of the prediction system. The existing monitoring infrastructure is extended such that users can also access information about the current availability. Through the app, users can inform themselves about the current percentage of available predictions and the spatial distribution of good and bad predictions on the map. The resulting user interface shown in \Cref{fig:home-view-prediction-quality} is intended to allow users to identify faults at an early stage and then switch to an alternative app, avoiding frustration caused by missing or incorrect predictions.
+In summary, the smartphone application not only displays a bare route geometry as in other navigation applications. It also utilizes the route to enhance the overall speed advisory, conveying a relation to advised traffic lights and telling users which route sections will be covered by a speed advisory. In this way, the explainability of the overall application is enhanced, with the goal of avoiding frustration during rides when no speed advisory can be given. The speed advisory also operates together with two other application services designed in \Cref{ch:routing}: automated rerouting and route-based GNSS error correction.
 
 \subsection{Final Application Architecture and Design}
 
-\begin{figure}[htbp]
+Now that we have looked at the many details of the speed recommendation, it is vital to take another look at the overall picture. In this way, we gain a thorough understanding of how all the designed components from the four discussed chapters work together to create the final Green Light Optimal Speed Advisory system for bikes. We will also briefly go over additional components for traffic prediction, geocoding, and map layers that are used to provide convenience features for pathfinding.
+
+\begin{figure}[t]
 \caption{Final application infrastructure.}\label{fig:architecture}
 \includegraphics[width=\linewidth]{images/architecture.png}
 \end{figure}
+
+% The traffic flow algorithm predicts traffic density in Hamburg by assigning weights to road paths based on congestion levels, calculating a normalized score relative to the path's length within the road network. Afterward, the normalized scores are summed to generate an overall traffic flow factor, ranging from 0 (complete congestion) to 1 (free flow). At its foundation, the traffic flow prediction algorithm utilizes open floating car data from INRIX, given through the "Verkehrslage Hamburg" dataset that is updated every 5 minutes.
+
+% Bike-specific points of interest such as air pumps, bike parking spots, repair shops, and rental stations are added through various open datasets from the city of Hamburg. The geodata is processed on a nightly basis and distributed to the app as JSON over a web proxy in our deployment. Bike accident hotspots are also extracted from the Unfallatlas\footnote{\url{https://unfallatlas.statistikportal.de/}} dataset, clustered, and can be displayed in the mobile application.
 
 %  \paragraph{Bike-Specific Points of Interest:} Routes can only be calculated if the users define their destination or multiple waypoints. Thus, users have to be given the option to look up places through the app. One option is to pinpoint a location on the in-app map. Here, it is vital to provide more information than just the base map layer. For example, Google Maps highlights specific places, such as busy areas, to improve the map's informativeness. In the designed solution, the focus lies on bike-specific points of interest, such as repair shops, parking spots, rental stations, and air pumps. A traffic layer is also provided, which indicates congested roads. Velo routes and static bike green waves (at 18 km/h) are also displayed to highlight public initiatives to make cycling more attractive. Furthermore, construction sites and accident hotspots can be marked on the map, providing enhanced awareness of potentially dangerous spots.
 
@@ -277,7 +272,7 @@ The final key solution that connects the speed advisory to the routing is route-
 
 Finally, a tracking service is implemented that obtains ride statistics from users. The collected telemetry data is used to conduct post-hoc analyses on the actual impact of bike-GLOSA on ride behavior. \Cref{ch:results} will focus on the analysis of this data.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \caption{The PrioBike app's main view flow.}\label{fig:app}
 \includegraphics[width=\linewidth]{images/app.png}
 \end{figure}
