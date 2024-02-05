@@ -234,7 +234,7 @@ Finally, a tracking service is implemented that obtains ride statistics from use
 \subsection{Collected Data}
 
 \begin{figure}[t]
-\caption{.}\label{fig:}
+\caption{Collected ratings, tracks, and completed survey answers over time in relation to prediction availability.}\label{fig:app-usage-over-time}
 \includegraphics[width=\linewidth]{images/app-usage-over-time.pdf}
 \end{figure}
 
@@ -264,7 +264,7 @@ Finally, a tracking service is implemented that obtains ride statistics from use
 - General observation: most users are experienced and already engaged bike riders 
 
 \begin{figure}[t]
-\caption{.}\label{fig:}
+\caption{Spatial coverage of recorded tracks and collected surveys by postal areas.}\label{fig:app-spatial-distribution}
 \includegraphics[width=\linewidth]{images/app-spatial-distribution.pdf}
 \end{figure}
 
@@ -336,12 +336,12 @@ Finally, a tracking service is implemented that obtains ride statistics from use
 - General user feedback
 
 \begin{figure}[t]
-\caption{.}\label{fig:}
+\caption{Negative feedback given in survey.}\label{fig:app-negative-feedback}
 \includegraphics[width=\linewidth]{images/app-feedback-negative.pdf}
 \end{figure}
 
 \begin{figure}[t]
-\caption{.}\label{fig:}
+\caption{Positive feedback given in survey.}\label{fig:app-positive-feedback}
 \includegraphics[width=\linewidth]{images/app-feedback-positive.pdf}
 \end{figure}
 
@@ -351,7 +351,7 @@ Finally, a tracking service is implemented that obtains ride statistics from use
 - Interaction during ride
 
 \begin{figure}[t]
-\caption{.}\label{fig:}
+\caption{Recorded interaction with the smartphone's screen while in the ride view.}\label{fig:app-user-interaction}
 \includegraphics[width=\linewidth]{images/app-user-interaction.pdf}
 \end{figure}
 
@@ -360,15 +360,19 @@ Finally, a tracking service is implemented that obtains ride statistics from use
 - 765 (57.5\%) of tracks have $\leq$ 2 taps in total (to end ride)
 
 \begin{figure}[t]
-\caption{.}\label{fig:}
+\caption{Taps on the screen by currently driven speed and time of entering/leaving the view.}\label{fig:app-user-interaction-speed}
 \includegraphics[width=\linewidth]{images/app-user-interaction-speed.pdf}
 \end{figure}
 
 
 \subsection{Measured Impact on Speed, Stop Time, and Energy Expenditure}
 
+- Distinct sgs with GLOSA: 1004
+- Distinct sgs in total: 1417
+- Distinct sgs without GLOSA: 1060
+
 \begin{figure}[t]
-\caption{T.}\label{fig:}
+\caption{Measured adherence to the speed advisory and activation distance.}\label{fig:impacts-adherence-activation-distance}
 \includegraphics[width=\linewidth]{images/impacts-adherence-activation-distance.pdf}
 \end{figure}
 
@@ -383,28 +387,58 @@ Finally, a tracking service is implemented that obtains ride statistics from use
 - Adherence == 1: 8
 
 \begin{figure}[t]
-\caption{T.}\label{fig:}
-\includegraphics[width=0.6\linewidth]{images/impacts-approach-speed.pdf}
+\caption{Measured speed advisory impact on traffic light approach speed.}\label{fig:impacts-approach-speed}
+\includegraphics[width=\linewidth]{images/impacts-approach-speed.pdf}
 \end{figure}
 
+- Impact on approach speed
 - Median speed at 0m with GLOSA: 14.748851498558905 (IQR 12.332427560394335)
 - Median speed at 0m no GLOSA: 15.47884898628614 (IQR 12.08553925483405)
 - Median speed at 0m no adherence: 12.093527416016059 (IQR 11.731757336342692)
 - Median speed at 0m adherence: 18.398685181342955 (IQR 10.33149951069667)
 
+- Resulting energy savings
+- Average kJ with GLOSA: 19.24 
+- Average kJ with GLOSA and adherence > 50\%: 21.00 
+- Average kJ with GLOSA and adherence < 50\%: 17.98 
+- Average kJ without GLOSA: 19.79
+
 \begin{figure}[t]
-\caption{T.}\label{fig:}
+\caption{Distribution of speeds on traffic light approach depending on the adherence level.}\label{fig:impacts-approach-speed-heatmap}
 \includegraphics[width=\linewidth]{images/impacts-approach-speed-heatmap.pdf}
 \end{figure}
 
-\begin{figure}[t]
-\caption{T.}\label{fig:}
-\includegraphics[width=\linewidth]{images/impacts-stop-time-adherence.pdf}
-\end{figure}
+- Stop rate
+- No GLOSA: 311 \href{https://file+.vscode-resource.vscode-cdn.net/}{/} 842 (36.94\%) 
+- 0\% - 50\% Adherence: 332 \href{https://file+.vscode-resource.vscode-cdn.net/}{/} 638 (52.04\%) 
+- 50\% - 100\% Adherence: 102 \href{https://file+.vscode-resource.vscode-cdn.net/}{/} 482 (21.16\%)
+
+- Stop time
+- Stopped so many times with GLOSA: 0.26\% 
+- Stopped so many times with GLOSA and adherence > 50\%: 0.15\% 
+- Stopped so many times with GLOSA and adherence < 50\%: 0.32\% 
+- Stopped so many times without GLOSA: 0.25\% 
+
+- If stopped, stopped so long with GLOSA: 23.48s 
+- If stopped, stopped so long with GLOSA and adherence > 50\%: 24.90s 
+- If stopped, stopped so long with GLOSA and adherence < 50\%: 23.00s 
+- If stopped, stopped so long without GLOSA: 23.96s
 
 \begin{figure}[t]
-\caption{T.}\label{fig:}
+\caption{Example intersection approach utilized for human labeling for cross-validation.}\label{fig:example-trajectory-3.pdf}
 \includegraphics[width=\linewidth]{images/example-trajectory-3.pdf}
 \end{figure}
+
+- Total labels: 1,165, persons involved in the process: 5 (equally split)
+- Equal decisions: 915
+- Unequal decisions: 200
+- Decisions where only one person labeled: 50
+
+- Adapted to speed advisory but stopped: 72
+- Adapted to speed advisory but did not stop: 447
+- Not adapted to speed advisory although possible and stopped: 149
+- Not adapted to speed advisory although possible and not stopped: 67
+- No adaption possible and stopped: 106
+- No adaption possible and not stopped: 74
 
 \section{Conclusions}
