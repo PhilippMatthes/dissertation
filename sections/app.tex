@@ -250,21 +250,15 @@ The core of our quantitative evaluation focuses on the impact of speed advisorie
 \includegraphics[width=\linewidth]{images/app-usage-over-time.pdf}
 \end{figure}
 
-Throughout the recorded time span from March 2023 to December 2023, as highlighted in \Cref{fig:app-usage-over-time}, various users have tested the app
+Throughout the recorded time span from March 2023 to December 2023, as highlighted in \Cref{fig:app-usage-over-time}, various users have downloaded and tested the app. Based on statistics obtained from the Google Play console and AppStore Connect on February 5, 2023, the mobile application was installed on at least 130 Android and 178 iOS devices. Among these devices, 126 distinct user ids submitted recorded tracks in Hamburg. A user id is generated on every fresh installation of the mobile app, meaning that only a part of the users who installed the app also used it on real bike rides in Hamburg. Development devices and users who tested the application only on test setups in Dresden are likely the main reason for this difference.
 
-- Time of recording: March 2023 - December 2023
-- Number of users: 126 distinct user ids generated
-- Number of tracks: 1,330
-- Relation to prediction availability, bulks of riding (explanation)
-- A few highly engaged users: \#305ee0 (201), \#3494b0 (150), \#ff00f0 (91), \#0a9580 (59), remaining 122 users $\leq$ 50 tracks
-- 35 users with only 1 uploaded track
-- Median \# tracks per user: 3.5 (IQR: 8.75)
+Throughout the testing period, 1655 tracks were recorded, resulting in approximately 3 weeks of continuous driving data. From these tracks, 325 were filtered out during preprocessing, as they contained fewer than 30 GNSS samples and were considered too short to provide reliable measurements. On some occasions, the GNSS data could not be decoded properly due to an intermittent implementation error. However, these occasions represent a small minority in the collected tracks.
 
-- Number of survey respondents: 279 started survey, 40 filled out all questions
-- General demographics of the user basis
-- Median Age: 37 (IQR: 22.5), min: 18, max: 65 
-- Male: 34, Female: 5, Diverse: 1
-- Occupations: 30 employed, 9 other occupations (3 student, 2 self-employed, 1 apprentice, 3 other such as pensioner)
+Clearly visible in \Cref{fig:app-usage-over-time} is that the frequency of rides has not been continuous over the months, but tracks were instead collected in "bulks." This can be explained by our strategy to fan out the test version to new users. While initial beta test versions were distributed in a closed beta schema on request via email, later versions were opened to the public with a download link. Simultaneously, there were some occasions on which the app test was advertised on social media platforms, leading to an increase in testers around September 2023. This increase persisted until the winter, in which it is expected that much fewer cyclists test the app. During December 2023, only a handful of users did drive with the app, denoting the end of our data collection period. 
+
+After a track was driven, users were able to give their opinion on the ride, from 1 to 5 stars. As shown in \Cref{fig:app-usage-over-time}, a wide variety of ratings were given. Users who stuck to the app after initial tests were apparently very satisfied, as seen by the repeated 5-star ratings by the same user IDs. In general, there seem to be a few highly engaged users with the IDs \#305ee0 (201 tracks), \#3494b0 (150 tracks), \#ff00f0 (91 tracks), and \#0a9580 (59 tracks). The remaining 122 user IDs have collected fewer tracks, including 35 user IDs that only uploaded one track. The median number of tracks per user lies at 3.5 (IQR: 8.75), indicating a high diversity in users but also a low rate of users sticking to the app. 
+
+Our survey will later show us that some users seem to have been dissatisfied with the app, not attempting to reuse it. One of the main reasons is the sometimes decreased prediction availability, as seen in \Cref{fig:app-usage-over-time}, especially on July 11, 2023. Out of 279 users who have started to answer questions in the survey, 40 users completed all questions. The median age is 37 (IQR: 22.5), ranging from 18 to 65. While we have a large age diversity, respondents report mainly to be male (34), while female (5) and diverse (1) subjects represent a minority. 30 of our testers reported being employed, with 8 testers declaring other occupations such as being a student (3), self-employed (2), apprentice (1), or pensioner (2).
 
 - Favorite bike navigation app: 17 Komoot, 13 Google Maps, 9 Other including bike citizens (2) and PrioBike (2)
 - Preferred bike type: 19x City bike, 10 x Trekking bike, 6x MTB, 5x Racing bike, 4x cargo bike, 1 other: "commuter"
