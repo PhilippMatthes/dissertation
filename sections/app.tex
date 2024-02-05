@@ -241,16 +241,20 @@ Finally, a tracking service is implemented that obtains ride statistics from use
 - Time of recording: March 2023 - December 2023
 - Number of users: 126 distinct user ids generated
 - Number of tracks: 1,330
-- Number of survey respondents: 279 started survey, 40 filled out all questions
+- Relation to prediction availability, bulks of riding (explanation)
+- A few highly engaged users: \#305ee0 (201), \#3494b0 (150), \#ff00f0 (91), \#0a9580 (59), remaining 122 users $\leq$ 50 tracks
+- 35 users with only 1 uploaded track
+- Median \# tracks per user: 3.5 (IQR: 8.75)
 
+- Number of survey respondents: 279 started survey, 40 filled out all questions
 - General demographics of the user basis
 - Median Age: 37 (IQR: 22.5), min: 18, max: 65 
-- Male: , Female: , Diverse: 
-- Occupations: 30 employed (76.92\%), 9 other occupations (3 student, 2 self-employed, 1 apprentice, 3 other such as pensioner)
+- Male: 34, Female: 5, Diverse: 1
+- Occupations: 30 employed, 9 other occupations (3 student, 2 self-employed, 1 apprentice, 3 other such as pensioner)
 
-- Favorite bike navigation app: 17 Komoot (43.59\%), 13 Google Maps (33.33\%), 9 Other including bike citizens (2) and PrioBike (2)
-- Preferred bike type: 19x City bike (31.67\%), 10 x Trekking bike (16.67\%), 6x MTB (10\%), 5x Racing bike (8.33\%), 4x cargo bike (6.67\%), 1 other: "commuter"
-- Also 12x e-bike (20\%), 6 offroad and 6 onroad capable
+- Favorite bike navigation app: 17 Komoot, 13 Google Maps, 9 Other including bike citizens (2) and PrioBike (2)
+- Preferred bike type: 19x City bike, 10 x Trekking bike, 6x MTB, 5x Racing bike, 4x cargo bike, 1 other: "commuter"
+- Also 12x e-bike, 6 offroad and 6 onroad capable
 
 - Experience level: 39 experienced (97.5\%), 1 other "Master"
 - Car instead of bike? For the following activities: 12x shopping, 12x free time activities or vacation, 8x work.
@@ -281,7 +285,6 @@ Finally, a tracking service is implemented that obtains ride statistics from use
 \caption{Route personalization preferences.}\label{fig:route-personalization}
 \includegraphics[width=\linewidth]{images/app-usability-questions-route-personalization.pdf}
 \end{figure}
-          
 
 \begin{figure}[t]
 \caption{Route personalization adaptation.}\label{fig:route-personalization-adaptation}
@@ -351,6 +354,10 @@ Finally, a tracking service is implemented that obtains ride statistics from use
 \caption{.}\label{fig:}
 \includegraphics[width=\linewidth]{images/app-user-interaction.pdf}
 \end{figure}
+
+- Top 10 tracks by tap rate have > 27 taps/min, but are only approx. one minute long. Maybe they failed to plan a correct route?
+- Median is 0.15 taps/minute (IQR: 0.34)
+- 765 (57.5\%) of tracks have $\leq$ 2 taps in total (to end ride)
 
 \begin{figure}[t]
 \caption{.}\label{fig:}
