@@ -275,6 +275,13 @@ All respondents of the survey considered themselves to be experienced cyclists -
 
 Based on the survey answers, a noticeable part of respondents seem to strongly advocate for cycling, and only utilize a car whenever no other option is present. Three subjects responded they avoid a car in any situation. Thus, we generally observe that many users who responded to our survey are already highly engaged in bike riding: 26 users use their bike on a daily basis, 12 users occasionally during the week, and two users sometimes on a monthly basis. These aspects will be considered when interpreting individual feedback, but also give insights into the representativeness of the collected tracks.
 
+\begin{figure}[t]
+\caption{Route fit for bike paths and planning intuitiveness.}\label{fig:route-fit-bike-paths}
+\includegraphics[width=\linewidth]{images/app-usability-questions-route-fit-bike-paths.pdf}
+\\
+\includegraphics[width=\linewidth]{images/app-usability-questions-route-planning-intuitiveness.pdf}
+\end{figure}
+
 \subsection{System Usability Scale and User Opinions}
 
 A key part of the conducted survey is the SUS, consisting of ten standardized questions. As the scale intended, these questions were minimally adjusted to fit the PrioBike app context by replacing "the system" with "the app." Finally, the questions were translated into German as closely as possible. As the SUS is intended to be comparable across different applications, it allows us to compare our score against related work. 
@@ -283,17 +290,6 @@ A key part of the conducted survey is the SUS, consisting of ten standardized qu
 
 Thus, our achieved SUS does not reach 80.4, which could be accomplished by Krause et al. (2012) \cite{krause_traffic_2012}. However, the study of Krause et al. (2012) \cite{krause_traffic_2012} is also less comparable to our results, as it was conducted in a simulator environment with relatively favorable conditions and an isolated evaluation of the speed advisory. As the SUS is determined by the overall usability of the system, it is likely that many different aspects of the app have influenced the result.
 
-To further distinguish which aspects of the app users experienced as improvable, specific questions were given for each component of the app. Afterward, we can correlate the given ratings for each feature with the System Usability Score to find which components may have had a large negative impact.
-
-\begin{figure}[t]
-\caption{Route fit for bike paths and planning intuitiveness.}\label{fig:route-fit-bike-paths}
-\includegraphics[width=\linewidth]{images/app-usability-questions-route-fit-bike-paths.pdf}
-\\
-\includegraphics[width=\linewidth]{images/app-usability-questions-route-planning-intuitiveness.pdf}
-\end{figure}
-
-\Cref{fig:route-fit-bike-paths} shows opinions given on the in-app bike routing in relation to each given SUS. Respondents for which no SUS could be calculated are highlighted in gray. While there is a less distinguished opinion on the route's fit with bike paths, improvement potentials can be seen with the routes' fit to normally taken paths. The route planning's intuitiveness and clarity seem to have had an impact on the overall usability, as seen by the SUS distribution. However, one user reporting a low SUS seems to have liked the intuitiveness and clarity, together with the main group of high-SUS respondents. The speed advisory coverage along routes seems to be incorporated by some users into their route planning process.
-
 \begin{figure}[t]
 \caption{Route personalization preferences and adaptation.}\label{fig:route-personalization}
 \includegraphics[width=\linewidth]{images/app-usability-questions-route-personalization.pdf}
@@ -301,9 +297,13 @@ To further distinguish which aspects of the app users experienced as improvable,
 \includegraphics[width=\linewidth]{images/app-usability-questions-route-personalization-adaptation.pdf}
 \end{figure}
 
+To further distinguish which aspects of the app users experienced as improvable, specific questions were given for each component of the app. Afterward, we can correlate the given ratings for each feature with the System Usability Score to find which components may have had a large negative impact.
+
+\Cref{fig:route-fit-bike-paths} shows opinions given on the in-app bike routing in relation to each given SUS. Respondents for which no SUS could be calculated are highlighted in gray. While there is a less distinguished opinion on the route's fit with bike paths, improvement potentials can be seen with the routes' fit to normally taken paths. The route planning's intuitiveness and clarity seem to have had an impact on the overall usability, as seen by the SUS distribution. However, one user reporting a low SUS seems to have liked the intuitiveness and clarity, together with the main group of high-SUS respondents. The speed advisory coverage along routes seems to be incorporated by some users into their route planning process.
+
 For some users, especially users who ranked a low SUS, route personalization seems to play a large role. This can be seen in \Cref{fig:route-personalization}. Two of these users appear to have felt a lack of meaningful adaption to the defined routing profile personalization. Meanwhile, other users described a good personalization or remained neutral about this aspect. Overall, the ability to personalize routes seems to be weighted differently in its importance and also interpreted differently. The same is true for the displayed additional path meta information. Some users seem to like this information for their path choice, while others do not see a demand for this kind of feature. 
 
-Finally, we also asked users whether they would prefer routing on the road instead of the bike path. This question is important, as the developed bike routing and traffic light matching are designed to prefer a bike path whenever possible. Some users indeed responded they would prefer an on-road-routing, while a similarly large part of users opposed this idea. The SUS distribution indicates that this aspect has only played a minor role in the overall usability.  
+Finally, we also asked users whether they would prefer routing on the road instead of the bike path. This question is important, as the developed bike routing and traffic light matching are designed to prefer a bike path whenever possible. Some users indeed responded they would prefer an on-road route, while a similarly large number of users opposed this idea, leading to an overall neutral evaluation of this question. The SUS distribution indicates that this aspect has only played a minor role in the overall usability.
 
 \begin{figure}[t]
 \caption{Speed advisory satisfaction, reliability, and utility.}\label{fig:speed-recommendations-satisfaction}
@@ -312,7 +312,7 @@ Finally, we also asked users whether they would prefer routing on the road inste
 \includegraphics[width=\linewidth]{images/app-usability-questions-speed-recommendations-reliability.pdf}
 \end{figure}
 
-
+Regarding the second main aspect of usability, the speed advisory also provides some aspects with room for improvement. While some users were satisfied, another group of users were unsatisfied or very unsatisfied. One potential reason seems to have been the speed advisory's reliability, which was perceived in some cases as low or very low. 
 
 \begin{figure}[t]
 \caption{Perceived impact on waiting time and safety}\label{fig:waiting-time-at-traffic-lights}
