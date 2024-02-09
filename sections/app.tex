@@ -239,7 +239,7 @@ Our developed concept provides the foundation for our final evaluation: a large-
 
 Our upscaled real-world test aims to capture the impact of speed recommendations on cyclists as realistically as possible. However, the increase in study complexity also introduces additional challenges, particularly in data analysis. For example, we can no longer assume that users will only choose predefined routes for speed advisory, containing traffic lights that are also suitable for prediction. In such a complex setting with various possible routes, traffic situations, types of devices, users and attitudes, the main goal is to overcome challenges in analysis while deriving as many reliable insights as possible. 
 
-A twofold study design is chosen. Initially, a user survey through our app is conducted, in which our test users can voluntarily participate. This yields demographic statistics about our user base, standardized SUS ratings for usability, and more detailed individual feedback on both positive and areas for improvement. Subsequently, we transition to a quantitative analysis. By studying recorded interactions with the user interface, we examine how often users physically interact with the smartphone and explore ways to further reduce potentially hazardous interactions during cycling.
+A twofold study design is chosen. Initially, an anonymized user survey through our app is conducted, in which our test users can voluntarily participate. This yields demographic statistics about our user base, standardized SUS ratings for usability, and more detailed individual feedback on both positive and areas for improvement. Subsequently, we transition to a quantitative analysis. By studying recorded interactions with the user interface, we examine how often users physically interact with the smartphone and explore ways to further reduce potentially hazardous interactions during cycling.
 
 The core of our quantitative evaluation focuses on the impact of speed advisories on intersection approaches, calculating multiple impact metrics. To distinguish between well-utilized and poorly-utilized speed advisories, we measure the user's adherence to the recommended green phase(s). This allows us to categorize three cases: intersection approaches without speed advisories, those with adhered-to speed advisories, and those where the speed advisory was not utilized for various reasons. With this differentiation and the recorded tracks, we calculate the influence on intersection approach speed, increase or decrease in energy expenditure, as well as the number of stops and stop duration. Finally, we cross-validate our results and discuss the main findings, setting them in relation to previous studies.
 
@@ -356,35 +356,22 @@ The negative feedback that was collected mainly relates to the speed advisory co
 \includegraphics[width=\linewidth]{images/app-feedback-positive.pdf}
 \end{figure}
 
-Apart from the negative aspects that were expected to be much more prevalent in user feedback, there are also some positive aspects that were noted in the survey. As shown in \Cref{fig:app-positive-feedback}, 6 users conveyed an overall positive feeling about the application concept, which was mainly hindered by the coverage or reliability of the traffic light predictions. 5 users also expressed they enjoyed using the app. For 6 users, the main benefit was that they could roll out at traffic lights more often and conserve energy. In addition to this benefit, users also felt positive about a heightened sense of awareness and relaxation in selecting speeds, knowing about the upcoming traffic light's switching behavior. Some users felt they could successfully adhere to the speed advisory and reduce the frequency and frustration of stopping at red lights.
+Apart from the negative aspects of user feedback, there are also some positive aspects that were noted in the survey. As shown in \Cref{fig:app-positive-feedback}, 6 users conveyed an overall positive feeling about the application concept, which was mainly hindered by the coverage or reliability of the traffic light predictions. 5 users also expressed they enjoyed using the app. For 6 users, the main benefit was that they could roll out at traffic lights more often and conserve energy. In addition to this benefit, users also felt positive about a heightened sense of awareness and relaxation in selecting speeds, knowing about the upcoming traffic light's switching behavior. Some users felt they could successfully adhere to the speed advisory and reduce the frequency and frustration of stopping at red lights.
 
-Furthermore, specific features of the app received praise from users. The countdown for green lights was particularly helpful, as was the display of speed information. Users also commended the app's stability and usability, indicating a smooth and reliable experience.
+The user interface also obtained positive feedback from some users. The traffic light countdown was seen as helpful, while one user found particular use in the display of speed. Opposed to the users that reported crashes in the negative feedback, some users also felt the app was very stable and experienced overall good usability. Similarly, while a few users criticized the app's route choice in the negative feedback, there were also users who found good route choices and experienced the routing functioning well. While occasional inconsistency with the speed advisory coverage along routes was noted in the negative feedback, it was also experienced by 3 other users as a good source of information for speed-advisory enhanced route planning. The detected number of traffic lights along routes was also utilized to find routes with fewer traffic lights. Finally, one user also noted the easy learnability of the app's features.
 
-Moreover, users appreciated the app's route suggestions, finding them to be well-chosen and effectively functional. Despite concerns about the coverage of speed advisories, users found the routing functionality to be reliable and beneficial.
+Comparing negative and positive feedback, it is expected that negatives are more prevalent than positives, as users were free to participate in the survey. Thus, users who were dissatisfied were likely more motivated to participate, using the survey as a channel for criticism. Against this backdrop, it is clear that key improvements must be made in data stability, prediction reliability, and speed advisory coverage to avoid user frustration. While there is critical feedback toward the developed in-app routing, other users also experience the selected routes as well-suited. It is clear that the developed routing profiles cannot equally suit all user preferences, but some adjustments or personalization to the routing profiles may be needed for optimization. In the presence of a reliable speed advisory, users generally felt free to follow it and experienced the anticipated benefits, such as increased comfort, stop reduction, and overall more informedness. Most users experienced the speed advisory's potential distraction from traffic as low, not encouraging them to engage in riskier driving behavior. To reduce distractions and increase accessibility, users wished for an auditive speed advisory.
 
+\subsection{Measured Impact on Cycling}
 
-- More mindful / more relaxed speed choice
-- Experienced fewer stops and associated frustration
-- General successful following of the speed advisory
-- More informed ride
-
-- Green light countdown helpful, display of speed also helpful
-- Good app stability and usability
-
-- Good route choice
-- Routing experienced as well functioning
-- Speed advisory coverage is informative
-
-- Summary
-
-\subsection{Interaction During Ride}
-
-- Interaction during ride
+After studying user opinions on the overall usability and the perceived impacts, we now shift our focus to the objective insights provided by trajectory data. Before studying the impacts on driving speed and stop (time) reduction, we investigate the recorded user interface interactions during rides. This analysis aims to understand more precisely how often and at what speed users tap on the display to determine whether interaction during rides could be a safety concern.
 
 \begin{figure}[t]
 \caption{Recorded interaction with the smartphone's screen while in the ride view.}\label{fig:app-user-interaction}
 \includegraphics[width=\linewidth]{images/app-user-interaction.pdf}
 \end{figure}
+
+The recorded taps are highlighted in \Cref{fig:app-user-interaction}. Older betas with a slightly different ride view layout are omitted here. 
 
 - Top 10 tracks by tap rate have > 27 taps/min, but are only approx. one minute long. Maybe they failed to plan a correct route?
 - Median is 0.15 taps/minute (IQR: 0.34)
@@ -394,9 +381,6 @@ Moreover, users appreciated the app's route suggestions, finding them to be well
 \caption{Taps on the screen by currently driven speed and time of entering/leaving the view.}\label{fig:app-user-interaction-speed}
 \includegraphics[width=\linewidth]{images/app-user-interaction-speed.pdf}
 \end{figure}
-
-
-\subsection{Measured Impact on Cycling}
 
 - Distinct sgs with GLOSA: 1004
 - Distinct sgs in total: 1417
