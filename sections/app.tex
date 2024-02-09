@@ -424,43 +424,17 @@ Overall, when all approaches with speed advisory are summed up, the median traff
 
 % For electric bicycles, Tal et al. (2016) reported savings of 32 -- 46\% in an iTETRIS (SUMO) simulation, testing at a single intersection. The energy savings were measured using a consumption model that considered air resistance, road inclination, and rolling resistance \cite{tal_vehicular-communications-based_2016}. Dabiri et al. (2020) employed a similar model, including acceleration \cite{dabiri_optimized_2020}. However, actual energy savings during everyday cycling have not been measured for cyclists.
 
-Based on the different speeds during the approach, we can calculate the increased or decreased energy spending. 
-\begin{equation}
-\text{Power} = (F_{\text{air}} + F_{\text{roll}} + F_{\text{climb}}) \times \text{speed}
-\end{equation}
+%  D=1.247 kg/m3, A=0.7 m2, Rc=0.004, Cd=1 (typical values [5]).
+%  m=105 kg (cyclist 80 kg, bicycle 25 kg—as used in the testbed-based testing).
 
-Where:
-\begin{equation}
-\begin{align*}
-F_{\text{air}} &= \frac{1}{2} \rho \cdot v^2 \cdot C_w \cdot A \\
-F_{\text{roll}} &= m \cdot g \cdot C_r \\
-F_{\text{climb}} &= m \cdot g \cdot \sin(\arctan(\text{inclination}))
-\end{align*}
-\end{equation}
 
-The parameters used in the calculation are as follows:
-
-\begin{center}
-\begin{tabular}{|c|c|}
-\hline
-Parameter & Value \\
-\hline
-Cyclist weight & $75 + 15$ kg \\
-Rolling resistance coefficient & 0.005 \\
-Air resistance coefficient & 0.9 \\
-Frontal surface area & 0.6 $m^2$ \\
-Air density & 1.29 $kg/m^3$ \\
-Gravity & 9.81 $m/s^2$ \\
-Inclination & 0 \% (flat) \\
-\hline
-\end{tabular}
-\end{center}
+Based on the different speeds during the approach, we can calculate the increased or decreased energy spending. The bike energy model from Dabiri et al. (2020) \cite{dabiri_optimized_2020} is not chosen here, as it requires a calculation of the acceleration force, which would overamplify the slight inaccuracies in the measured GNSS speed as continuous. Instead, the similar but simplified model from Tal et al. (2016) \cite{tal_vehicular-communications-based_2016} is adopted that considers the drag, hillclimb/downhill, and friction forces. We use the same air density (1.247 kg/m$^3$), frontal area (0.7 m$^2$), rolling resistance (0.004), and drag coefficient (1) that originated from a publication of Muetze et al. (2007) \cite{muetze_electric_2007}. However, we also make some minor adjustments and simplifications. First, as we do not only consider e-bikes, we reduce the bike's mass to 15 kg, meaning the total mass, including the cyclist, is configured as 95kg instead of 105 kg. Furthermore, we assume a wind speed of 0 km/h as we have no meaningful way of measuring this value. Finally, although the user's height could be inferred from the GNSS location or calculated by the route's height profile, we also assume a slope grade of 0\% to avoid incorporating additional errors from the height determination, as Hamburg can be considered generall flat. 
 
 - Resulting energy savings
-- Average kJ with GLOSA: 19.24 
-- Average kJ with GLOSA and adherence > 50\%: 21.00 
-- Average kJ with GLOSA and adherence < 50\%: 17.98 
-- Average kJ without GLOSA: 19.79
+- Average kJ with GLOSA: 22.52 
+- Average kJ with GLOSA and adherence > 50\%: 24.69 
+- Average kJ with GLOSA and adherence < 50\%: 21.04 
+- Average kJ without GLOSA: 23.21
 
 \begin{figure}[t]
 \caption{Distribution of speeds on traffic light approach depending on the adherence level.}\label{fig:impacts-approach-speed-heatmap}
