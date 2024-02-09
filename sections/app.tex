@@ -412,18 +412,49 @@ After the described preprocessing, our final evaluation dataset contains 1962 tr
 \includegraphics[width=\linewidth]{images/impacts-approach-speed.pdf}
 \end{figure}
 
-Based on our evaluation dataset, we first calculate the influence of the speed advisory on the user's speed while approaching the traffic light. For each meter from 150m before to 50m after the traffic light, we sample the driving speed from all approaches at this distance. As the device's sampling rate and the driven speed determine how often GNSS samples occur during the approach, meaning that faster driving results in fewer samples along the approach, we perform a super/subsampling to the 1m raster using linear interpolation between GNSS samples.
+Based on our evaluation dataset, we first calculate the influence of the speed advisory on the user's speed while approaching the traffic light. For each meter from 150m before to 50m after the traffic light, we sample the driving speed from all approaches at this distance. As the device's sampling rate and the driven speed determine how often GNSS samples occur during the approach, meaning that faster speeds result in fewer samples along the approach, we perform a resampling to the 1m raster using linear interpolation between GNSS samples.
 
-The first key impact is highlighted in \Cref{fig:impacts-approach-speed}. 
+As a result, we obtain the median and mean traffic light approach speed as displayed in \Cref{fig:impacts-approach-speed}, upon which a few key observations can be made. As expected, we can clearly see the deceleration before and acceleration after the traffic lights, indicating that our track segmentation and alignment with traffic light positions were successful. Also, we can see that all types of approaches start close together and accelerate to a similar speed after the traffic light. However, a notable disparity becomes evident as the cyclist approaches closer to the traffic light. The effect of the speed advisory differs between "no adherence" and "adherence" cases.
 
-\Cref{fig:impacts-approach-speed}
+In "no adherence" cases, the median passing speed resides at 12.09 km/h (IQR: 11.73 km/h), which is 3.39 km/h slower than without speed advisory, residing at a median passing speed of 15.49 km/h (IQR: 12.09 km/h). The deceleration from the user's comfort speed also seems to start earlier, indicating that users decide to "roll out" to the traffic light, as previously confirmed through user feedback. This effect was likely caused by the awareness of a red light when arriving.
 
-- Interpolation auf meterbasis
-- Impact on approach speed
-- Median speed at 0m with GLOSA: 14.748851498558905 (IQR 12.332427560394335)
-- Median speed at 0m no GLOSA: 15.47884898628614 (IQR 12.08553925483405)
-- Median speed at 0m no adherence: 12.093527416016059 (IQR 11.731757336342692)
-- Median speed at 0m adherence: 18.398685181342955 (IQR 10.33149951069667)
+In cases with adherence to the speed advisory, it can be clearly seen that users traverse the traffic light at a higher median speed of 18.40 km/h (IQR: 10.33 km/h) and, thus, 2.92 km/h faster than without speed advisory. Consequently, less acceleration after passing the traffic light is required to reach the comfort speed again. Additionally, shortly after passing the 150-meter distance mark, cyclists appear to accelerate slightly. This implies that there were instances where users increased their speed from their comfortable pace to catch a green phase. Just before the traffic light, the speed decreases more noticeably. This could be due to situations where the green phase could no longer be reached or the traffic light had not yet turned green.
+
+Overall, when all approaches with speed advisory are summed up, the median traffic light passing speed only changes marginally to 14.75 km/h (IQR: 12.33 km/h), which is 0.73 km/h slower than without a speed advisory. However, splitting speed advisory approaches into adhered and non-adhered cases displays a clear twofold effect on the cycling behavior, meaning that both effects cancel out each other when aggregated.
+
+% For electric bicycles, Tal et al. (2016) reported savings of 32 -- 46\% in an iTETRIS (SUMO) simulation, testing at a single intersection. The energy savings were measured using a consumption model that considered air resistance, road inclination, and rolling resistance \cite{tal_vehicular-communications-based_2016}. Dabiri et al. (2020) employed a similar model, including acceleration \cite{dabiri_optimized_2020}. However, actual energy savings during everyday cycling have not been measured for cyclists.
+
+Based on the different speeds during the approach, we can calculate the increased or decreased energy spending. 
+\begin{equation}
+\text{Power} = (F_{\text{air}} + F_{\text{roll}} + F_{\text{climb}}) \times \text{speed}
+\end{equation}
+
+Where:
+\begin{equation}
+\begin{align*}
+F_{\text{air}} &= \frac{1}{2} \rho \cdot v^2 \cdot C_w \cdot A \\
+F_{\text{roll}} &= m \cdot g \cdot C_r \\
+F_{\text{climb}} &= m \cdot g \cdot \sin(\arctan(\text{inclination}))
+\end{align*}
+\end{equation}
+
+The parameters used in the calculation are as follows:
+
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+Parameter & Value \\
+\hline
+Cyclist weight & $75 + 15$ kg \\
+Rolling resistance coefficient & 0.005 \\
+Air resistance coefficient & 0.9 \\
+Frontal surface area & 0.6 $m^2$ \\
+Air density & 1.29 $kg/m^3$ \\
+Gravity & 9.81 $m/s^2$ \\
+Inclination & 0 \% (flat) \\
+\hline
+\end{tabular}
+\end{center}
 
 - Resulting energy savings
 - Average kJ with GLOSA: 19.24 
