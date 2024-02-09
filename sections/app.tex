@@ -362,7 +362,7 @@ The user interface also obtained positive feedback from some users. The traffic 
 
 Comparing negative and positive feedback, it is expected that negatives are more prevalent than positives, as users were free to participate in the survey. Thus, users who were dissatisfied were likely more motivated to participate, using the survey as a channel for criticism. Against this backdrop, it is clear that key improvements must be made in data stability, prediction reliability, and speed advisory coverage to avoid user frustration. While there is critical feedback toward the developed in-app routing, other users also experience the selected routes as well-suited. It is clear that the developed routing profiles cannot equally suit all user preferences, but some adjustments or personalization to the routing profiles may be needed for optimization. In the presence of a reliable speed advisory, users generally felt free to follow it and experienced the anticipated benefits, such as increased comfort, stop reduction, and overall more informedness. Most users experienced the speed advisory's potential distraction from traffic as low, not encouraging them to engage in riskier driving behavior. To reduce distractions and increase accessibility, users wished for an auditive speed advisory.
 
-\subsection{Measured Impact on Cycling}
+\subsection{User Interaction During Rides}
 
 After studying user opinions on the overall usability and the perceived impacts, we now shift our focus to the objective insights provided by trajectory data. Before studying the impacts on driving speed and stop (time) reduction, we investigate the recorded user interface interactions during rides. This analysis aims to understand more precisely how often and at what speed users tap on the display to determine whether interaction during rides could be a safety concern.
 
@@ -371,16 +371,24 @@ After studying user opinions on the overall usability and the perceived impacts,
 \includegraphics[width=\linewidth]{images/app-user-interaction.pdf}
 \end{figure}
 
-The recorded taps are highlighted in \Cref{fig:app-user-interaction}. Older betas with a slightly different ride view layout are omitted here. T
+The recorded taps are highlighted in \Cref{fig:app-user-interaction}. Older betas with a slightly different ride view layout are omitted here. As a result, the general tap distribution on the screen shows four hotspots of interaction. The largest hotspot is located above the speedometer in the map view. Most interactions seen here are related to panning and zooming on the map. Taps in this region, as seen on the right side, are primarily detected while being stationary. An exception is the lower part in the center of the screen, where users can tap to re-center the map's camera onto the current location. This button is often pressed while on the move, likely after continuing to ride.
 
-- Top 10 tracks by tap rate have > 27 taps/min, but are only approx. one minute long. Maybe they failed to plan a correct route?
-- Median is 0.15 taps/minute (IQR: 0.34)
-- 765 (57.5\%) of tracks have $\leq$ 2 taps in total (to end ride)
+Two other interaction hotspots are seen in the bottom region within the speedometer. These hotspots are related to the buttons designed to report bad and good bike path qualities -- a feature that was originally intended to further enhance the routing and was also implemented to warn users from spots that were repeatedly marked with bad quality. However, as seen in \Cref{fig:app-user-interaction}, these buttons are frequently activated while in motion, requiring users to remove one hand from the handlebar and concentrate on pressing the button. The potential safety concerns associated with this interaction were also observed during test rides in Dresden, particularly when already navigating on a rough surface. Based on this result, the decision was made to remove these buttons.
+
+Besides the third hotspot located on the top right, which corresponds to users ending their rides by pressing the finish button, a vertical line artifact can be seen in the center of the screen. Since this artifact was captured by only one user, it is unlikely to represent an actual finger tap on the screen. A more plausible explanation could be the presence of a smartphone mount that might have inadvertently interacted with the screen.
+
+In general, some users tend to interact significantly more often with the screen than others. This can also be seen by the recurring colors in \Cref{fig:app-user-interaction}. The top 10 tracks (by tap rate) exhibit a rate exceeding 27 taps per minute despite their approximately one-minute duration. In such instances, one potential explanation is that users faced difficulties in accurately planning their routes, or perhaps they wished to experiment with the application by following the planned route and tapping on the traffic lights to switch to their countdown. In most other tracks, the tap rate is relatively low, with 0.15 taps per minute (IQR: 0.34). Additionally, a substantial portion, 765 tracks accounting for 57.5\% of the total, recorded two taps or fewer in total, primarily for ending the ride. Thus, in many tracks, there was no interaction with the screen at all while driving.
 
 \begin{figure}[t]
 \caption{Taps on the screen by currently driven speed and time of entering/leaving the view.}\label{fig:app-user-interaction-speed}
 \includegraphics[width=\linewidth]{images/app-user-interaction-speed.pdf}
 \end{figure}
+
+As seen in \Cref{fig:app-user-interaction-speed}, most user interactions happen in a standstill position, directly after the ride has been started or shortly before the ride ended. Interactions with higher speeds are primarily related to the two path quality report buttons. Hence, apart from these buttons that were removed to enhance safety during usage, no further areas to reduce active interaction could be identified.
+
+\subsection{Measured Impact on Cycling}
+
+Our final evaluation focuses on the direct impacts of the speed advisory on cyclist behavior. However, there are a few key challenges that we need to overcome before we can measure these impacts. As there may be road sections with and without traffic lights, the first key challenge in this investigation is extracting traffic light approaches from the trajectory data. 
 
 - Distinct sgs with GLOSA: 1004
 - Distinct sgs in total: 1417
