@@ -252,7 +252,7 @@ The core of our quantitative evaluation focuses on the impact of speed advisorie
 
 Throughout the recorded time span from March 2023 to December 2023, as highlighted in \Cref{fig:app-usage-over-time}, various users have downloaded and tested the app. Based on statistics obtained from the Google Play console and AppStore Connect on February 5, 2023, the mobile application was installed on at least 130 Android and 178 iOS devices. Among these devices, 126 distinct user IDs recorded tracks in Hamburg. A user id is generated on every fresh installation of the mobile app, meaning that only a part of the users who installed the app also used it on real bike rides in Hamburg. Development devices and users who tested the application only on test setups in Dresden are likely the main reason for this difference.
 
-Throughout the testing period, 1655 tracks were recorded, resulting in approximately three weeks of continuous driving data. From these tracks, 325 were filtered out during preprocessing, as they contained fewer than 30 GNSS samples and were considered too short to provide reliable measurements. On some occasions, the GNSS data could not be decoded properly due to an intermittent implementation error. However, these occasions represent a small minority in the collected tracks.
+Throughout the testing period, 1655 tracks were recorded, resulting in approximately three weeks of continuous driving data. From these tracks, 121 were filtered out during preprocessing, as they contained fewer than 30 GNSS samples and were considered too short to provide reliable measurements. 175 tracks containing GNSS points over 250m from the route were discarded. During these "teleport" tracks, the app was likely backgrounded for a long time, not recording GNSS points, although the user moved. On one occasion, the GNSS data could not be decoded properly due to an intermittent implementation error. However, these occasions represent a small minority in the collected tracks.
 
 Clearly visible in \Cref{fig:app-usage-over-time} is that the frequency of rides has not been continuous over the months, but tracks were instead collected in "bulks." This can be explained by our strategy to fan out the test version to new users. While initial beta test versions were distributed in a closed beta schema on request via email, later versions were opened to the public with a download link. Simultaneously, there were some occasions on which the app test was advertised on social media platforms, leading to an increase in testers around September 2023. This increase persisted until the winter, in which it is expected that much fewer cyclists test the app. During December 2023, only a handful of users did drive with the app, denoting the end of our data collection period. 
 
@@ -397,7 +397,7 @@ Our final evaluation focuses on the direct impacts of the speed advisory on cycl
 
 To solve this problem, the pre-matched traffic light locations along the trajectory are reused to split the continuous trajectory into segments of traffic light approaches. Afterward, we determine the first GNSS location on which the user obtained a speed advisory and calculate the activation distance from the traffic light. As shown in \Cref{fig:impacts-adherence-activation-distance}, this results in a large variety of speed advisory activation distances, with a median of 133.5 meters (IQR: 260.7m). 
 
-A larger concentration of activation distances close to zero can be seen. These resulted from occasional overshooting of the GNSS location past the traffic light, followed by a rapid return to position just before. To ensure only meaningful traffic light approaches with sufficient activation distance are utilized for impact evaluation, we filter out all approaches that are shorter than 150 meters or provide less than 50 meters of trajectory after the traffic light is passed. As a result, from 1120 tracks with 4179 intersection approaches for 1004 different traffic lights, we extract 1120 speed-advisory enhanced approaches for 321 different traffic lights.
+A larger concentration of activation distances close to zero can be seen. These resulted from occasional overshooting of the GNSS location past the traffic light, followed by a rapid return to position just before. To ensure only meaningful traffic light approaches with sufficient activation distance are utilized for impact evaluation, we filter out all approaches that are shorter than 150 meters or provide less than 50 meters of trajectory after the traffic light is passed. As a result, from 4179 intersection approaches for 1004 different traffic lights, we extract 1120 speed-advisory enhanced approaches for 321 different traffic lights that cover the full 200m range.
 
 To compare approaches influenced by the speed advisory against approaches without, we repeat the same procedure. However, this time, we only retain approaches for which no speed advisory was displayed throughout the entire arrival section (150m distance to 0m). Through this process, we obtain 842 additional approaches for 317 different traffic lights. Together with traffic lights for which advised approaches were extracted, 451 distinct traffic lights are captured by our evaluation dataset. 187 distinct traffic lights are captured both with and without advisory, while 134 are only captured with and 130 only without. Thus, while there is an overlap in captured traffic lights, both parts of the dataset (with/without advisory) also contain unique examples.
 
@@ -422,13 +422,17 @@ In cases with adherence to the speed advisory, it can be clearly seen that users
 
 Overall, when all approaches with speed advisory are summed up, the median traffic light passing speed only changes marginally to 14.75 km/h (IQR: 12.33 km/h), which is 0.73 km/h slower than without a speed advisory. However, splitting speed advisory approaches into adhered and non-adhered cases displays a clear twofold effect on the cycling behavior, meaning that both effects cancel out each other when aggregated.
 
-Based on the different speeds during the approach, we can calculate the energy expenditure during and after the traffic light approach. The simplified model by Tal et al. (2016) \cite{tal_vehicular-communications-based_2016} based on parameters from Muetze et al. (2007) \cite{muetze_electric_2007} is not adopted here since it does not incorporate the acceleration force. Instead, we utilize the model proposed by Dabiri et al. (2020) \cite{dabiri_optimized_2020} with an air density of 1.247 kg/m$^3$, a frontal area of 0.616 m$^2$, a rolling resistance of 0.008, and drag coefficient of 1.2. We also use the same combined bike and cyclist mass of 95 kg together with a rotational wheel mass of 0.95 kg for acceleration force calculation. Like Dabiri et al. (2020) \cite{dabiri_optimized_2020}, we assume a wind speed of 0 km/h as we have no meaningful way of measuring this value. The inclination is linearly interpolated from the route's height profile (see \Cref{ch:routing}), snapping each GNSS position to the nearest route segment.
+Based on the different speeds during the approach, we can calculate the energy expenditure before and after the traffic light. The simplified model by Tal et al. (2016) \cite{tal_vehicular-communications-based_2016} based on parameters from Muetze et al. (2007) \cite{muetze_electric_2007} is not adopted here since it does not incorporate the acceleration force. Instead, we utilize the model proposed by Dabiri et al. (2020) \cite{dabiri_optimized_2020} that incorporates the acceleration force, making it possible to estimate the spent energy to accelerate again after the traffic light. We don't count negative acceleration toward the expended energy, assuming that the bike is unable to recuperate braking energy into, for example, a battery through an electric motor.
+
+Otherwise, we adopt all parameters of the model with an air density of 1.247 kg/m$^3$, a frontal area of 0.616 m$^2$, a rolling resistance of 0.008, and a drag coefficient of 1.2. We also use the same combined bike and cyclist mass of 95 kg together with a rotational wheel mass of 0.95 kg for acceleration force calculation. Like Dabiri et al. (2020) \cite{dabiri_optimized_2020}, we assume a wind speed of 0 km/h as we have no meaningful way of measuring this value. The inclination is linearly interpolated from the route's height profile, snapping each GNSS position to the nearest route segment. Thus, although the terrain of Hamburg can be considered quite flat, cycling uphill increases the estimated energy expenditure, and cycling downhill decreases it.
+
+Based on the model, cycling without GLOSA toward traffic lights (150m before to 50m after) results in a median spending of 42.07 kJ (IQR: 25.38 kJ). Compared to this baseline, cycling with GLOSA results in a 1.4\% increase in energy expenditure at 41.47 kJ (IQR: 29.62 kJ). Split into the two classes, the difference becomes more clear. Without adherence to the speed advisory, users save 
 
 - Resulting energy savings
-- Average kJ with GLOSA: 22.07
-- Average kJ with GLOSA and adherence > 50\%: 24.23 
-- Average kJ with GLOSA and adherence < 50\%: 20.63 
-- Average kJ without GLOSA: 22.75
+Average kJ with GLOSA: 31.86 
+Average kJ with GLOSA and adherence > 50\%: 33.15 
+Average kJ with GLOSA and adherence < 50\%: 30.96 
+Average kJ without GLOSA: 31.54
 
 \begin{figure}[t]
 \caption{Distribution of speeds on traffic light approach depending on the adherence level.}\label{fig:impacts-approach-speed-heatmap}
@@ -472,5 +476,9 @@ Based on the different speeds during the approach, we can calculate the energy e
 - Not adapted to speed advisory although possible and not stopped: 67
 - No adaption possible and stopped: 106
 - No adaption possible and not stopped: 74
+
+\begin{Summary}[Summary and Discussion of Results]
+- Shift between adherence cases with better prediction reliability?
+\end{Summary}
 
 \section{Conclusions}
