@@ -397,25 +397,28 @@ Our final evaluation focuses on the direct impacts of the speed advisory on cycl
 
 To solve this problem, the pre-matched traffic light locations along the trajectory are reused to split the continuous trajectory into segments of traffic light approaches. Afterward, we determine the first GNSS location on which the user obtained a speed advisory and calculate the activation distance from the traffic light. As shown in \Cref{fig:impacts-adherence-activation-distance}, this results in a large variety of speed advisory activation distances, with a median of 133.5 meters (IQR: 260.7m). 
 
-A larger concentration of activation distances close to zero can be seen. These resulted from occasional overshooting of the GNSS location past the traffic light, followed by a rapid return to position just before the traffic light. To ensure only meaningful traffic light approaches with sufficient activation distance are utilized for impact evaluation, we filter out all approaches that are shorter than 150 meters or provide less than 50 meters of trajectory after the traffic light is passed. As a result, from 1120 tracks with 4179 intersection approaches for 1004 different traffic lights, we extract 1120 speed-advisory enhanced approaches for 321 different traffic lights.
+A larger concentration of activation distances close to zero can be seen. These resulted from occasional overshooting of the GNSS location past the traffic light, followed by a rapid return to position just before. To ensure only meaningful traffic light approaches with sufficient activation distance are utilized for impact evaluation, we filter out all approaches that are shorter than 150 meters or provide less than 50 meters of trajectory after the traffic light is passed. As a result, from 1120 tracks with 4179 intersection approaches for 1004 different traffic lights, we extract 1120 speed-advisory enhanced approaches for 321 different traffic lights.
 
 To compare approaches influenced by the speed advisory against approaches without, we repeat the same procedure. However, this time, we only retain approaches for which no speed advisory was displayed throughout the entire arrival section (150m distance to 0m). Through this process, we obtain 842 additional approaches for 317 different traffic lights. Together with traffic lights for which advised approaches were extracted, 451 distinct traffic lights are captured by our evaluation dataset. 187 distinct traffic lights are captured both with and without advisory, while 134 are only captured with and 130 only without. Thus, while there is an overlap in captured traffic lights, both parts of the dataset (with/without advisory) also contain unique examples.
 
-Finally, before we can evaluate the speed advisory's influence, we split the "with advisory" part of the dataset into two more groups: "no adaption" and "adaption." 
+Finally, before we can evaluate the speed advisory's influence, we split the "with advisory" part of the dataset into two more groups: "no adaption" and "adaption." This classification aims to differentiate between approaches with speed advisory where the recommended speed was adhered to and those where it was not. Non-adherence may occur when users perceive the recommended green phases as unattainable (either too slow or too fast). Other reasons could include the absence of an attainable green phase in the speedometer range, leading users to assume they will encounter a red light regardless. However, users may also intentionally choose not to follow the recommendation. To distinguish these cases from instances where users genuinely attempted to adhere to the speed advisory, we calculate an adherence factor for each approach to the intersection.
 
-Die Intention dieses Schrittes 
+The adherence factor is calculated from the traveled distance during the approach where the speedometer needle was over a green area of the speed advisory. When users were able to position their needle over green over 50\% of the approach's distance, the approach was classified as an "adaption" to the speed advisory. Below, approaches were classified as "no adaption." The resulting distribution is shown in \Cref{fig:impacts-adherence-activation-distance}, where 638 approaches with speed advisory fell into the category "no adaption," and 482 were classified as "adaption."
 
-- Median adherence: 0.0 IQR 0.4660847535192057
-- No adherence: 283 
-- Adherence < 0.5: 638 
-- Adherence > 0.5: 482 
-- Adherence == 1: 8
+After the described preprocessing, our final evaluation dataset contains 1962 traffic light approaches with full coverage of at least 150m before and 50m after the traffic light: 842 approaches without advisory (baseline), 638 without adaption, and 482 with adaption to the speed advisory.
 
 \begin{figure}[t]
 \caption{Measured speed advisory impact on traffic light approach speed.}\label{fig:impacts-approach-speed}
 \includegraphics[width=\linewidth]{images/impacts-approach-speed.pdf}
 \end{figure}
 
+Based on our evaluation dataset, we first calculate the influence of the speed advisory on the user's speed while approaching the traffic light. For each meter from 150m before to 50m after the traffic light, we sample the driving speed from all approaches at this distance. As the device's sampling rate and the driven speed determine how often GNSS samples occur during the approach, meaning that faster driving results in fewer samples along the approach, we perform a super/subsampling to the 1m raster using linear interpolation between GNSS samples.
+
+The first key impact is highlighted in \Cref{fig:impacts-approach-speed}. 
+
+\Cref{fig:impacts-approach-speed}
+
+- Interpolation auf meterbasis
 - Impact on approach speed
 - Median speed at 0m with GLOSA: 14.748851498558905 (IQR 12.332427560394335)
 - Median speed at 0m no GLOSA: 15.47884898628614 (IQR 12.08553925483405)
