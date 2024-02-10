@@ -455,19 +455,35 @@ In the example given in \Cref{fig:example-trajectory-not-adapted}, the user seem
 \includegraphics[width=\linewidth]{images/16-#82d34-user_#87476-sg_306_9.pdf}
 \end{figure}
 
-Another example is shown in \Cref{fig:example-trajectory-adapted}. Here, the user also stopped before accelerating toward the recommended traffic light. On this occasion, the user appears to be aiming to catch the green light, exhibiting a higher-than-usual acceleration, as shown by the previous speeds on the left side. Furthermore, it can be seen that the user aims to follow the more certain part of the speed advisory, indicated by a stronger green. Here, the speed advisory seems also to have been accurate, as no stop can be seen after passing the predicted green light.
+A different example is shown in \Cref{fig:example-trajectory-adapted}. On this occasion, the user appears to be aiming to catch the green light, exhibiting a higher-than-usual acceleration, as shown by the previous speeds on the left side. The measured speed remains over the green phases for more than 50\% of the approach distance, indicating this case would have been classified as "adhered." Interestingly, it can be seen that the user aims to follow the more certain part of the speed advisory, shown by a stronger green. Here, the speed advisory seems also to have been accurate, as no stop can be seen after passing the predicted green light. However, as opposed to the approach in \Cref{fig:example-trajectory-not-adapted}, the user adapted to the speed advisory and did not stop at the traffic light.
 
-- Total labels: 1,165, persons involved in the process: 5 (equally split, 3 times)
-- Equal decisions: 915
-- Unequal decisions: 200
-- Decisions where only one person labeled: 50
+To obtain a more comprehensive understanding of these cases, we generated such visualizations from all available user approaches on August 29, 2023, and classified all approaches according to our reasoning. Five persons were involved to reduce personal bias in the labeling process. Each person was tasked with labeling a similarly large subset of the visualizations. This process was repeated three times in a round-robin fashion, meaning that each roughly 20\% subset of the visualizations had at least three labelings by different people. In consequence, 2280 labels were created for 1165 traffic light approaches out of 1386. In the remaining 221 approaches, no meaningful classification could be made due to very short approaches or otherwise unclear parts of the trajectory, such as presumably mismatched traffic lights. 
 
-- Adapted to speed advisory but stopped: 72
-- Adapted to speed advisory but did not stop: 447
-- Not adapted to speed advisory although possible and stopped: 149
-- Not adapted to speed advisory although possible and not stopped: 67
-- No adaption possible and stopped: 106
-- No adaption possible and not stopped: 74
+During this process, 915 (78.5\%) of the visualizations had equal, and 200 (17.2\%) had unequal labelings. In these cases, it proved difficult to distinguish whether an adaption had happened or would have been possible. Sometimes, such as in \Cref{fig:example-trajectory-not-adapted}, the suggested speed for catching the green phase fell below 10 km/h, rendering the target speed so minimal that users had no practical means of adhering to it. Therefore, while in theory, adaptation could have been possible, its practicality in these cases was subject to debate. In the remaining 50 cases (4.3\%), only one person had labeled the visualization, meaning that a cross-checking was not possible.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lr}
+\toprule
+\textbf{Classification of traffic light approach} & \textbf{Count} \\
+\midrule
+Adapted to speed advisory but stopped & 72 \\
+Adapted to speed advisory but did not stop & 447 \\
+Not adapted to speed advisory, although possible, and stopped & 149 \\
+Not adapted to speed advisory, although possible, and did not stop & 67 \\
+No adaption possible and stopped & 106 \\
+No adaption possible and did not stop & 74 \\
+\bottomrule
+\end{tabular}
+\caption{Results from labeling the visualized traffic light approaches}
+\label{tab:impacts-labeling-results}
+\end{table}
+
+Out of the 915 unambiguously labeled traffic light approaches, the results of this labeling process are shown in \Cref{tab:impacts-labeling-results}. This evaluation shows cyclists seem to have adapted to the speed advisory in 56.7\% of cases, compared to 43.0\% of intersection approaches that were classified as "adherence" in our more coarse-grained impact analysis from before. 
+
+Whenever we labeled that an adaption to the speed advisory had happened, the chance of stopping was 13.87\% (72 out of 519), similar to our previous estimate of 15.56\% (75 out of 482). Whenever no adaption was seen, cyclists stopped in 35.60\% (141 out of 396) compared to 43.73\% (279 out of 638) from our previous estimation. Out of all cases with speed advisory, the stop rate is 35.73\% (327 out of 915) in our labeling study and 31.61\% (354 out of 1120) in our previous impact study. Thus, as expected, minor discrepancies between the estimates can be seen while generally cross-validating our previous results. 
+
+In addition to our previous results, the labeling study also shows that in 45.45\% (180 out of 396) cases where no adaption had happened, an adaption was also not possible in the first place. Out of 915 cases, 7.32\% (67 cases) involved the disregard of a valid speed advisory, implying that users should have stopped but did not. These instances suggest either deliberate red light violations by users or inaccuracies in the speed advisory or traffic light synchronization.
 
 \begin{Summary}[Summary and Discussion of Results]
 - Shift between adherence cases with better prediction reliability?
