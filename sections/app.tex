@@ -176,15 +176,14 @@ Concluding this section, three identified visualization methods have been invest
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/camera-controller-1.png}
-\includegraphics[width=\linewidth]{images/camera-controller-2.pdf}
+\includegraphics[width=\linewidth]{images/camera-controller.pdf}
 \caption{Dynamic camera adaption in different scenarios. [\hyperref[attribution]{Attribution}]}
 \label{fig:camera-controller}
 \end{figure}
 
 The integrated routing is utilized to enhance two aspects of the speed advisory. First, the traffic light for which a speed advisory is displayed can be shown along the route on the smartphone's display. The goal is to avoid confusion when a false traffic light is selected. Second, the route is utilized to convey for which parts of the planned trajectory a speed advisory will be given. This additional information is intended to help users plan routes with higher speed advisory coverage, as not all intersections are connected to the system. In addition, intersections not sending data are shown, so that a user understands why they may not receive a speed advisory at the moment, enhancing the overall explainability.
 
-Displaying the upcoming traffic light on the map is quite trivial -- no further consideration is needed here. However, often, the currently selected traffic light or next turn is out of view when the camera strictly follows the user's position and heading at a fixed height. To improve this aspect of responsiveness and avoid users attempting to pan/zoom during bike rides, the map's camera is automatically adjusted to focus on traffic lights and close turns. This feature was adopted from Apple Maps, as seen in \Cref{fig:camera-controller}, which also incorporates the route's curvature to suitably orient the map's camera.
+Displaying the upcoming traffic light on the map is quite trivial -- no further consideration is needed here. However, often, the currently selected traffic light or next turn is out of view when the camera strictly follows the user's position and heading at a fixed height. To improve this aspect of responsiveness and avoid users attempting to pan/zoom during bike rides, the map's camera is automatically adjusted to focus on traffic lights and close turns. This feature was adopted from Apple Maps, and as seen in \Cref{fig:camera-controller}, also incorporates the route's curvature to suitably orient the map's camera.
 
 The specific process is as follows. During a ride, the app continuously checks if the user is approaching a traffic light by examining the route segments from the user's location. A turn is detected when a route segment is found that deviates at least 15° from the user's measured heading. As the user approaches a turn or traffic light, the camera automatically zooms in to focus on the intersection, making it easier for users to locate a path entry or identify a corresponding signal. Additionally, the camera rotates slightly (up to a maximum of 20°) away from the user to ensure that the traffic lights remain within the view frustum. These threshold values have been determined empirically through extensive real-world testing. To prevent excessive zooming, the camera operates within specified maximum and minimum zoom levels, avoiding zooming too far out or too far in.
 
