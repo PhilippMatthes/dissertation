@@ -54,10 +54,13 @@ Compared to decentralized systems, centralized approaches to obtaining traffic l
 
 The accuracy of predictions is negatively affected by shifted switching behavior as a result of traffic-adaptive traffic light timing intended to optimize the traffic flow. As noted by Otto et al. (2023) \cite{otto_framework_2023}, the dynamic shifting of traffic light timing reduces the effectivity and trustworthiness of the speed advisory. However, in which way the prediction is affected highly depends on the prediction algorithm. In general, there are two different approaches to prediction: self-adaptive prediction models and probabilistic prediction methods. Both respond differently to dynamics in traffic light behavior. Otto et al. (2023) \cite{otto_framework_2023} only refer to the traditional, probabilistic methods.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{images/prediction.pdf}
-\caption{Probabilistic method of traffic light prediction with cycle stacking.}
+\begin{figure}[b]
+\centering 
+\begin{tabular}{ccc}
+\footnotesize{(a) Fixed-time} & \footnotesize{(b) Partially adaptive} & \footnotesize{(c) Fully adaptive} \\
+\includegraphics[width=0.3\linewidth]{images/explanation-fixed-time.png} & \includegraphics[width=0.3\linewidth]{images/explanation-fully-adaptive.png} & \includegraphics[width=0.3\linewidth]{images/explanation-partially-adaptive.png}
+\end{tabular}
+\caption{Probabilistic (cycle-stacking) method for prediction and its reaction to traffic-adaptive switching.}
 \label{fig:prediction}
 \end{figure}
 
