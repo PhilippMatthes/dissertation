@@ -58,7 +58,7 @@ The accuracy of predictions is negatively affected by shifted switching behavior
 \centering 
 \begin{tabular}{ccc}
 \footnotesize{(a) Fixed-time} & \footnotesize{(b) Partially adaptive} & \footnotesize{(c) Fully adaptive} \\
-\includegraphics[width=0.3\linewidth]{images/explanation-fixed-time.png} & \includegraphics[width=0.3\linewidth]{images/explanation-fully-adaptive.png} & \includegraphics[width=0.3\linewidth]{images/explanation-partially-adaptive.png}
+\includegraphics[width=0.3\linewidth]{images/explanation-fixed-time.png} & \includegraphics[width=0.3\linewidth]{images/explanation-partially-adaptive.png} & \includegraphics[width=0.3\linewidth]{images/explanation-fully-adaptive.png}
 \end{tabular}
 \caption{Probabilistic (cycle-stacking) method for prediction and its reaction to traffic-adaptive switching.}
 \label{fig:prediction}
@@ -139,18 +139,28 @@ In the extreme case that only one green phase is detected, the metric is set to 
 
 Since the cycle-independent instability, however, does not necessarily capture the amount of shift between green phases and only the uniqueness, it is not entirely better than the cycle-dependent instability metric. Both measures need to be employed in conjunction to determine whether predictable patterns are present.
 
-\begin{figure}[t]
-\centering 
-\begin{tabular}{ccc}
-& \footnotesize{\textbf{Low cycle-dependent instability}} & \footnotesize{\textbf{High cycle-dependent instability}} \\
-\rotatebox{90}{\footnotesize{\textbf{\hspace{0.18cm} High cycle-independent instability}}} & B \includegraphics[width=0.42\linewidth]{images/predictability-cycles-1.pdf} & D \includegraphics[width=0.42\linewidth]{images/predictability-cycles-2.pdf} \\
-\rotatebox{90}{\footnotesize{\textbf{\hspace{0.18cm} Low cycle-independent instability}}} & A \includegraphics[width=0.42\linewidth]{images/predictability-cycles-3.pdf} & C \includegraphics[width=0.42\linewidth]{images/predictability-cycles-4.pdf} \\
+\definecolor{good}{HTML}{00bb00}
+\definecolor{bad}{HTML}{ff0000}
+\begin{table}[b]
+\centering
+\def\arraystretch{1.5}
+\caption{Types of predictability mapped by our two metrics.}
+\label{tab:cases}
+\begin{tabular}{c|c|c|}
+\multicolumn{1}{c}{} & \multicolumn{2}{c}{Cycle Discrepancy} \\
+\cline{2-3}
+Wait Time Diversity& Low& High\\
+\hline
+\multicolumn{1}{|c|}{High}& \textbf{\color{good} High predictability}$^1$& \textbf{\color{bad} Low predictability} \\
+\hline
+\multicolumn{1}{|c|}{Low}& \textbf{\color{good} High predictability}& \textbf{\color{good} High predictability}$^2$\\
+\hline
+\multicolumn{3}{l}{$^1$\footnotesize{Unpredictable wait time between green phases.}} \\
+\multicolumn{3}{l}{$^2$\footnotesize{Unpredictable with cycle-stacking prediction method.}}
 \end{tabular}
-\caption{Patterns expected to be detectable by the cycle-dependent and -independent instability metrics.}
-\label{fig:types-of-instability}
-\end{figure}
+\end{table}
 
-\Cref{fig:types-of-instability} provides a systematic model for the types of instability that can be measured with our two metrics. In case A, the green phases are both aligned with the cycle time and at relatively constant distances from each other. Thus, both the cycle-independent and cycle-dependent instability is low. In case B, the green phase is only occasionally switched upon detection of a vehicle, cyclist, or pedestrian. As a result, the cycle-dependent instability is low since all cycles are very similar to each other. However, since the waiting time between green phases is highly variable, the cycle-independent instability is high. Case C highlights the scenario that is not captured well by the cycle-dependent metric alone. A "staircase" pattern is present, meaning that the green time is shifted in a constant rhythm that is not aligned with the cycle time, resulting in a high cycle-dependent instability but a low cycle-independent instability. Finally, case D contains the least predictable switching behavior, which expresses both cycle-dependent and independent instability. 
+\Cref{fig:cases} provides a systematic model for the types of instability that can be measured with our two metrics. In case A, the green phases are both aligned with the cycle time and at relatively constant distances from each other. Thus, both the cycle-independent and cycle-dependent instability is low. In case B, the green phase is only occasionally switched upon detection of a vehicle, cyclist, or pedestrian. As a result, the cycle-dependent instability is low since all cycles are very similar to each other. However, since the waiting time between green phases is highly variable, the cycle-independent instability is high. Case C highlights the scenario that is not captured well by the cycle-dependent metric alone. A "staircase" pattern is present, meaning that the green time is shifted in a constant rhythm that is not aligned with the cycle time, resulting in a high cycle-dependent instability but a low cycle-independent instability. Finally, case D contains the least predictable switching behavior, which expresses both cycle-dependent and independent instability. 
 
 Locating traffic lights on this 2-dimensional scale will help us determine which kinds of patterns are present. It also helps us find the number of cases in which our prediction method is inadequate, especially with respect to cases C and D. In general, the more cases are similar to A and B, the better for our chosen probabilistic prediction method. Finally, we can explore these metrics in a temporal context over a week to gain additional insights about predictability.
 
@@ -174,10 +184,10 @@ The second part of the evaluation focuses on studying traffic adaptability throu
         \hline
         \textbf{Lane type} & \multicolumn{9}{c|}{\textbf{Tag according to \texttt{Thing/properties/laneType}}} & $\Sigma$ \\
         \hline
-        Car        & $\blacksquare$ & $\blacksquare$ & $\blacksquare$ &   &   & $\blacksquare$ &   &   &   &  9649 \\
-        Bus        &   &   & $\blacksquare$ &   &   & $\blacksquare$ & $\blacksquare$ &   & $\blacksquare$ &  1309 \\
-        Bike     & $\blacksquare$ &   & $\blacksquare$ & $\blacksquare$ &   &   &   & $\blacksquare$ & $\blacksquare$ &  5477 \\
-        Pedestrian &   &   &   &   & $\blacksquare$ &   &   & $\blacksquare$ &   &  6408 \\
+        Car        & $\times$ & $\times$ & $\times$ &   &   & $\times$ &   &   &   &  9649 \\
+        Bus        &   &   & $\times$ &   &   & $\times$ & $\times$ &   & $\times$ &  1309 \\
+        Bike     & $\times$ &   & $\times$ & $\times$ &   &   &   & $\times$ & $\times$ &  5477 \\
+        Pedestrian &   &   &   &   & $\times$ &   &   & $\times$ &   &  6408 \\
         \hline
         $\Sigma$ (unique) & 1509 & 7077 & 217 & 3646 & 6315 & 846 & 234 & 93 & 12 & \\
         \hline
