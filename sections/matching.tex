@@ -79,7 +79,7 @@ In this concept, we will investigate methods that accurately match a few from th
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-example.png}
-\caption{In this case, the OpenStreetMap route does not accurately depict the cyclist's most optimal path and runs over car traffic light 1. In reality, the bike path and four bike/pedestrian traffic lights to the right of the route are utilized: 2, 3, 4, and 5.}
+\caption{In this case, the OpenStreetMap route does not accurately depict the cyclist's most optimal path and runs over car traffic light 1. In reality, the bike path and four bike/pedestrian traffic lights to the right of the route are utilized: 2, 3, 4, and 5. [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-example}
 \end{figure}
 
@@ -98,7 +98,7 @@ Assuming that cyclists will follow certain movement patterns at each intersectio
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-ground-truth.pdf}
-\caption{The Route Composer web application.}
+\caption{The Route Composer web application. [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-ground-truth}
 \end{figure}
 
@@ -153,7 +153,7 @@ One identified possibility for improvement was to apply a relative scoring schem
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-h3-example.png}
-\caption{Example of four traffic lights that were matched using the H3 approach along the route.}
+\caption{Example of four traffic lights that were matched using the H3 approach along the route. [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-h3-example}
 \end{figure}
 
@@ -183,7 +183,7 @@ Which penalty value and intersection padding to choose may depend on each inters
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/matching-dijkstra-correct.pdf}
-\caption{Examples of correct matching using the graph approach.}
+\caption{Examples of correct matching using the graph approach. [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-graph-example}
 \end{figure}
 
@@ -192,7 +192,7 @@ After tuning the model to the ground truth, the model reached an F1 score of 75.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/matching-dijkstra-incorrect.pdf}
-\caption{Examples of false matching using the graph approach.}
+\caption{Examples of false matching using the graph approach. [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-graph-fails}
 \end{figure}
 
@@ -208,7 +208,7 @@ Option one initially may seem like a good choice here. However, this strategy wo
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/matching-dijkstra-strict.pdf}
-\caption{Examples of matching using the adjusted graph generation procedure.}
+\caption{Examples of matching using the adjusted graph generation procedure. [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-graph-strict}
 \end{figure}
 
@@ -236,7 +236,7 @@ The approach by Newson and Krumm (2009) \cite{newson_hidden_2009} is utilized as
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-map-matching-fails.png}
-\caption{Distortion of traffic light geometries after map-matching.}
+\caption{Distortion of traffic light geometries after map-matching. [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-map-matching-fails}
 \end{figure}
 
@@ -449,7 +449,7 @@ A feature scaling algorithm is employed to optimize the ML model's learning and 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-overlap-cleanup.png}
-\caption{Model selection without (left) and with (right) overlap cleanup.}
+\caption{Model selection without (left) and with (right) overlap cleanup. [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-overlap-cleanup}
 \end{figure}
 
@@ -492,7 +492,7 @@ As of December 8, 2023, 85.6\% of the 791 available intersection nodes in the sy
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/lanes-map.pdf}
-\caption{Types of transport modes served by traffic lights as extracted from metadata.}
+\caption{Types of transport modes served by traffic lights as extracted from metadata. [\hyperref[attribution]{Attribution}]}
 \label{fig:lanes-map}
 \end{figure}
 
@@ -522,7 +522,7 @@ The development of the route-based matching method involved creating several gro
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-osm-old.pdf}
-\caption{OpenStreetMap 2022 ground truth for model training and evaluation.}
+\caption{OpenStreetMap 2022 ground truth for model training and evaluation. [\hyperref[attribution]{Attribution}]}
 \label{fig:matching-ground-truth-osm-old}
 \end{figure}
 
@@ -537,7 +537,7 @@ While only 549 unique connections are identified at least once as a "match," an 
 \begin{figure}[htbp]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-osm.pdf}
-\caption{Additional OpenStreetMap 2023 ground truth for model training and evaluation.}
+\caption{Additional OpenStreetMap 2023 ground truth for model training and evaluation. [\hyperref[attribution]{Attribution}]}
 \label{fig:matching-ground-truth-osm}
 \end{figure}
 

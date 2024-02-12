@@ -137,7 +137,7 @@ Overall, although some issues with out target speed approach can be attributed t
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/multi-lane-view.png}
-\caption{Multi-lane matching and preliminary implementation of multi-lane speed recommendation.}
+\caption{Multi-lane matching and preliminary implementation of multi-lane speed recommendation. [\hyperref[attribution]{Attribution}]}
 \label{fig:multi-lane-view}
 \end{figure}
 
@@ -158,7 +158,7 @@ The designed speedometer visualization aims to integrate the strengths and mitig
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/speedometer-adaptions.png}
-\caption{Final speed recommendation concept and adaption mechanisms for varying prediction quality.}
+\caption{Final speed recommendation concept and adaption mechanisms for varying prediction quality. [\hyperref[attribution]{Attribution}]}
 \label{fig:speedometer-adaptions}
 \end{figure}
 
@@ -178,7 +178,7 @@ Concluding this section, three identified visualization methods have been invest
 \centering
 \includegraphics[width=\linewidth]{images/camera-controller-1.png}
 \includegraphics[width=\linewidth]{images/camera-controller-2.pdf}
-\caption{Dynamic camera adaption in different scenarios.}
+\caption{Dynamic camera adaption in different scenarios. [\hyperref[attribution]{Attribution}]}
 \label{fig:camera-controller}
 \end{figure}
 
@@ -193,7 +193,7 @@ In addition to the camera controller, the prediction availability is also mapped
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-process-quality-mapping.png}
-\caption{Visualization of traffic light groups and prediction quality along the calculated route.}
+\caption{Visualization of traffic light groups and prediction quality along the calculated route. [\hyperref[attribution]{Attribution}]}
 \label{fig:routing-process-quality-mapping}
 \end{figure}
 
@@ -213,7 +213,7 @@ Now that we have looked at the many details of the speed recommendation, it is v
 As seen in \Cref{fig:architecture}, the main application flow is divided into three views. The home view, serving as an entry point after opening the app, is intended to display the current data availability upfront. With the information fetched from the prediction service monitoring, users are directly informed about potential data outages. These can occur spontaneously, as we have seen in \Cref{ch:prediction}. A modification of the routing profile is also possible in the home view.
 
 \begin{figure}[t]
-\caption{The final mobile application distributed to users.}\label{fig:app}
+\caption{The final mobile application distributed to users. [\hyperref[attribution]{Attribution}]}\label{fig:app}
 \includegraphics[width=\linewidth]{images/app.png}
 \end{figure}
 
@@ -259,7 +259,7 @@ Clearly visible in \Cref{fig:app-usage-over-time} is that the frequency of rides
 After a track was driven, users were able to give their opinion on the ride, from 1 to 5 stars. As shown in \Cref{fig:app-usage-over-time}, a wide variety of ratings were given. Users who stuck to the app after initial tests were apparently very satisfied, as seen by the repeated 5-star ratings by the same user IDs. In general, there seem to be a few highly engaged users with the IDs \#305ee0 (201 tracks), \#3494b0 (150 tracks), \#ff00f0 (91 tracks), and \#0a9580 (59 tracks). The remaining 122 user IDs have collected fewer tracks, including 35 user IDs that only uploaded one track. The median number of tracks per user lies at 3.5 (IQR: 8.75), indicating a high diversity in users but also a low rate of users sticking to the app. Potential reasons will be investigated later in more detail, based on the collected user opinions.
 
 \begin{figure}[t]
-\caption{Spatial coverage of recorded tracks and collected surveys by postal areas.}\label{fig:app-spatial-distribution}
+\caption{Spatial coverage of recorded tracks and collected surveys by postal areas. [\hyperref[attribution]{Attribution}]}\label{fig:app-spatial-distribution}
 \includegraphics[width=\linewidth]{images/app-spatial-distribution.pdf}
 \end{figure}
 
@@ -367,7 +367,7 @@ Comparing negative and positive feedback, it is expected that negatives are more
 After studying user opinions on the overall usability and the perceived impacts, we now shift our focus to the objective insights provided by trajectory data. Before studying the impacts on driving speed and stop (time) reduction, we investigate the recorded user interface interactions during rides. This analysis aims to understand more precisely how often and at what speed users tap on the display to determine whether interaction during rides could be a safety concern.
 
 \begin{figure}[t]
-\caption{Recorded interaction with the smartphone's screen while in the ride view.}\label{fig:app-user-interaction}
+\caption{Recorded interaction with the smartphone's screen while in the ride view. [\hyperref[attribution]{Attribution}]}\label{fig:app-user-interaction}
 \includegraphics[width=\linewidth]{images/app-user-interaction.pdf}
 \end{figure}
 
@@ -442,7 +442,7 @@ We can count the stops by approaches that contain at least one speed below 1 km/
 If users stopped, the stop time was not substantially different. Without GLOSA, the median stop time was calculated as 18.53s (IQR: 25.51s). With GLOSA, the stop time was slightly higher at 19.99s (IQR: 26.50s), with no substantial difference between cases with adherence (19.97s, IQR: 18.51s) and cases without adherence (20.00s, IQR: 30.99s). Thus, even though users may roll out earlier in low-adherence cases, the median stop time is not noticeably decreased.
 
 \begin{figure}[t]
-\caption{Example approach in which the user did not adapt to the speed advisory.}\label{fig:example-trajectory-not-adapted}
+\caption{Example approach in which the user did not adapt to the speed advisory. [\hyperref[attribution]{Attribution}]}\label{fig:example-trajectory-not-adapted}
 \includegraphics[width=\linewidth]{images/11-#e8e6e-user_#35daf-sg_70_42.pdf}
 \end{figure}
 
@@ -451,7 +451,7 @@ To validate our results and gain more insights into traffic light approaches wit
 In the example given in \Cref{fig:example-trajectory-not-adapted}, the user seemed not to follow the given speed advisory. During the main part of the traffic light approach, the speed is within the predicted red bands, meaning the calculated adherence score is also close to zero. After accelerating from the previous traffic light, it becomes evident that the e-bike rider reaches a speed of approximately 25 km/h, adhering to the legal limit imposed on e-bikes in Germany. However, to reach the traffic light on green, a much slower speed would have been necessary, indicating that the user decided against adapting to the speed advisory in this case. Shortly before the traffic light, the user comes to a stop, accelerating again after the traffic light is predicted to switch green. Thus, the speed advisory and prediction seemed to have been accurate in this case. An adaptation was feasible, yet the user did not adjust accordingly, resulting in a stop at the intersection.
 
 \begin{figure}[t]
-\caption{Example approach in which the user adapted to the speed advisory.}\label{fig:example-trajectory-adapted}
+\caption{Example approach in which the user adapted to the speed advisory. [\hyperref[attribution]{Attribution}]}\label{fig:example-trajectory-adapted}
 \includegraphics[width=\linewidth]{images/16-#82d34-user_#87476-sg_306_9.pdf}
 \end{figure}
 
