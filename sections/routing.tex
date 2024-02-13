@@ -132,13 +132,11 @@ These properties are utilized to infer a corresponding OpenStreetMap class, tran
 
 The challenge here is that there is no one-to-one match between all DRN properties and OpenStreetMap properties. For example, DRN specifies three types for compacted surface: "befestigt - nicht genauer erkennbar", "befestigt - zu detailieren" and "Wassergebundene Decke". To resolve this problem, a mapping was developed that assumes the OpenStreetMap tags from the DRN specification. 
 
-The final mapping highlighted in \Cref{tab:tag-mapping} includes the bike path's surface, level, direction, and type. In cases where the bike path's properties cannot be directly mapped to a suitable OpenStreetMap tag, the path is tagged with \texttt{highway=tertiary}. This fallback corresponds to established mapping practices in Germany. The result is an inferred set of tags for each path in the OpenStreetMap format, completing the metadata harmonization process.
-
-\begin{table}[h]
+\begin{table}[!t]
 \centering
 \caption{Metadata mapping from DRN to OpenStreetMap.}\label{tab:tag-mapping}
 \resizebox{\linewidth}{!}{%
-\begin{tabular}{p{8.5cm}p{3cm}p{3cm}p{3cm}p{6cm}}
+\begin{tabular}{@{}p{5cm}p{3cm}p{3cm}p{3cm}p{5cm}@{}}
     \hline
     \textbf{Path Type in DRN} & \textbf{\texttt{highway}} & \textbf{\texttt{bicycle}} & \textbf{\texttt{foot}} & \textbf{Other OpenStreetMap Tags} \\
     \hline
@@ -168,25 +166,27 @@ The final mapping highlighted in \Cref{tab:tag-mapping} includes the bike path's
     Wege in Grünflächen & \texttt{\textbf{path}} & \texttt{\textbf{designated}} & \texttt{\textbf{designated}} & \texttt{segregated=\textbf{no}} \\
     Wirtschaftsweg & \texttt{\textbf{track}} & -- & -- & -- \\
     \hline
-    \multicolumn{5}{p{25cm}}{\textbf{Surfaces}: befestigt - nicht genauer erkennbar $\rightarrow$ \texttt{\textbf{compacted}}, befestigt - zu detailieren $\rightarrow$ \texttt{\textbf{compacted}}, Wassergebundene Decke $\rightarrow$ \texttt{\textbf{compacted}}, unbefestigt $\rightarrow$ \texttt{\textbf{unpaved}}, Betonplatten $\rightarrow$ \texttt{\textbf{concrete:plates}}, Bituminöse Decke $\rightarrow$ \texttt{\textbf{asphalt}}, Holz $\rightarrow$ \texttt{\textbf{wood}}, Kunststein-Pflaster $\rightarrow$ \texttt{\textbf{paving\_stones}}, Metall $\rightarrow$ \texttt{\textbf{metal}}, Naturstein-Pflaster $\rightarrow$ \texttt{\textbf{cobblestone}}; \textbf{Obstacles}: Bahnübergang $\rightarrow$ \texttt{\textbf{railway=level\_crossing}}, Treppe $\rightarrow$ \texttt{\textbf{highway=steps}}, Fahrradroute $\rightarrow$ \texttt{\textbf{type=route, route=bicycle, network=lcn}}, Brücke $\rightarrow$ \texttt{\textbf{bridge=yes}}, Tunnel $\rightarrow$ \texttt{\textbf{tunnel=yes}}}. \\
+    \multicolumn{5}{p{20cm}}{\textbf{Surfaces}: befestigt - nicht genauer erkennbar $\rightarrow$ \texttt{\textbf{compacted}}, befestigt - zu detailieren $\rightarrow$ \texttt{\textbf{compacted}}, Wassergebundene Decke $\rightarrow$ \texttt{\textbf{compacted}}, unbefestigt $\rightarrow$ \texttt{\textbf{unpaved}}, Betonplatten $\rightarrow$ \texttt{\textbf{concrete:plates}}, Bituminöse Decke $\rightarrow$ \texttt{\textbf{asphalt}}, Holz $\rightarrow$ \texttt{\textbf{wood}}, Kunststein-Pflaster $\rightarrow$ \texttt{\textbf{paving\_stones}}, Metall $\rightarrow$ \texttt{\textbf{metal}}, Naturstein-Pflaster $\rightarrow$ \texttt{\textbf{cobblestone}}; \textbf{Obstacles}: Bahnübergang $\rightarrow$ \texttt{\textbf{railway=level\_crossing}}, Treppe $\rightarrow$ \texttt{\textbf{highway=steps}}, Fahrradroute $\rightarrow$ \texttt{\textbf{type=route, route=bicycle, network=lcn}}, Brücke $\rightarrow$ \texttt{\textbf{bridge=yes}}, Tunnel $\rightarrow$ \texttt{\textbf{tunnel=yes}}}. \\
 \end{tabular}
 }
 \end{table}
+
+The final mapping highlighted in \Cref{tab:tag-mapping} includes the bike path's surface, level, direction, and type. In cases where the bike path's properties cannot be directly mapped to a suitable OpenStreetMap tag, the path is tagged with \texttt{highway=tertiary}. This fallback corresponds to established mapping practices in Germany. The result is an inferred set of tags for each path in the OpenStreetMap format, completing the metadata harmonization process.
 
 \subsubsection{Geometric Harmonization}
 
 After the conversion of metadata, the second step is geometric harmonization. However, before we can merge both datasets together, there are still two issues that need further attention: detours resulting from duplicated nodes in the graph and detours because the road cannot be crossed. 
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\linewidth]{images/node-merging.png}
-\caption{Duplicated nodes (left) are merged together (right) to avoid detours. [\hyperref[attribution]{Attribution}]}
-\label{fig:node-merging}
-\end{figure}
-
 Each individual path in the DRN dataset starts and ends in a node, which must be transformed into OpenStreetMap nodes that connect the individual paths to a graph structure\footnote{\url{https://wiki.openstreetmap.org/wiki/Node}}. To ease this process, the DRN dataset provides node IDs for the start and end points of each path. Thus, two OpenStreetMap nodes need to be generated for each DRN path based on the start and end coordinates given in the line geometry. 
 
 Since there may be multiple DRN paths that are connected to a single OpenStreetMap node, the same node is generated multiple times during dataset processing. In theory, this should not be a problem since the node ID can be utilized to avoid duplicates. In practice, however, sometimes there are nodes for which multiple different coordinates are found in the dataset, presumably due to floating point inaccuracies of a preceding geographic projection step during dataset publishing. As highlighted in \Cref{fig:node-merging}, this leads to the issue of duplicated OpenStreetMap nodes in the proximity of a few centimeters that are not properly connected.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{images/node-merging.pdf}
+\caption{Duplicated nodes (left) are merged together (right) to avoid detours. [\hyperref[attribution]{Attribution}]}
+\label{fig:node-merging}
+\end{figure}
 
 The developed solution involves merging all found coordinates for a specific node ID into a center point. Let $C_k = \{c_{k_1} = (lat_{k_1}, lng_{k_1}), \text{...} , c_{k_n} = (lat_{k_n}, lng_{k_n})\}$ be the collected coordinates for each node $k$. Then, the center point $\text{Center}_{\text{k}}$ is calculated as the mean of all coordinates for that node ID:
 
@@ -198,7 +198,7 @@ The second issue in the DRN dataset requiring additional processing is non-cross
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{images/oneway-travel-fix.png}
+\includegraphics[width=\linewidth]{images/oneway-travel-fix.pdf}
 \caption{Detour (left) that can be fixed by enabling opposite-direction one-way travel on foot (right), compared to OpenStreetMap route (blue). [\hyperref[attribution]{Attribution}]}
 \label{fig:oneway-travel-fix}
 \end{figure}
@@ -228,7 +228,7 @@ So far, we have investigated how to establish a routing foundation based on the 
 
 \subsubsection{Automated Deployment}
 
-\begin{figure}[ht]
+\begin{figure}[b]
 \centering
 \includegraphics[width=\linewidth]{images/load-distribution-containerization-preheating.pdf}
 \caption{CI/CD pipeline for automated rollouts of routing network updates.}
@@ -298,6 +298,10 @@ The developed rerouting approach operates as illustrated in \Cref{fig:rerouting-
 
 A challenge in this approach is determining the appropriate distance threshold that strikes a balance between prompt rerouting and avoiding unnecessary recalculations. In initial tests conducted in Hamburg, a threshold of 20 meters was used. However, it proved to be too low and resulted in excessive unnecessary reroutings during field tests. Consequently, the threshold was increased to 50 meters, which yielded a satisfactory balance.
 
+An additional challenge in this approach is identifying the waypoints that have already been visited to prevent rerouting back to the starting point. To address this issue, only the remaining waypoints are selected when rerouting is triggered. Originally, the rerouting process involved selecting the nearest waypoint to the user and recalculating the route using that waypoint as a reference. However, this method depicted in \Cref{fig:rerouting-strategy-comparison} on the left was only effective half of the time, assuming the user's location was closer to the upcoming waypoint than to the previously visited waypoint. Consequently, this initial strategy often led to unnecessary backtracking.
+
+Another option considered was snapping the user's location to the route geometry and following that path to find the next waypoint. However, a challenge arose because the waypoints were not directly integrated into the route geometry data structure, which is returned from the routing framework. Although it is possible to align the waypoints with the route geometry for implementation, a simpler and faster approximation was employed in the app, consisting of three steps: (1) Drawing direct lines between waypoints to create a connected path roughly resembling the route. (2) Selecting the nearest line to the user's location. (3) Determining the waypoint at the end of this line as the next waypoint for recalculating the route. This approach assumes that the drawn lines approximately represent the general route structure.
+
 \begin{figure}[t]
 \centering
 \resizebox{\linewidth}{!}{%
@@ -311,10 +315,6 @@ A challenge in this approach is determining the appropriate distance threshold t
 \caption{Schematic comparison of the initial and final rerouting algorithms.}
 \label{fig:rerouting-strategy-comparison}
 \end{figure}
-
-An additional challenge in this approach is identifying the waypoints that have already been visited to prevent rerouting back to the starting point. To address this issue, only the remaining waypoints are selected when rerouting is triggered. Originally, the rerouting process involved selecting the nearest waypoint to the user and recalculating the route using that waypoint as a reference. However, this method depicted in \Cref{fig:rerouting-strategy-comparison} on the left was only effective half of the time, assuming the user's location was closer to the upcoming waypoint than to the previously visited waypoint. Consequently, this initial strategy often led to unnecessary backtracking.
-
-Another option considered was snapping the user's location to the route geometry and following that path to find the next waypoint. However, a challenge arose because the waypoints were not directly integrated into the route geometry data structure, which is returned from the routing framework. Although it is possible to align the waypoints with the route geometry for implementation, a simpler and faster approximation was employed in the app, consisting of three steps: (1) Drawing direct lines between waypoints to create a connected path roughly resembling the route. (2) Selecting the nearest line to the user's location. (3) Determining the waypoint at the end of this line as the next waypoint for recalculating the route. This approach assumes that the drawn lines approximately represent the general route structure.
 
 \begin{Summary}[Summary of Methods]
 To provide accurate bike routing in Hamburg, we investigate the usage of an authoritative dataset for bike infrastructure, DRN. Preparing the DRN dataset for routing, we first translate the path descriptions given in the DRN dataset into the OpenStreetMap format. This allows our routing engine to assign different costs to each path segment depending on its properties, circumventing uncomfortable paths for more sensitive bike types such as racing bikes. Afterward, we address two specific kinds of issues that were detected in the DRN dataset. Duplicated and slightly misaligned nodes are combined using their center point, and the opposite direction of every path is marked passable if on foot. As a result, routes no longer take long detours to cross a road in case a much closer crossing is available upstream. Finally, we stitch the boundary region of DRN using helper points to allow cross-border routing between OpenStreetMap and DRN. 
