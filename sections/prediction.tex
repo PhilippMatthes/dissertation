@@ -288,7 +288,7 @@ Previously, between 25 and 125 cycles were rejected every minute. Assuming a cyc
 
 Finally, we review the scalability of the prediction algorithm. For the prediction service implemented in Java, running as a container on the deployment since December 2022, load metrics have been recorded using Cadvisor\footnote{\url{https://github.com/google/cadvisor}}. This measurement period progressed until May 2023.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-prediction-service-load.pdf}
     \caption{Cadvisor statistics for prediction service.}\label{fig:monitoring-prediction-service-load}
@@ -324,7 +324,7 @@ The detection of faulty cycles, also implemented in the prediction service, was 
 
 It is likely that only a subordinate part of faulty cycles was detected in this process. 35\% of the available traffic lights in Hamburg, according to the recorded data, switch only between red and green, making it impossible to identify missing phases using the established error detection. However, for 42\% of the traffic lights, the detection should have worked well, as it was determined that they switch in the order of green-amber-red-redamber. The remaining traffic lights switch between other colors, such as green and dark, represented by \texttt{primary\_signal} Observations with \texttt{result = 0}. However, these other patterns each represent only roughly 1\% or significantly fewer of the recorded cycles. Thus, these more exotic switching schemes were not excluded from the analyses in favor of a more complete perspective since no substantial effect on the interpretability of our metrics is expected.
 
-\begin{figure}[th]
+\begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-week-heatmap.pdf}
     \caption{Measured traffic light instability over weekdays in relation to the measured traffic volume.}\label{fig:adaptiveness-weekdays-distance}
@@ -350,15 +350,7 @@ Another significant observation is that most traffic lights reside within a low 
 
 Above the median cycle-dependent instability, given by the horizontal center of the diagram, there are also some traffic lights that express an opposite behavior, i.e., low cycle-independent instability with a high cycle-dependent instability. The origin of this observation will be studied further in the upcoming sections. Overall, the day-night cycle can be clearly distinguished for almost all traffic lights. However, in the highest 10\% proportion of the upper diagram, there are also traffic lights with high adaptivity that fully saturate the diagram for every hour, indicating an exceptionally poor predictability. 
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=\linewidth]{images/predictability-heatmap.pdf}
-    \caption{Distribution of instabilities measured over all weekdays for all traffic lights.}\label{fig:predictability-heatmap}
-\end{figure}
-
-A more conjugated perspective on the instability is given in \Cref{fig:predictability-heatmap} in which the cycle-dependent metric is set in relation to the cycle-independent metric. The visualization employs hourly granularity, allowing us to accurately capture transitioning traffic lights between adaptive and non-adaptive programs. For instance, a traffic light that switches between adaptive and non-adaptive modes 50\% of the time is represented with both adaptive and non-adaptive hours in the diagram. Consequently, the color scale's maximum value exceeds $10^5$ measured hours on a histogram element, in which one traffic light typically encompasses a few hundred values.
-
-It is evident from this visualization again that many traffic lights exhibit low persistent adaptivity. Out of the evaluated 2,793,786 traffic light hours, 43\% (1,206,817) have a cycle-dependent instability of less than 5 seconds and a cycle-independent instability of less than 10\%. Traffic lights with more green phases tend to have lower cycle-independent instability than those with fewer green phases. Nevertheless, this visualization shows again that a large proportion of traffic lights reside within a relatively stable regime.
+Out of the evaluated 2,793,786 traffic light hours, 43\% (1,206,817) have a cycle-dependent instability of less than 5 seconds and a cycle-independent instability of less than 10\%. Traffic lights with more green phases tend to have lower cycle-independent instability than those with fewer green phases. Nevertheless, this visualization shows again that a large proportion of traffic lights reside within a relatively stable regime.
 
 Outside of the large stable proportion of traffic lights, there are three other notable observations. First, a vertical line at cycle-dependent instability = 0 indicates traffic lights that only occasionally switch to green. Approximately 9\% (245,379) of recorded traffic light hours can be associated with this behavior: they have a median cycle-dependent instability of 0 seconds but a cycle-independent instability higher than 10\%. 
 
@@ -378,18 +370,11 @@ Interestingly, although many traffic lights experience an increased cycle-indepe
 
 However, this interpretation should be handled with caution since 6 AM is also the time when, according to \Cref{fig:monitoring-7-days}, data failures become more prevalent. Examining case studies of this period helps us understand whether the interpretation of increased step patterns during the day is valid or whether the observed relation is solely induced by data errors.
 
-
-\begin{figure}[ht]
-\centering 
-\begin{tabular}{ccc}
-& \footnotesize{\textbf{Cycle-dependent instability <5s}} & \footnotesize{\textbf{Cycle-dependent instability >25s}} \\
-\rotatebox{90}{\footnotesize{\textbf{\hspace{0.18cm} Cycle-independent instability >90\%}}} & B \includegraphics[width=0.42\linewidth]{images/predictability-rw-example-top_left.pdf} & D \includegraphics[width=0.42\linewidth]{images/predictability-rw-example-top_right.pdf} \\
-\rotatebox{90}{\footnotesize{\textbf{\hspace{0.18cm} Cycle-independent instability <10\%}}} & A \includegraphics[width=0.42\linewidth]{images/predictability-rw-example-bottom_left.pdf} & C \includegraphics[width=0.42\linewidth]{images/predictability-rw-example-bottom_right.pdf} \\
-\end{tabular}
-\caption{Examples of recorded traffic light histories, ordered by their classification according to our two metrics.}
-\label{fig:types-of-instability}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{images/predictability-case-studies.pdf}
+    \caption{Examples of recorded traffic light histories, ordered by their classification according to our two metrics.}\label{fig:types-of-instability}
 \end{figure}
-
 
 \Cref{fig:types-of-instability} illustrates randomly chosen examples for each section of the instability diagram. Seen in this visualization are also examples from case C, towards which some traffic lights drift throughout the day. The observed patterns indeed indicate some fully traffic-dependent traffic lights triggered very frequently. However, this random sample also suggests that such patterns may be rarer than expected. Overall, most patterns, as described by Protschky et al. (2014) \cite{protschky_extensive_2014}, appear to be synchronized with the cycle length in this range.
 
