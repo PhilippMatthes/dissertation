@@ -324,7 +324,7 @@ The detection of faulty cycles, also implemented in the prediction service, was 
 
 It is likely that only a subordinate part of faulty cycles was detected in this process. 35\% of the available traffic lights in Hamburg, according to the recorded data, switch only between red and green, making it impossible to identify missing phases using the established error detection. However, for 42\% of the traffic lights, the detection should have worked well, as it was determined that they switch in the order of green-amber-red-redamber. The remaining traffic lights switch between other colors, such as green and dark, represented by \texttt{primary\_signal} Observations with \texttt{result = 0}. However, these other patterns each represent only roughly 1\% or significantly fewer of the recorded cycles. Thus, these more exotic switching schemes were not excluded from the analyses in favor of a more complete perspective since no substantial effect on the interpretability of our metrics is expected.
 
-\begin{figure}[t]
+\begin{figure}[!t]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-week-heatmap.pdf}
     \caption{Measured traffic light instability over weekdays in relation to the measured traffic volume.}\label{fig:adaptiveness-weekdays-distance}
@@ -340,13 +340,13 @@ As a result, we observe that instability correlates, as expected, with traffic v
 
 Another significant observation is that most traffic lights reside within a low range of instability. Measured across all traffic lights, the median of the distance metric ranges between 0 and 3 seconds depending on the daytime. Interpreting the interquartile range (IQR): at least 25\% of all traffic lights exhibit no persistent instability in the median, and at least 75\% of all traffic lights in the median operate with a maximum instability of 15 seconds. In general, these results correspond with the observation that the designed prediction algorithm is able to accurately predict Hamburg's traffic lights in a large proportion of cases. Nonetheless, they again underline that traffic lights equipped with traffic-adaptive capabilities do not necessarily have to express a corresponding adaptive behavior or are at least highly limited in their adaptiveness.
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=\linewidth]{images/predictability-week-heatmap-per-thing.pdf}
-    \caption{Measured cycle-dependent and cycle-independent instability per traffic light over weekdays.}\label{fig:adaptiveness-weekdays-comparison}
-\end{figure}
+% Instability by transport mode
 
-\Cref{fig:adaptiveness-weekdays-comparison} highlights the recorded instabilities per each traffic light. In this chart, it can be again seen that at least 25\% of traffic lights exhibit no cycle-dependent instability. However, as seen in the lower part of the diagram, there seem to be single traffic lights within this region that still exhibit cycle-independent instability. These are likely traffic lights that only switch green in a subordinate part of cycles and, therefore, express fewer green phases with varying times in between. The ordering is not as clear on the lower part of the diagram, validating that both metrics indeed measure separate types of instability. Interestingly, the day-night cycle seems to have an adverse effect on the cycle-independent instability as opposed to the cycle-dependent instability. One possible explanation for this observation is that fewer green phases are switched at night, increasing cycle-independent instability while decreasing cycle-dependent instability.
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{images/cycle_discrepancy_green_length_heatmap.pdf}
+    \caption{Green length and cycle discrepancy.}\label{fig:green-length-cycle-discrepancy}
+\end{figure}
 
 Above the median cycle-dependent instability, given by the horizontal center of the diagram, there are also some traffic lights that express an opposite behavior, i.e., low cycle-independent instability with a high cycle-dependent instability. The origin of this observation will be studied further in the upcoming sections. Overall, the day-night cycle can be clearly distinguished for almost all traffic lights. However, in the highest 10\% proportion of the upper diagram, there are also traffic lights with high adaptivity that fully saturate the diagram for every hour, indicating an exceptionally poor predictability. 
 
@@ -358,13 +358,7 @@ Second, the horizontal line at cycle-independent instability = 1 suggests cases 
 
 Some recorded hours exhibit low cycle-independent instability but high cycle-dependent instability. This suggests the presence of step patterns but may also result from data errors such as missing cycle observations.
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=\linewidth]{images/predictability-heatmap-hourly.pdf}
-    \caption{Distribution of measured instabilities by daytime.}\label{fig:predictability-heatmap-hourly}
-\end{figure}
-
-\Cref{fig:predictability-heatmap-hourly} further dissects the relationship between cycle-dependent and cycle-independent instability throughout the day. When comparing hours, a distinct difference is observed before 6 AM and after 6 AM, persisting until around 11 PM. The increase in adaptiveness during the day aligns with the moment when adaptivity, as shown in \Cref{fig:adaptiveness-weekdays-distance}, starts to increase. 
+When comparing hours, a distinct difference is observed before 6 AM and after 6 AM, persisting until around 11 PM. The increase in adaptiveness during the day aligns with the moment when adaptivity, as shown in \Cref{fig:adaptiveness-weekdays-distance}, starts to increase. 
 
 Interestingly, although many traffic lights experience an increased cycle-independent instability during that period, there are also some traffic lights that express a decreased cycle-independent instability while having a high cycle-dependent instability. One potential interpretation is that, during the plateau of instability during the day, these traffic lights are permanently triggered by traffic participants, resulting in a relatively stable period of green phases and a step-like pattern unaligned with the cycle time.
 
@@ -384,23 +378,17 @@ In category D, as expected, there are initially traffic lights with strong adapt
 
 In conclusion, even with increased cycle-independent and cycle-dependent instability, partially stable patterns can still be measured, while problematic traffic lights are less common. Therefore, the forecasting situation can be considered relatively favorable.
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=\linewidth]{images/predictability-by-lanes.pdf}
-    \caption{Measured cycle-dependent instability by served transport mode as extracted from the traffic light metadata.}\label{fig:predictability-by-lanes}
-\end{figure}
+Finally, we examine the distribution of instability across individual modes of transportation and the spatial distribution. It is noteworthy that there are almost no differences in instability among different modes of transportation. Once again, the pattern emerges that traffic lights experience little to no persistent instability for the majority of the time. Overall, this implies that the predictability situation is similarly favorable for all modes of transportation.
 
-Finally, we examine the distribution of instability across individual modes of transportation and the spatial distribution. As depicted in \Cref{fig:predictability-by-lanes}, it is noteworthy that there are almost no differences in instability among different modes of transportation. Once again, the pattern emerges that traffic lights experience little to no persistent instability for the majority of the time. Overall, this implies that the predictability situation is similarly favorable for all modes of transportation.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=\linewidth]{images/predictability-map.pdf}
-    \caption{Spatial distribution of measured cycle-dependent instability. [\hyperref[attribution]{Attribution}]}\label{fig:predictability-map}
+\begin{figure}[t]
+\centering 
+\begin{tabular}{cc}
+\includegraphics[width=0.46\linewidth]{images/predictability-map.pdf} & \includegraphics[width=0.46\linewidth]{images/predictability-map-diversity.pdf}
+\end{tabular}
+\caption{Spatial distribution of predictability. [\hyperref[attribution]{Attribution}]}\label{fig:predictability-map}
 \end{figure}
 
 One possible explanation for this uniformity is that traffic lights for different modes of transportation may be interconnected, leading them to exhibit similar levels of instability. This relationship is further illustrated on the map in \Cref{fig:predictability-map}. The visualization demonstrates that instability often depends on the intersection. If individual traffic lights at a given intersection exhibit high instability, there is a considerable chance that this behavior is mirrored in other traffic lights at the same intersection.
-
-% TODO: Case studies
 
 While the traffic light switching behavior is generally stable at most intersections, there are occasional intersections with higher instability. These intersections would be sensible focal points for testing a more complex prediction methodology.
 
