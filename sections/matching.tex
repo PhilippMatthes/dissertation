@@ -549,7 +549,7 @@ Notably, the addition of new routes to the ground truth does not necessarily res
 
 An implication of this is that there is a limit to the number of routes that can be meaningfully added to the dataset. With each new route, there is an increased risk of introducing duplicate examples. Excessive duplicates should be avoided to minimize dataset bias. Specifically, when training an ML classifier, an abundance of duplicates can lead to overfitting and reduced generalization capability.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering 
 \begin{tabular}{cc}
 \footnotesize{(a) Redundancy in OSM Ground Truth (2022)} & \footnotesize{(b) Redundancy in OSM Ground Truth (2023)} \\
@@ -572,7 +572,9 @@ The distribution overall indicates that there may be significantly more duplicat
 
 \subsection{Model Evaluation}
 
-\begin{table}[h]
+Two models were designed: the algorithmic model and the ML model. Each model was trained and evaluated on the ground truths presented in the previous section. First, let's examine the algorithmic model. The same version of the algorithmic model was trained once on the 2022 OSM dataset and once on the 2023 OSM dataset. This resulted in two distinct models, each validated on the other dataset.
+
+\begin{table}[t]
 \caption{Tuned hyperparameters for the algorithmic matching model.}
 \resizebox{\linewidth}{!}{\begin{tabular}{@{}llllllllll@{}}
 \toprule
@@ -585,31 +587,29 @@ The distribution overall indicates that there may be significantly more duplicat
 \label{tab:hyperparameter-tuning-results}
 \end{table}
 
-Two models were designed: the algorithmic model and the ML model. Each model was trained and evaluated on the ground truths presented in the previous section. First, let's examine the algorithmic model. The same version of the algorithmic model was trained once on the 2022 OSM dataset and once on the 2023 OSM dataset. This resulted in two distinct models, each validated on the other dataset.
-
 The specific model configurations are detailed in \Cref{tab:hyperparameter-tuning-results}. The hyperparameter tuning process selected similar values for the initial thresholds along the filter pipeline. Ignoring the parameters of the overlap matchers initially, notable differences are observed only in the chosen bearing threshold $t_{bear}$ and the length filter. While the 2023 model is less strict in filtering steeply angled lane geometries, the length filter is configured more rigorously. This is not surprising, as both the bearing filter and the length filter pertain to similar properties between the route and the lane. The overlap matcher, which comes last in the filter pipeline, exhibits relatively large differences between the two model variants. 
 
-\begin{figure}[htbp]
+\Cref{fig:hyperparameter-contourplot} provides more detailed insights into the interpretation of the hyperparameter tuner regarding the direction in which the parameter configuration needs to be optimized to achieve the maximum F1 score. This plot was generated using the training history of the 2023 model.
+
+Several interesting conclusions can be drawn from the figure regarding the training and the general interpretation of a "good" match between a route and a traffic light geometry. First, a clear trend is observed with Threshold 5, which decides whether inversely oriented traffic light geometries should be chosen as a match. The tendency is clearly towards "no," aligning with Rule 6 in the dataset creation, stating that traffic light geometries should never be chosen against the direction of travel. 
+
+\begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-hpt-contour-topological-osm-updated.png}
 \caption{Contour plot of the hyperparameter tuner's threshold search space indicating its gradient measurements for F1 score optimization.}
 \label{fig:hyperparameter-contourplot}
 \end{figure}
 
-\Cref{fig:hyperparameter-contourplot} provides more detailed insights into the interpretation of the hyperparameter tuner regarding the direction in which the parameter configuration needs to be optimized to achieve the maximum F1 score. This plot was generated using the training history of the 2023 model.
+This relationship was successfully reconstructed by the hyperparameter model. Clear gradients are also noticeable at other thresholds. The loss gradients for the overlap thresholds T7 to T9 appear somewhat diffuse, aligning with the variability observed in these parameters in the final models. Overall, the hyperparameter tuning seems to have captured essential relationships effectively. At least, no better model could be manually found.
 
-Several interesting conclusions can be drawn from the figure regarding the training and the general interpretation of a "good" match between a route and a traffic light geometry. First, a clear trend is observed with Threshold 5, which decides whether inversely oriented traffic light geometries should be chosen as a match. The tendency is clearly towards "no," aligning with Rule 6 in the dataset creation, stating that traffic light geometries should never be chosen against the direction of travel. 
+The ML model was trained on the 2022 OSM dataset and is evaluated on both OSM ground truths. The training and evaluation of the ML model are structured more complexly to effectively address overfitting issues via regularization. The analysis of the ground truth revealed increased redundancy, especially in the 2022 OSM dataset. Since this is also the dataset on which the ML model is trained, 3092 out of 6440 redundant examples were identified and removed based on matching feature vectors before training. The model training was conducted using Stratified K-Fold Cross-Validation over 342 epochs.
 
-\begin{figure}[H]
+\begin{figure}[!t]
 \centering 
 \includegraphics[width=\linewidth,bb=0 0 760 760]{images/decision-boundaries.pdf}
 \caption{Decision boundaries of the ML model's Yeo-Johnson-transformed non-categorical features.}
 \label{fig:ml-model-decision-boundaries}
 \end{figure}
-
-This relationship was successfully reconstructed by the hyperparameter model. Clear gradients are also noticeable at other thresholds. The loss gradients for the overlap thresholds T7 to T9 appear somewhat diffuse, aligning with the variability observed in these parameters in the final models. Overall, the hyperparameter tuning seems to have captured essential relationships effectively. At least, no better model could be manually found.
-
-The ML model was trained on the 2022 OSM dataset and is evaluated on both OSM ground truths. The training and evaluation of the ML model are structured more complexly to effectively address overfitting issues via regularization. The analysis of the ground truth revealed increased redundancy, especially in the 2022 OSM dataset. Since this is also the dataset on which the ML model is trained, 3092 out of 6440 redundant examples were identified and removed based on matching feature vectors before training. The model training was conducted using Stratified K-Fold Cross-Validation over 342 epochs.
 
 A look at the decision boundaries of the trained ML model allows us to gain a more precise understanding of its workwise. The gradual decision boundaries of the non-categorical features are shown in \Cref{fig:ml-model-decision-boundaries}. This visualization was created by inferring random routes on the model and recording the calculated features along with the predicted class. 
 
@@ -662,6 +662,8 @@ On the other hand, where the ML model performs significantly better is in situat
 
 These situations occur more frequently than expected and are closely related to the imprecise bicycle routing in OSM.
 
+The analysis of route-lane constellations (\Cref{fig:matching-routing-errors-osm}) reveals that only a relatively small number of route-lane constellations exhibit no routing errors. This assessment involved marking both the constellation type in the Route Composer and any occurring routing errors. In the majority of cases, approximately 72\%, the route does not utilize the bicycle lane or bicycle ford at traffic lights but instead follows the center of the road. This occurrence is more than twice as frequent as instances with no routing errors.
+
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-route-errors-osm-old.pdf}
@@ -669,13 +671,11 @@ These situations occur more frequently than expected and are closely related to 
 \label{fig:matching-routing-errors-osm}
 \end{figure}
 
-The analysis of route-lane constellations (\Cref{fig:matching-routing-errors-osm}) reveals that only a relatively small number of route-lane constellations exhibit no routing errors. This assessment involved marking both the constellation type in the Route Composer and any occurring routing errors. In the majority of cases, approximately 72\%, the route does not utilize the bicycle lane or bicycle ford at traffic lights but instead follows the center of the road. This occurrence is more than twice as frequent as instances with no routing errors.
-
 In some cases, routing occurs on the wrong side of the street. The ML model demonstrates a higher accuracy of 86\% in detecting routing errors and correctly associating them with the traffic light geometry, surpassing the algorithmic model's 78\% accuracy. When no routing errors are present, the algorithmic model marginally outperforms the ML model with an accuracy of 96.2\% compared to 95.15\%. However, this advantage diminishes significantly in the presence of routing errors associated with OSM.
 
 The ML model proves superior in matching traffic lights compared to the algorithmic model, leading to its selection as the final model for OSM matching provided to app users. The remaining concerns revolve around evaluating real-world application performance and scalability over longer routes or additional traffic light geometries.
 
-Further insights into user perception of the matching process will be explored in \Cref{ch:impacts} through user surveys. Meanwhile, our focus here is on quantitative validation in real-world scenarios. Initial considerations involving the use of user tracks for validation were dismissed due to significant GNSS trajectory drift, making it challenging to identify which traffic light was utilized.
+Further insights into user perception of the matching process will be explored in \Cref{ch:app} through user surveys. Meanwhile, our focus here is on quantitative validation in real-world scenarios. Initial considerations involving the use of user tracks for validation were dismissed due to significant GNSS trajectory drift, making it challenging to identify which traffic light was utilized.
 
 An alternative validation method was adopted. On March 21, 2023, four test rides with good prognosis availability were conducted and filmed using a camera. The app calculated routes for these rides, and the final version of the matching algorithm automatically selected traffic lights. Subsequent video analysis confirmed the correct selection of 51 out of 56 passed traffic lights, resulting in an accuracy of 91.07\%. These measured results align with the ground truths, validating the effectiveness of the matching algorithm.
 
