@@ -460,7 +460,7 @@ Comparing the selected traffic lights to their assigned route geometries, the DR
 
 Most matching traffic light geometries seem to reside directly over the DRN route, while the distribution of distances between route and traffic light geometries in OpenStreetMap is much more evened out. Although the discrepancy between traffic light geometries and the generated bike routes is substantially lower, the maximum distance distribution indicates that a perfect overlap is still not given. For these examples with imperfect alignments, a more advanced matching strategy than a simple proximity-based lookup is still required. Nonetheless, the measured alignment represents a substantial improvement over the OpenStreetMap approach. 
 
-\begin{table}[h]
+\begin{table}[b]
 \caption{Retrained model thresholds on the new routing.}
 \resizebox{\linewidth}{!}{\begin{tabular}{@{}llllllllll@{}}
 \toprule
@@ -476,7 +476,7 @@ Most matching traffic light geometries seem to reside directly over the DRN rout
 
 In the next experiment, we will assess whether this improvement positively impacts the matching accuracy, as expected. To achieve this, we will retrain the algorithmic matching model on the newly created ground truth. The hyperparameter configuration identified through hyperparameter optimization is compared to that of the OpenStreetMap models in \Cref{tab:hyperparameter-tuning-results-drn}. Notably, the optimization tool applied stricter thresholds than those employed in OpenStreetMap. These stricter thresholds result in quicker dismissal of traffic light geometries that do not align well with the route.
 
-\begin{table}[h]
+\begin{table}[t]
 \caption{Model scores after retraining on DRN compared to preliminary results.}
 \begin{tabular}{@{}lllllllll@{}}
 \toprule
@@ -488,10 +488,10 @@ In the next experiment, we will assess whether this improvement positively impac
   \midrule
   Algorithmic & OSM 2023 & OSM 2022 & 615 & 159 & 143 & 79\% & 81\% & 80.3\% \\
   Algorithmic & OSM 2023 & OSM 2023 & 637 & 136 & 121 & 82\% & 84\% & 83.2\% \\
-  ML          & OSM 2023 & OSM 2022 & 614 & 52 & 144 & 92\% & 81\% & 86.2\% \\
+  ML          & OSM 2023 & OSM 2022 & 614 & 52 & 144 & 92\% & 81\% & \textbf{86.2}\% \\
   \midrule
   Algorithmic & DRN 2023 & DRN 2023 & 655 & 95 & 83 & 87\% & 89\% & 88.0\% \\
-  ML          & DRN 2023 & DRN 2023 & 676 & 24 & 62 & 97\% & 92\% & 94.0\% \\
+  ML          & DRN 2023 & DRN 2023 & 676 & 24 & 62 & 97\% & 92\% & \textbf{94.0}\% \\
 \bottomrule
 \end{tabular}
 \label{tab:model-scores-drn}
@@ -505,10 +505,11 @@ Notably, when tested on the complete dataset, the machine learning model's recal
 
 The measurable improvement in routing accuracy is evident not only in the enhanced strictness of the algorithmic model but also in an overall improved matching accuracy. Considering the gained accuracies, it prompts speculation about a potential simplification of the matching problem induced by the closer alignment between DRN routes and the traffic light geometries. Hence, we examine the types of configurations between routes and traffic light geometries associated with varying degrees of matching complexity next.
 
-\begin{figure}[t]
+\begin{figure}[!t]
 \centering 
-\includegraphics[width=\linewidth]{images/matching-constellations-osm-vs-drn.pdf}
-\caption{Constellations between traffic light geometries and routes in DRN relative to the OpenStreetMap results.}
+\includegraphics[width=\linewidth]{images/matching-constellations-osm-vs-drn.pdf} \\
+\includegraphics[width=\linewidth]{images/matching-route-errors-osm-vs-drn.pdf}
+\caption{Tagged routing errors and constellations between traffic light geometries and routes in DRN relative to the OpenStreetMap results.}
 \label{fig:matching-constellations-osm-vs-drn}
 \end{figure}
 
@@ -516,18 +517,11 @@ As depicted in \Cref{fig:matching-constellations-osm-vs-drn}, there are nearly t
 
 A similar difference is observed in situations where the route turns but runs offset to the route, a case handled better by the machine learning model in the DRN dataset than the algorithmic model. However, a new error situation is seen to emerge, particularly when the route closely aligns with the traffic light geometry. This suggests potential room for improvement in the matching procedure in such cases.
 
-\begin{figure}[t]
-\centering 
-\includegraphics[width=\linewidth]{images/matching-route-errors-osm-vs-drn.pdf}
-\caption{Routing errors tagged for each constellation between traffic light and route, compared between OpenStreetMap and DRN.}
-\label{fig:matching-route-errors-osm-vs-drn}
-\end{figure}
-
-As depicted in \Cref{fig:matching-route-errors-osm-vs-drn}, an examination of routing errors, categorized into four classes during ground truth creation, reveals a significant enhancement. Instances without routing errors nearly tripled, rising from 23\% (241 out of 1035 constellations marked) in OpenStreetMap to 60\% (438 out of 731 constellations marked) in DRN. This improvement primarily stems from more accurate utilization of bike lanes and paths, reducing routing in the middle of the road. However, complete elimination of this scenario was not achieved. Moreover, routing on the wrong side of the street occurs less frequently.
+An examination of routing errors, categorized into four classes during ground truth creation, reveals a significant enhancement. Instances without routing errors nearly tripled, rising from 23\% (241 out of 1035 constellations marked) in OpenStreetMap to 60\% (438 out of 731 constellations marked) in DRN. This improvement primarily stems from more accurate utilization of bike lanes and paths, reducing routing in the middle of the road. However, complete elimination of this scenario was not achieved. Moreover, routing on the wrong side of the street occurs less frequently.
 
 A detailed case study analyzing 72 random routes by Max Lorenz confirms these findings, as depicted in \Cref{tab:accuracy-comparison}. This validation study further supports the notable improvement in routing quality, marked by fewer identified errors. Continuous routing on the bicycle path contributes significantly to this improvement, along with mitigated occurrences of less common errors such as routing through impassable obstacles, buildings, and stairs.
 
-\begin{table}[htbp]
+\begin{table}[t]
 \centering
 \begin{tabular}{@{}lrr@{}}
 \hline
@@ -588,7 +582,7 @@ Aggregating the measured differences in \Cref{fig:routing-distance-distribution}
 
 A more noticeable difference arises when calculating the interquartile ranges of the distributions. In at least 25\% of cases, the direct distance underestimates the actual traffic light distance by at least 24.47 meters, while the route-based distance estimation only underestimates by at least 5.87 meters. On the other hand, an overestimation is quite rare with the direct distance approach. In at least 25\% of cases, the direct distance approach only overestimates by at least 0.33 meters, while the route-based approach overestimates at least 4.36 meters. Nonetheless, the skewness of the direct distance approach's distribution, together with the larger interquartile range, shows clearly that the route-based approach provides a more even and stable distance estimation.
 
-\begin{figure}[t]
+\begin{figure}[!b]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-distance-scatter.pdf}
 \caption{Under- and overestimation depending on the actual distance traveled toward the traffic light, as extrapolated through the actual GNSS trajectory.}
