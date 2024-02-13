@@ -180,7 +180,7 @@ The cost function is defined to penalize traversal between signals, and traversa
 
 Which penalty value and intersection padding to choose may depend on each intersection's characteristics. Thus, defining these hyperparameters by hand would not be the best option. A better option is to utilize a tuning algorithm that automatically approximates the optimal configuration based on the developed ground truth. Specifically, the Tree-Structured Parzen Estimator hyperparameter tuning algorithm \cite{ozaki_multiobjective_2020} is utilized. This tuner considers each hyperparameter (intersection padding and penalty) independently from each other. During the tuning, the model undergoes inference for all routes in the dataset (one trial). After each of these trials, the F1 score is evaluated, and the hyperparameters are adjusted by the tuner into a direction the tuner estimates will result in a better score.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/matching-dijkstra-correct.pdf}
 \caption{Examples of correct matching using the graph approach. [\hyperref[attribution]{Attribution}]}
@@ -189,7 +189,7 @@ Which penalty value and intersection padding to choose may depend on each inters
 
 After tuning the model to the ground truth, the model reached an F1 score of 75.4\% (penalty = 2.87, padding = 25m). As a distance function, this version of the model utilizes the Euclidean distance between the coordinates in the WGS84 projection system. Correct matchings from this model highlighted in \Cref{fig:sg-selection-graph-example} indicate the model's capabilities. The model would perform well even in scenarios where the signal's geometry is offset to the route and thus has large advantages over the H3 approach, as reflected in the improved F1 score.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/matching-dijkstra-incorrect.pdf}
 \caption{Examples of false matching using the graph approach. [\hyperref[attribution]{Attribution}]}
@@ -205,16 +205,16 @@ However, the final result is still not convincing, considering that the measured
 
 Option one initially may seem like a good choice here. However, this strategy would worsen another problem highlighted in \Cref{fig:sg-selection-graph-fails}: often, traffic light geometries are falsely traversed simply because their exit point is slightly more proximal to the egress point. A higher penalty amplifies this problem. Thus, option two was implemented instead. 
 
-\begin{figure}[htbp]
+Unfortunately, the result of the adjusted graph generation procedure is a worse F1 score after hyperparameter tuning of 60.7\% (penalty = 9.68, intersection padding = 42m). In many cases, the model would now avoid shortcutting as intended, but the model would also be noticeably more strict. The reason is that the signals' geometries are no longer connected to each other but rather through the route (see \Cref{fig:sg-selection-graph-strict}). Jumping on and off the signals' geometries would often be a worse option for the pathfinding algorithm than staying on the route, even with a remarkably higher penalty. 
+
+Another variation of the graph-based approach would be to cut out the intersections, reconnect the OSM paths via the traffic light geometries, and then calculate the route using these. However, the main problems here would probably be similar, especially the problem of connecting the traffic light geometries with each other and the problem of stitching at the edges. Thus, this idea was not further explored.
+
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/matching-dijkstra-strict.pdf}
 \caption{Examples of matching using the adjusted graph generation procedure. [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-graph-strict}
 \end{figure}
-
-Unfortunately, the result of the adjusted graph generation procedure is a worse F1 score after hyperparameter tuning of 60.7\% (penalty = 9.68, intersection padding = 42m). In many cases, the model would now avoid shortcutting as intended, but the model would also be noticeably more strict. The reason is that the signals' geometries are no longer connected to each other but rather through the route (see \Cref{fig:sg-selection-graph-strict}). Jumping on and off the signals' geometries would often be a worse option for the pathfinding algorithm than staying on the route, even with a remarkably higher penalty. 
-
-Another variation of the graph-based approach would be to cut out the intersections, reconnect the OSM paths via the traffic light geometries, and then calculate the route using these. However, the main problems here would probably be similar, especially the problem of connecting the traffic light geometries with each other and the problem of stitching at the edges. Thus, this idea was not further explored.
 
 Although the developed graph-based methods initially promised good results, they were ultimately not further studied in favor of more promising ideas. Even if the graph approach seems less susceptible to offsets and longer traffic light geometries, it clearly falls short when considering the curvature and not only the absolute location of the traffic light geometries. In the end, only each traffic light geometry's start and end points are considered. However, the curvature is similarly important to decide which traffic light could match the associated route.
 
@@ -222,7 +222,7 @@ Although the developed graph-based methods initially promised good results, they
 
 A positive learning of the graph-based approach is that the map-matching problem of Newson and Krumm (2009) \cite{newson_hidden_2009} is, in theory, very similar to the problem we are trying to solve. Another idea based on this approach would be to map-match the traffic light geometries onto the OSM road network, fusing both map sources and allowing for a direct traffic light lookup.
 
-\begin{figure}[htbp]
+\begin{figure}[b]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-map-matching-approach.pdf}
 \caption{Steps for map-matching traffic lights onto the routing foundation.}
@@ -233,9 +233,9 @@ A positive learning of the graph-based approach is that the map-matching problem
 
 The approach by Newson and Krumm (2009) \cite{newson_hidden_2009} is utilized as a map-matching procedure. This approach is implemented by default in the GraphHopper routing engine and can be accessed through its map-matching API\footnote{\url{https://docs.graphhopper.com/\#tag/Map-Matching-API}}. Each traffic light geometry is transformed into a compatible format (GPX) and sent to the map-matching API, where it is projected onto the integrated routing foundation.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/sg-selection-map-matching-fails.png}
+\includegraphics[width=\linewidth]{images/sg-selection-map-matching-fails.pdf}
 \caption{Distortion of traffic light geometries after map-matching. [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-map-matching-fails}
 \end{figure}
@@ -248,7 +248,7 @@ Since not only bike traffic lights are represented in the system but also traffi
 
 The preliminary H3, graph, and map-matching approaches have not been successful but provided a deeper understanding of the problem. First, an ideal matching procedure should be robust against offsets of the traffic light geometries from the route, especially in cases when the route geometry is mapped on the road while the bike traffic light is alongside. Second, the matching procedure must handle long and short traffic light geometries similarly well. 
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-matching-filters.pdf}
 \caption{Filtering steps for matching with the algorithmic approach.}
@@ -292,7 +292,7 @@ The bearing diff $\bar{\Delta}_{bear_1}$ denotes how much the signal's angle is 
 
 where $\Psi_{bear_{i=1}} = 1$ means that the segment is angled similarly enough to the nearby route and is therefore a match. All traffic lights that are not a match ($\Psi_{bear_{i=1}} = 0$) are filtered out. For example, if $t_{bear} = 45°$, we will filter out all geometries whose first coordinate is angled more than $\pm 45°$ relative to the projection onto the route. 
 
-\begin{figure}[htbp]
+\begin{figure}[b]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-bearing-filter.pdf}
 \caption{Examples for bearing matching based on traffic light geometry's first coordinate.}
@@ -312,7 +312,7 @@ This process is drawn in \Cref{fig:sg-selection-bearing-filter}. In cases (1), (
 
 where $dist$ is calculated as the Euclidean distance and $n$ is the number of coordinates in the signal's geometry. As a result, $\phi_{bear}$ is normalized between 0 and 1. $\phi_{bear} = 0$ means none of the traffic light geometry's segments matches the angular threshold $t_{bear}$, while a value of 1 represents a full match. To determine the decision boundary between match and no match, $\phi_{bear}$ is subjected to another threshold $t_{bear\_sum} \in [0, 1]$. This threshold is chosen such that traffic lights curving away from the route are also excluded.
 
-\begin{figure}[htbp]
+\begin{figure}[b]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-bearing-filter-sum.pdf}
 \caption{Examples for (cumulative) bearing matching.}
@@ -323,7 +323,7 @@ where $dist$ is calculated as the Euclidean distance and $n$ is the number of co
 
 \paragraph{Step 3 -- Length Filter:} With the previous two steps, we have two bearing thresholds ($t_{bear}$ and $t_{bear\_sum}$) in addition to the distance threshold $t_{dist}$. However, during the systematic testing of the thresholds it quickly became clear that these thresholds alone are not nearly enough to sufficiently distinguish matching from non-matching signals. During the search for other characteristics that distinguish matching from non-matching signals, a key observation was made: Non-matching traffic light geometries often have a shorter projection onto the route relative to their original length. This feature is also related to the traffic light geometry's angular position to the route but incorporates the shape of the route in between projected traffic light geometry coordinates.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-length-filter-sum.pdf}
 \caption{Examples for (cumulative) length matching.}
@@ -366,7 +366,7 @@ Here, $\phi_{len} = 0$ means that all of the traffic light geometry's segments a
 
 \paragraph{Step 4 -- Overlap Matcher:} The previous matching steps often struggle with one particular problem: multiple parallel-aligned signals. Often, this case leads to a multi-selection of these signals, while only one of them will be taken by the cyclist. On the other hand, especially on complex intersections, there may be multiple consecutive traffic lights whose geometries partially overlap along the route but are still a valid match. Thus, some overlaps need to be filtered out, while others are intentional.
 
-\begin{figure}[htbp]
+\begin{figure}[b]
 \centering
 \includegraphics[width=0.5\linewidth]{images/overlap.drawio.pdf}
 \caption{Example overlap.}
@@ -390,7 +390,7 @@ In the error case that the denominator is zero, $\phi_{overlap}$ is also mapped 
 
 The thresholds $t_{overlap\_pct}$, $t_{perfect\_match}$, and $t_{road\_side}$ can be used to tune the final result. In the case of $\phi_{overlap} < t_{overlap\_pct}$, both traffic lights are kept. This allows for intentional small overlaps at complex intersections without filtering one of both traffic lights out.
 
-\begin{table}[t]
+\begin{table}[!b]
 \caption{Summary of thresholds and search space.}
 \begin{tabular}{@{}lp{8cm}l@{}}
 \toprule
@@ -446,9 +446,9 @@ To ensure comparability during the model testing process, each model feature pip
 
 A feature scaling algorithm is employed to optimize the ML model's learning and inference process. Here, it is usually a good option to choose a Yeo-Johnson power transformation \cite{yeo_new_2000}, which includes standardization and additionally tries to symmetrize the observed data into a normal distribution. Together with the scaled numerical features, the one-hot-encoded categorical features are input into the model as, in sum, 16 features. Together with the model, the parameters of the Yeo-Johnson power transformation are only fit to the dataset's training proportion.
 
-\begin{figure}[htbp]
+\begin{figure}[b]
 \centering
-\includegraphics[width=\linewidth]{images/sg-selection-overlap-cleanup.png}
+\includegraphics[width=\linewidth]{images/sg-selection-overlap-cleanup.pdf}
 \caption{Model selection without (left) and with (right) overlap cleanup. [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-overlap-cleanup}
 \end{figure}
@@ -492,7 +492,7 @@ As of December 8, 2023, 85.6\% of the 791 available intersection nodes in the sy
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/lanes-map.pdf}
-\caption{Types of transport modes served by traffic lights as extracted from metadata. [\hyperref[attribution]{Attribution}]}
+\caption{Types of transport modes served by traffic lights in Hamburg (extracted from metadata). [\hyperref[attribution]{Attribution}]}
 \label{fig:lanes-map}
 \end{figure}
 
@@ -502,7 +502,7 @@ While multiple connections typically operate simultaneously, and an incorrect ch
 
 In cases where the selection is solely based on the next signal geometry due to the precise overlap of ingress lanes, ambiguity arises, necessitating the display of multiple parallel lanes in the user interface. Additionally, there are often several parallel ingress lanes, which can be independently controlled, such as a bicycle signal preceding a vehicle signal also tagged for cyclists. Although these lanes do not physically overlap, they are usually situated a few meters apart.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/lanes-lengths.pdf}
 \caption{Lane lengths of traffic lights in Hamburg as measured through the Vincenty distance.}
@@ -519,7 +519,7 @@ Even then, the problem is not entirely resolved, as the ingress lanes of multipl
 
 The development of the route-based matching method involved creating several ground truths, which we will now examine in more detail.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-osm-old.pdf}
 \caption{OpenStreetMap 2022 ground truth for model training and evaluation. [\hyperref[attribution]{Attribution}]}
@@ -534,7 +534,7 @@ Along the 148 routes, a total of 6440 connections were considered at least once 
 
 While only 549 unique connections are identified at least once as a "match," an additional 1231 unique connections are never identified as a "match" despite being considered. Consequently, the 2022 OSM dataset covers a total of 73.7\% (1780) of all 2414 traffic lights, although not necessarily accounting for all possible entry directions of the intersections.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-osm.pdf}
 \caption{Additional OpenStreetMap 2023 ground truth for model training and evaluation. [\hyperref[attribution]{Attribution}]}
