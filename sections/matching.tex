@@ -76,7 +76,7 @@ Route-based matching is similar to location-based matching as it assumes the rou
 
 In this concept, we will investigate methods that accurately match a few from thousands of traffic lights along a route geometry. The methods are intended to display only one traffic light at a time, preferring bike traffic lights whenever possible, to simplify communicating the speed advisory to the user and avoid abuse by motorists as much as possible. Of course, the methods must also be computationally efficient to allow quick re-matching of the traffic lights in case of a deviation from the intended route.
 
-\begin{figure}[b]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-example.png}
 \caption{In this case, the OpenStreetMap route does not accurately depict the cyclist's most optimal path and runs over car traffic light 1. In reality, the bike path and four bike/pedestrian traffic lights to the right of the route are utilized: 2, 3, 4, and 5. [\hyperref[attribution]{Attribution}]}
@@ -95,10 +95,10 @@ It is first important to thoroughly understand what a "correct" traffic light me
 
 Assuming that cyclists will follow certain movement patterns at each intersection, and these movement patterns are sufficiently predictable by looking at the intersection layout, we can craft examples for optimal selections. As a result, we obtain a ground truth with combinations of routes and traffic lights predicted by a human to match each given route. In the second step, this ground truth can be utilized to develop and test models for automated traffic light matching.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-ground-truth.pdf}
-\caption{The Route Composer web application. [\hyperref[attribution]{Attribution}]}
+\caption{Ground truth creation process through the developed Route Composer app. [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-ground-truth}
 \end{figure}
 
@@ -122,7 +122,7 @@ Based on this ground truth, we can run a benchmark that evaluates the performanc
 In the selection of the benchmark metric, a few more considerations are required. Since many of the thousand traffic lights can be excluded entirely by applying a rough distance threshold around the route, a large number of true negatives is expected. These easily excluded traffic lights are not of interest here. What's of interest are the traffic lights near the route for which a more thorough decision is required. Thus, a metric is required that ideally excludes true negatives. The F1 score is chosen here since it only considers true positives (TP), false positives (FP), and false negatives (FN): 
 
 \begin{equation}
-\text{F1 Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}} \quad \text{where} \quad \text{Precision} = \frac{TP}{TP + FP} \quad \text{and} \quad \text{Recall} = \frac{TP}{TP + FN}
+\text{\footnotesize F1 Score} = 2 \times \frac{\text{\footnotesize Precision} \times \text{\footnotesize Recall}}{\text{\footnotesize Precision} + \text{\footnotesize Recall}} \quad \text{\footnotesize where} \quad \text{\footnotesize Precision} = \frac{TP}{TP + FP} \quad \text{\footnotesize and} \quad \text{\footnotesize Recall} = \frac{TP}{TP + FN}
 \end{equation}
 
 Assuming that especially false-positive or false-negative matches limit the speed advisory's perceived usability, the F1 score is suitable to accurately depict the perceived quality of the matching.
@@ -137,7 +137,7 @@ The H3 approach is based on an idea by colleagues who applied a similar method t
 
 In the work by colleagues, after the GNSS samples of each user track were assigned to an H3 cell, the resulting cells each contained a number of samples and travel direction (edge of the H3 cell), resembling a histogram of the trajectories spatially aligned with the intersections. Assuming a normally distributed GNSS scattering around the actual position, the buckets could then be used to statistically sift out the most frequently used pathways of cyclists. Minor GNSS errors or individualities in the user movement don't fall into weight as they are clustered together. Since this approach was described as remarkably successful, the fundamental idea was further explored to identify potential methods for aligning the traffic light geometries with the inaccurate bike route.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-h3-approach.pdf}
 \caption{Illustration of the matching procedure behind the developed H3 approach.}
@@ -150,9 +150,9 @@ Nonetheless, a very significant challenge is to find a suitable scoring threshol
 
 One identified possibility for improvement was to apply a relative scoring schema for each signal. Instead of applying absolute values to each H3 cell around the line geometry, the scoring schema would be scaled inversely proportional to the number of cells. This means that a longer line geometry would have more cells with lower individual scores compared to a short geometry. Ideally, the result would be a normalized alignment score for each traffic light geometry that can be subjected to a universal threshold. Figuratively, the score would depict how much both geometries align. However, this potential solution was not thoroughly explored due to other systematic limitations of the H3 approach.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/sg-selection-h3-example.png}
+\frame{\includegraphics[width=\linewidth]{images/sg-selection-h3-example.png}}
 \caption{Example of four traffic lights that were matched using the H3 approach along the route. [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-h3-example}
 \end{figure}
@@ -167,7 +167,7 @@ Due to these issues, the H3-based approach for traffic light matching was not fu
 
 The second approach is inspired by the map-matching procedure proposed by Newson and Krumm in 2009 \cite{newson_hidden_2009}. Their proposed method matches GNSS trajectories to the road network by building a transition graph between each GNSS sample and the nearby roads. After the graph is created, each transition is marked with a transition probability. In their approach, the most probable path through the transitions is calculated using the Viterbi algorithm to find the most likely sequence of roads that were taken. This approach can be transferred over to traffic light matching, interpreting the route geometry as GNSS trajectory and the traffic light geometries as road segments.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-graph-approach.pdf}
 \caption{Steps for traffic light matching in the graph-based approach.}
