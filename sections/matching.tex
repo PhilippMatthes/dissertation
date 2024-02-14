@@ -259,9 +259,9 @@ Most importantly, it is crucial to consider the absolute location of the traffic
 
 One solution is to tell apart matching from non-matching traffic light geometries by a geometrical comparison with the route. In four filtering steps, specific geometric thresholds are applied to filter out traffic lights that are likely no match. The idea is that each step catches a specific type of misalignment with the route, such that, in the end, only the wanted matches remain. As shown in \Cref{fig:sg-matching-filters}, four filtering steps are employed: proximity filter, bearing filter, length filter, and overlap filter.
 
-\paragraph{Step 1 -- Distance Filter:} Step one focuses on coarsely excluding a large proportion of the traffic lights in the city area through a distance threshold $t_{dist}$ from the route. This step is efficiently executed through a PostGIS database using the \texttt{ST\_Distance}\footnote{\url{https://postgis.net/docs/en/ST\_Distance.html}} query.
+\textbf{\color{cidarkblue}Step 1 -- Distance Filter:} Step one focuses on coarsely excluding a large proportion of the traffic lights in the city area through a distance threshold $t_{dist}$ from the route. This step is efficiently executed through a PostGIS database using the \texttt{ST\_Distance}\footnote{\url{https://postgis.net/docs/en/ST\_Distance.html}} query.
 
-\paragraph{Step 2 -- Bearing Filter:} As a next step, the bearing between the signal's geometry and the route is compared. Hereby, we can exclude traffic lights that are angled too steeply or even inverted to the route. As a foundation, the atan2 function is used to calculate the bearing between two coordinates on the earth\footnote{\url{https://www.movable-type.co.uk/scripts/latlong.html}}:
+\textbf{\color{cidarkblue}Step 2 -- Bearing Filter:} As a next step, the bearing between the signal's geometry and the route is compared. Hereby, we can exclude traffic lights that are angled too steeply or even inverted to the route. As a foundation, the atan2 function is used to calculate the bearing between two coordinates on the earth\footnote{\url{https://www.movable-type.co.uk/scripts/latlong.html}}:
 
 \begin{equation}
 x(c_1, c_2) = sin(lon_2 - lon_1) \times cos(lat_2)
@@ -301,7 +301,6 @@ where $\Psi_{bear_{i=1}} = 1$ means that the segment is angled similarly enough 
 
 This process is drawn in \Cref{fig:sg-selection-bearing-filter}. In cases (1), (2), and (3), the alignment of both geometries is classified correctly. However, (4) illustrates one particular weakness: traffic light geometries initially aligned but then curving away from the route are not filtered out correctly. The reason is that only the first coordinate is compared, and not the complete geometry. To compare the complete geometry, all coordinates $c_i$ of the traffic light geometry are compared to the route. Then, a weighted sum $\phi_{bear}$ is calculated, incorporating the length of each geometry segment relative to the complete geometry. In this way, longer parts of the signal's geometry are emphasized:
 
-
 \begin{equation} 
 \phi_{bear} = 
     \underbrace{\sum_{i=1}^{n-1} 
@@ -321,7 +320,7 @@ where $dist$ is calculated as the Euclidean distance and $n$ is the number of co
 
 \Cref{fig:sg-selection-bearing-filter-sum} gives an intuition for the final working principle of the bearing filter. In example (1) all segments of the signal's geometry are sufficiently aligned to the route. Examples (2) and (3) depict cases where none of the segments are within the angular threshold $t_{bear}$. Example (4) highlights a case where the first 60\% of the traffic light geometry matches the route. In the illustration, $t_{bear\_sum}$ is assumed to be larger than 60\%, and so the traffic light that curves away is filtered out. The higher this threshold is configured, the more aggressively the filter excludes inclined geometries.
 
-\paragraph{Step 3 -- Length Filter:} With the previous two steps, we have two bearing thresholds ($t_{bear}$ and $t_{bear\_sum}$) in addition to the distance threshold $t_{dist}$. However, during the systematic testing of the thresholds it quickly became clear that these thresholds alone are not nearly enough to sufficiently distinguish matching from non-matching signals. During the search for other characteristics that distinguish matching from non-matching signals, a key observation was made: Non-matching traffic light geometries often have a shorter projection onto the route relative to their original length. This feature is also related to the traffic light geometry's angular position to the route but incorporates the shape of the route in between projected traffic light geometry coordinates.
+\textbf{\color{cidarkblue}Step 3 -- Length Filter:} With the previous two steps, we have two bearing thresholds ($t_{bear}$ and $t_{bear\_sum}$) in addition to the distance threshold $t_{dist}$. However, during the systematic testing of the thresholds it quickly became clear that these thresholds alone are not nearly enough to sufficiently distinguish matching from non-matching signals. During the search for other characteristics that distinguish matching from non-matching signals, a key observation was made: Non-matching traffic light geometries often have a shorter projection onto the route relative to their original length. This feature is also related to the traffic light geometry's angular position to the route but incorporates the shape of the route in between projected traffic light geometry coordinates.
 
 \begin{figure}[t]
 \centering
@@ -364,7 +363,7 @@ where $\Psi_{len_i} = 1$ means the segment matches the length diff threshold $t_
 
 Here, $\phi_{len} = 0$ means that all of the traffic light geometry's segments are shortened too much when projecting them onto the route geometry, indicating a traffic light that is not aligned with the route. Likewise, $\phi_{len} = 1$ means that all segments roughly stay the same length when projected onto the route. To distinguish when a traffic light is counted as a match or not, the thresholds $t_{len}$ and $t_{len\_sum}$ can be optimized accordingly.
 
-\paragraph{Step 4 -- Overlap Matcher:} The previous matching steps often struggle with one particular problem: multiple parallel-aligned signals. Often, this case leads to a multi-selection of these signals, while only one of them will be taken by the cyclist. On the other hand, especially on complex intersections, there may be multiple consecutive traffic lights whose geometries partially overlap along the route but are still a valid match. Thus, some overlaps need to be filtered out, while others are intentional.
+\textbf{\color{cidarkblue}Step 4 -- Overlap Matcher:} The previous matching steps often struggle with one particular problem: multiple parallel-aligned signals. Often, this case leads to a multi-selection of these signals, while only one of them will be taken by the cyclist. On the other hand, especially on complex intersections, there may be multiple consecutive traffic lights whose geometries partially overlap along the route but are still a valid match. Thus, some overlaps need to be filtered out, while others are intentional.
 
 \begin{figure}[b]
 \centering
