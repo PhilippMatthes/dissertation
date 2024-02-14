@@ -648,8 +648,9 @@ Instead, what we can do is carefully examine areas where improvement potential e
 
 \begin{figure}[t]
 \centering 
-\includegraphics[width=\linewidth]{images/matching-constellations-osm-old.pdf}
-\caption{Recorded types of constellation between route and traffic light geometry.}
+\includegraphics[width=\linewidth]{images/matching-constellations-osm-old.pdf} \\
+\includegraphics[width=\linewidth]{images/matching-route-errors-osm-old.pdf}
+\caption{Recorded types of routing errors and constellation between route and traffic light geometry.}
 \label{fig:matching-constellations-osm}
 \end{figure}
 
@@ -661,14 +662,7 @@ On the other hand, where the ML model performs significantly better is in situat
 
 These situations occur more frequently than expected and are closely related to the imprecise bicycle routing in OSM.
 
-The analysis of route-lane constellations (\Cref{fig:matching-routing-errors-osm}) reveals that only a relatively small number of route-lane constellations exhibit no routing errors. This assessment involved marking both the constellation type in the Route Composer and any occurring routing errors. In the majority of cases, approximately 72\%, the route does not utilize the bicycle lane or bicycle ford at traffic lights but instead follows the center of the road. This occurrence is more than twice as frequent as instances with no routing errors.
-
-\begin{figure}[t]
-\centering 
-\includegraphics[width=\linewidth]{images/matching-route-errors-osm-old.pdf}
-\caption{Recorded types of routing errors annotated to each constellation between traffic light and route.}
-\label{fig:matching-routing-errors-osm}
-\end{figure}
+The analysis of route-lane constellations reveals that only a relatively small number of route-lane constellations exhibit no routing errors. This assessment involved marking both the constellation type in the Route Composer and any occurring routing errors. In the majority of cases, approximately 72\%, the route does not utilize the bicycle lane or bicycle ford at traffic lights but instead follows the center of the road. This occurrence is more than twice as frequent as instances with no routing errors.
 
 In some cases, routing occurs on the wrong side of the street. The ML model demonstrates a higher accuracy of 86\% in detecting routing errors and correctly associating them with the traffic light geometry, surpassing the algorithmic model's 78\% accuracy. When no routing errors are present, the algorithmic model marginally outperforms the ML model with an accuracy of 96.2\% compared to 95.15\%. However, this advantage diminishes significantly in the presence of routing errors associated with OSM.
 
