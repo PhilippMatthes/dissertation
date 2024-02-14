@@ -376,12 +376,12 @@ Two other interaction hotspots are seen in the bottom region within the speedome
 
 Besides the third hotspot located on the top right, which corresponds to users ending their rides by pressing the finish button, a vertical line artifact can be seen in the center of the screen. Since this artifact was captured by only one user, it is unlikely to represent an actual finger tap on the screen. A more plausible explanation could be the presence of a smartphone mount that might have inadvertently interacted with the screen.
 
-In general, some users tend to interact significantly more often with the screen than others. This can also be seen by the recurring colors in \Cref{fig:app-user-interaction}. The top 10 tracks (by tap rate) exhibit a rate exceeding 27 taps per minute despite their approximately one-minute duration. In such instances, one potential explanation is that users faced difficulties in accurately planning their routes, or perhaps they wished to experiment with the application by following the planned route and tapping on the traffic lights to switch to their countdown. In most other tracks, the tap rate is relatively low, with 0.15 taps per minute (IQR: 0.34). Additionally, a substantial portion, 765 tracks accounting for 57.5\% of the total, recorded two taps or fewer in total, primarily for ending the ride. Thus, in many tracks, there was no interaction with the screen at all while driving.
-
 \begin{figure}[t]
 \caption{Taps on the screen by currently driven speed and time of entering/leaving the view.}\label{fig:app-user-interaction-speed}
 \includegraphics[width=\linewidth]{images/app-user-interaction-speed.pdf}
 \end{figure}
+
+In general, some users tend to interact significantly more often with the screen than others. This can also be seen by the recurring colors in \Cref{fig:app-user-interaction}. The top 10 tracks (by tap rate) exhibit a rate exceeding 27 taps per minute despite their approximately one-minute duration. In such instances, one potential explanation is that users faced difficulties in accurately planning their routes, or perhaps they wished to experiment with the application by following the planned route and tapping on the traffic lights to switch to their countdown. In most other tracks, the tap rate is relatively low, with 0.15 taps per minute (IQR: 0.34). Additionally, a substantial portion, 765 tracks accounting for 57.5\% of the total, recorded two taps or fewer in total, primarily for ending the ride. Thus, in many tracks, there was no interaction with the screen at all while driving.
 
 As seen in \Cref{fig:app-user-interaction-speed}, most user interactions happen in a standstill position, directly after the ride has been started or shortly before the ride ended. Interactions with higher speeds are primarily related to the two path quality report buttons. Hence, apart from these buttons that were removed to enhance safety during usage, no further areas to reduce active interaction could be identified.
 
@@ -460,7 +460,7 @@ To obtain a more comprehensive understanding of these cases, we generated such v
 
 During this process, 915 (78.5\%) of the visualizations had equal, and 200 (17.2\%) had unequal labelings. In these cases, it proved difficult to distinguish whether an adaption had happened or would have been possible. Sometimes, such as in \Cref{fig:example-trajectory-not-adapted}, the suggested speed for catching the green phase fell below 10 km/h, rendering the target speed so minimal that users had no practical means of adhering to it. Therefore, while in theory, adaptation could have been possible, its practicality in these cases was subject to debate. In the remaining 50 cases (4.3\%), only one person had labeled the visualization, meaning that a cross-checking was not possible.
 
-\begin{table}[h]
+\begin{table}[t]
 \centering
 \begin{tabular}{@{}lr@{}}
 \toprule
