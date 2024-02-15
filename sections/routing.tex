@@ -28,7 +28,7 @@ One issue of authoritative datasets is their spatial limitedness to a specific r
 
 A key focus is evaluating how much the accuracy of traffic light matching can be improved with a potentially more precise representation of cycling paths, compared to results from \Cref{ch:matching}. The primary contribution is determining the effectiveness of routing based on this type of dataset by comparing alignment with the actual location of cycling infrastructure and the number of routing errors. The goal is to ascertain whether adopting authoritative routing foundations can effectively address many of the issues encountered with OpenStreetMap bike routing, thereby providing users of the bike-GLOSA app with significantly improved directions and speed recommendations.
 
-\section{Related Work}\label{sec:rw-uis}
+\section{Related Work}
 
 Establishing an accurate bike routing is a multifaceted research area. One avenue of investigation focuses on models that can predict cyclists' route choices with high accuracy based on available metadata \cite{dill_understanding_2008, ghanayim_modelling_2018, huber_modelling_2021}. This involves correlating GNSS trajectories with routing networks to understand the relationships between path characteristics and route selection \cite{sultan_extracting_2017, huber_modelling_2021}. Some studies also focus on safe bike routing \cite{loidl_online_2018}, popularity-based routing \cite{bergman_conflation_2016} or the short-term effects of infrastructure changes on cyclists' route preferences \cite{yeboah_route_2015, pritchard_does_2019}. Over the years, open-source routing engines such as GraphHopper\footnote{\url{https://www.graphhopper.com/}} have continuously improved, providing community- and research-tested routing profiles tailored for various types of cycling \cite{krismer_elevation_2016}. Thus, although research around understanding cyclist route choices is still ongoing, available route choice models can already be considered quite advanced and consolidated.
 
@@ -523,7 +523,7 @@ A similar difference is observed in situations where the route turns but runs of
 
 An examination of routing errors, categorized into four classes during ground truth creation, reveals a significant enhancement. Instances without routing errors nearly tripled, rising from 23\% (241 out of 1035 constellations marked) in OpenStreetMap to 60\% (438 out of 731 constellations marked) in DRN. This improvement primarily stems from more accurate utilization of bike lanes and paths, reducing routing in the middle of the road. However, complete elimination of this scenario was not achieved. Moreover, routing on the wrong side of the street occurs less frequently.
 
-A detailed case study analyzing 72 random routes by Max Lorenz \cite{lorenz_2022} confirms these findings, as depicted in \Cref{tab:accuracy-comparison}. This validation study further supports the notable improvement in routing quality, marked by fewer identified errors. Continuous routing on the bicycle path contributes significantly to this improvement, along with mitigated occurrences of less common errors such as routing through impassable obstacles, buildings, and stairs.
+A detailed case study analyzing 72 random routes by Max Lorenz \cite{lorenz_2022} confirms these findings, as depicted in \Cref{tab:error-cases-max-lorenz}. This validation study further supports the notable improvement in routing quality, marked by fewer identified errors. Continuous routing on the bicycle path contributes significantly to this improvement, along with mitigated occurrences of less common errors such as routing through impassable obstacles, buildings, and stairs.
 
 \begin{table}[t]
 \centering
@@ -542,7 +542,7 @@ Generally problematic road crossings & 1 & 4 \\
 \hline
 \end{tabular}
 \caption{Observed error cases among an arbitrary sample of 72 routes. Source: \cite{lorenz_2022}}%
-\label{tab:accuracy-comparison}%
+\label{tab:error-cases-max-lorenz}%
 \end{table}
 
 In conclusion, the DRN routes not only closely align with bicycle infrastructure but also exhibit enhanced alignment with traffic light geometries compared to OpenStreetMap bicycle routes. The results suggest that this alignment improvement positively influences traffic light matching. Substantial reductions in routing error rates at intersections and fewer errors in examining entire route geometries further support the effectiveness of the proposed approach.

@@ -6,7 +6,7 @@
   headings=heavy,
   chapterpage=true,
   cdfont=off, % modify this to use the TUD font (Open Sans)
-  egregdoesnotlikesansseriftitles,
+  sfdefaults=false,
 ]{tudscrmanual}
 
 % use a custom serif font
@@ -43,6 +43,7 @@
 \AtEveryBibitem{%
   \clearfield{note}%
 }
+\BiblatexSplitbibDefernumbersWarningOff
 
 \usepackage{graphicx}
 \graphicspath{ {./} }
@@ -255,7 +256,6 @@ Promoting cycling is a crucial solution to improve the livability of urban envir
 \nocite{lorenz_2022}
 \nocite{pickhardt_2022}
 \nocite{jeschor_2022}
-\nocite{wieland_2022}
 \nocite{lahr_2023}
 \nocite{pickhardt_2023}
 \nocite{wieland_2023}
@@ -263,11 +263,11 @@ Promoting cycling is a crucial solution to improve the livability of urban envir
 \nocite{koch_2024}
 
 \input{sections/introduction.tex}
-% \input{sections/prediction.tex}
-% \input{sections/matching.tex}
-% \input{sections/routing.tex}
-% \input{sections/app.tex}
-% \input{sections/conclusions.tex}
+\input{sections/prediction.tex}
+\input{sections/matching.tex}
+\input{sections/routing.tex}
+\input{sections/app.tex}
+\input{sections/conclusions.tex}
 
 \nocite{*}
 
@@ -283,16 +283,16 @@ Promoting cycling is a crucial solution to improve the livability of urban envir
 This thesis is based on the following peer-reviewed research papers in which the author was the principal investigator:
 \printbibliography[heading=none,nottype=student,keyword={ownpaper,related}]
 The following study, although not directly pivotal for this work, had methodological relevance for hyperparameter tuning of the machine learning model in \Cref{ch:matching}, as well as GNSS-related aspects of smartphone sensor handling in \Cref{ch:routing} and \Cref{ch:app}:
-\printbibliography[heading=none,nottype=student,keyword={ownpaper,notrelated}]
+\printbibliography[heading=none,notkeyword={student},keyword={ownpaper,notrelated}]
 \pagebreak
 
 \section*{Supervised Student Theses}
 The author of this thesis identified several topics for student theses and was involved as supervisor:
-\printbibliography[heading=none,type=student,notkeyword={ownpaper}]
+\printbibliography[heading=none,keyword={student},notkeyword={ownpaper}]
 \pagebreak
 
 \section*{References}
-\printbibliography[heading=none,nottype=student,notkeyword={ownpaper,notrelated},notkeyword={ownpaper,related}]
+\printbibliography[heading=none,notkeyword={student},notkeyword={ownpaper,notrelated},notkeyword={ownpaper,related}]
 \pagebreak
 
 \newpage
