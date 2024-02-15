@@ -28,10 +28,11 @@
 \usepackage{hyphenat}
 
 \usepackage[
-  style=ieee,
+  citestyle=numeric-comp,
+  bibstyle=ieee,
   backend=biber,
   url=false,
-  doi=false,
+  doi=true,
   isbn=false,
   hyperref,
 ]{biblatex}
@@ -262,11 +263,11 @@ Promoting cycling is a crucial solution to improve the livability of urban envir
 \nocite{koch_2024}
 
 \input{sections/introduction.tex}
-\input{sections/prediction.tex}
-\input{sections/matching.tex}
-\input{sections/routing.tex}
-\input{sections/app.tex}
-\input{sections/conclusions.tex}
+% \input{sections/prediction.tex}
+% \input{sections/matching.tex}
+% \input{sections/routing.tex}
+% \input{sections/app.tex}
+% \input{sections/conclusions.tex}
 
 \nocite{*}
 
