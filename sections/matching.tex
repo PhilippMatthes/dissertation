@@ -7,7 +7,7 @@ This chapter is based on the following two papers in which the author was the pr
 
 \cite{matthes2023geo} \fullcite{matthes2023geo}
 
-This chapter contains concepts and results from the following student thesis, whose topic was identified by the author. The author was also involved as the primary supervisor:
+This chapter integrates concepts and results from a Master thesis, where the author identified the topic and was also involved as the primary supervisor:
 
 \cite{jeschor_2022} \fullcite{jeschor_2022}
 \end{Summary}
@@ -83,7 +83,7 @@ In this concept, we will investigate methods that accurately match a few from th
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-example.png}
-\caption{In this case, the OpenStreetMap route does not accurately depict the cyclist's most optimal path and runs over car traffic light 1. In reality, the bike path and four bike/pedestrian traffic lights to the right of the route are utilized: 2, 3, 4, and 5. [\hyperref[attribution]{Attribution}]}
+\caption{In this case, the OpenStreetMap route does not accurately depict the cyclist's most optimal path and runs over car traffic light 1. In reality, the bike path and four bike/pedestrian traffic lights to the right of the route are utilized: 2, 3, 4, and 5. Source: \cite{matthes2023geo}, [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-example}
 \end{figure}
 
@@ -102,7 +102,7 @@ Assuming that cyclists will follow certain movement patterns at each intersectio
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-ground-truth.pdf}
-\caption{Ground truth creation process through the developed Route Composer app. [\hyperref[attribution]{Attribution}]}
+\caption{Ground truth creation process through the developed Route Composer app. Sources: \cite{matthes2022matching, matthes2023geo},  [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-ground-truth}
 \end{figure}
 
@@ -417,7 +417,7 @@ T9 ($t_{overlap\_pct}$) & If two traffic lights overlap more relative to their c
 
 \subsection{Machine Learning Filtering Approach}
 
-One identified problem of the algorithmic approach is that each threshold is defined globally and equally applied to all situations. However, not all intersections are crossed similarly by routes. Thus, the filtering pipeline would be applied too strictly in some situations, while the thresholds are not applied strictly enough in others. Here, an ML model can be useful to employ a more flexible and interlinked mapping of the geometric properties.
+One identified problem of the algorithmic approach is that each threshold is defined globally and equally applied to all situations. However, not all intersections are crossed similarly by routes. Thus, the filtering pipeline would be applied too strictly in some situations, while the thresholds are not applied strictly enough in others. Here, an ML model can be useful to employ a more flexible and interlinked mapping of the geometric properties. After this opportunity was identified, such an ML model was investigated under supervision in Daniel Jeschor's Master thesis \cite{jeschor_2022}. The following concepts for the ML approach are based on this thesis.
 
 Regarding the problem of deciding between "match" and "no match" for each traffic light geometry, there may be many creative ways to establish an ML classifier. For example, it would be possible to generate top-down images of each intersection and utilize machine-learning techniques from image detection or segmentation to classify each signal. However, as a rule of thumb, more complicated tasks tend to require larger ML models, which in turn require a larger ground truth. 
 
@@ -426,7 +426,7 @@ Unfortunately, the ground truth itself would ever be able to contain a few thous
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/sg-matching-ml-model.pdf}
-\caption{Filtering steps for matching with the ML model.}
+\caption{Filtering steps for matching with the ML model. Source: \cite{matthes2023geo}}
 \label{fig:sg-matching-ml-model}
 \end{figure}
 
@@ -452,7 +452,7 @@ A feature scaling algorithm is employed to optimize the ML model's learning and 
 \begin{figure}[b]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-overlap-cleanup.pdf}
-\caption{Model selection without (left) and with (right) overlap cleanup. [\hyperref[attribution]{Attribution}]}
+\caption{Model selection without (left) and with (right) overlap cleanup. Source: \cite{matthes2023geo}, [\hyperref[attribution]{Attribution}]}
 \label{fig:sg-selection-overlap-cleanup}
 \end{figure}
 
@@ -477,7 +477,7 @@ To develop and test mathematical models with the goal of resembling human spatia
 
 Multiple methods were tested preliminarily but not investigated further. Nonetheless, the learnings from these methods were ultimately incorporated into an algorithmic filtering pipeline. This pipeline employs geometrical filters that calculate each signal's distance, bearing, and projection length to determine whether it would suit the route. Finally, overlapping traffic lights are compared to each other to decide which one matches the route better. As a result, a sequence of traffic lights is returned, which are predicted to match a given input route.
 
-To further improve the developed filtering pipeline, it was determined that the geometric features, such as bearing or projection length, could be weighted more dynamically by an ML model. The final MLP model utilizes 16 features calculated from the signal's geometry and its projection onto the route to determine if this traffic light matches the route. In case of overlaps, the traffic light predicted to match the route most likely is chosen.
+To further improve the developed filtering pipeline, it was determined that the geometric features, such as bearing or projection length, could be weighted more dynamically by an ML model. The final MLP model developed by Daniel Jeschor \cite{jeschor_2022} utilizes 16 features calculated from the signal's geometry and its projection onto the route to determine if this traffic light matches the route. In case of overlaps, the traffic light predicted to match the route most likely is chosen.
 
 Finally, to avoid speed advisories being given for a traffic light that comes after an unconnected but signalized intersection, the Lichtsignalanlagen Hamburg dataset is utilized. 
 \end{Summary}
@@ -642,7 +642,7 @@ Having explored the interpretability of the models, let's now focus on the achie
 
 The algorithmic model trained on the 2022 OSM dataset achieves an F1 score of 84.8\% on the same dataset, while the algorithmic model trained on the 2023 OSM dataset shows an F1 score of 83.6\%. These results suggest a robust performance of the algorithmic approach in validating on unknown data, even though a slight loss of accuracy is observed. Both algorithmic models generate relatively many false positives (FP) compared to the number of false negatives (FN), resulting in a low precision score of 82\% and 80\%, respectively.
 
-The ML model trained on the 2022 OSM data effectively filters out false positives about four times more, yielding a precision score of 94\%. The recall is also slightly higher. Overall, the ML model achieves an F1 score of 91.9\% across the entire dataset, surpassing the comparable algorithmic model by 7.1\%. On the stratified k-fold cross-validation of the duplicate-corrected dataset, the ML model achieves a similar test score of 92\% (94\% training).
+The ML model trained by Daniel Jeschor \cite{jeschor_2022} on the 2022 OSM data effectively filters out false positives about four times more, yielding a precision score of 94\%. The recall is also slightly higher. Overall, the ML model achieves an F1 score of 91.9\% across the entire dataset, surpassing the comparable algorithmic model by 7.1\%. On the stratified k-fold cross-validation of the duplicate-corrected dataset, the ML model achieves a similar test score of 92\% (94\% training).
 
 In the validation of the models on the 2023 OSM dataset, those trained on the 2022 OSM dataset perform less well. One possible explanation is that the 2023 OSM dataset contains significantly more connections that, together with the generated routes, represent new, unknown configurations for the model. The loss in the F1 score is mainly reflected in the lower recall, indicating that more traffic lights that actually belong to the route are being filtered out. Interestingly, even the algorithmic model optimized on the 2023 data performs worse on the 2023 OSM dataset than the model optimized on the larger 2022 OSM dataset. This suggests that a better result could have been achieved if the 2023 OSM dataset had been slightly larger.
 
@@ -705,6 +705,6 @@ Only a few false matchings are made when the traffic light geometry and the rout
 
 Accurate and timely traffic light matching is crucial for an effective speed advisory. Nonetheless, how to achieve such a matching has not received much research attention. While vision-based methods are highly advanced, their practicality for handlebar-mounted smartphones is limited. Matching the cyclist's real-time position to nearby traffic light geometries is also not an option due to the ambiguity and shortness of these geometries, as well as GNSS inaccuracies. Anticipating turns through a bike route and looking up nearby traffic lights is a better option. However, this lookup is not trivial since calculated bike routes do not align with the suitable traffic lights. In many cases, traffic lights are offset to the route but still a good match.
 
-In this chapter, we developed two methods that enable accurate traffic light matching even in the presence of imprecise and erroneous OSM bike routes. The algorithmic model and the ML model utilize geometric relationships between each traffic light geometry and the corresponding route to filter out suitable matches. The ML model achieves a test F1 score of 92\% on a 2022 ground truth and an 86.2\% F1 score on a separate validation ground truth from 2023. A matching is achieved on arbitrary OSM bike routes through Hamburg in approximately 1.4 seconds, allowing users of the app to freely, accurately, and quickly choose any route through the city. Bike traffic lights are preferred whenever possible. The developed approach has the advantage that it should work with practically any city and does not exhibit noticeable difficulties with short traffic light geometries. Its only requirement is the availability of traffic light geometries, which are expected to be relatively widespread in the form of MAP geometries due to the global expansion of C-ITS services.
+In this chapter, we developed two methods that enable accurate traffic light matching even in the presence of imprecise and erroneous OSM bike routes. The algorithmic model and the ML model utilize geometric relationships between each traffic light geometry and the corresponding route to filter out suitable matches. The ML model trained by Daniel Jeschor \cite{jeschor_2022} achieves a test F1 score of 92\% on a 2022 ground truth and an 86.2\% F1 score on a separate validation ground truth from 2023. A matching is achieved on arbitrary OSM bike routes through Hamburg in approximately 1.4 seconds, allowing users of the app to freely, accurately, and quickly choose any route through the city. Bike traffic lights are preferred whenever possible. The developed approach has the advantage that it should work with practically any city and does not exhibit noticeable difficulties with short traffic light geometries. Its only requirement is the availability of traffic light geometries, which are expected to be relatively widespread in the form of MAP geometries due to the global expansion of C-ITS services.
 
 However, the developed approach also has limitations that open up new opportunities for future work. An alternative solution to the proposed matching algorithms could be arriving at a georeferenced bicycle network graph that contains all traffic light IDs. Such a network graph is currently not available for Hamburg \cite{neuner_leitfaden_2020} but could be theoretically developed in the future. One potential source for a more accurate path network -- proprietary HD maps -- could not be investigated due to limited accessibility. Currently, these maps are primarily intended for cars and are likely not a good solution to generate bike routes. Ideally, it would even be possible to automatically generate such a network graph for cycle paths using publicly available data. Learning how to put this idea into practice, and whether this is possible at all, would also be a potential subject for future work. Until such a solution is viable, one potential improvement for the presented approach is decreasing the routing errors as much as possible and improving the overall alignment of bike routes with the traffic light geometries. This challenge and its influences on matching accuracy will be investigated in the following chapter.

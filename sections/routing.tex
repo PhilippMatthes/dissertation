@@ -5,7 +5,7 @@ This chapter is based on the following paper in which the author was the princip
 
 \cite{matthes2023accurate} \fullcite{matthes2023accurate}
 
-This chapter contains concepts and results from the following student thesis, whose topic was identified by the author. The author was also involved as the primary supervisor:
+This chapter integrates concepts and results from a Diploma thesis, where the author identified the topic and was also involved as the primary supervisor:
 
 \cite{lorenz_2022} \fullcite{lorenz_2022}
 \end{Summary}
@@ -92,7 +92,7 @@ In the second part of our concept, we focus on the routing's integration into ou
 
 The DRN dataset serves as an authoritative routing network for the city of Hamburg, specifically designed for bicycle paths. Published by the Free and Hanseatic City of Hamburg, Department for Traffic and Mobility Transition (BVM), it is made available under the DL-DE BY-2.0\footnote{\url{https://www.govdata.de/dl-de/by-2-0}} license. Notably, the dataset undergoes continuous updates and is currently in production as of December 27, 2023. Users can access the dataset through a public interface at no cost. 
 
-Distinguished by its routing capability, the dataset encompasses interconnected segments forming a graph, including roads designated for cyclists when dedicated bike paths are unavailable. Covering the entire area of Hamburg, it is possible to replace this area from OpenStreetMap with DRN data. Nevertheless, there are disparities between the two datasets that necessitate overcoming. The following sections will outline the necessary processing steps.
+Distinguished by its routing capability, the dataset encompasses interconnected segments forming a graph, including roads designated for cyclists when dedicated bike paths are unavailable. Covering the entire area of Hamburg, it is possible to replace this area from OpenStreetMap with DRN data. Nevertheless, there are disparities between the two datasets that necessitate overcoming. The following sections will outline the necessary processing steps to develop a DRN-based routing. These sections are based on the steps developed under supervision in Max Lorenz's Diploma thesis \cite{lorenz_2022}.
 
 \begin{figure}[t]
 \centering
@@ -188,7 +188,7 @@ Since there may be multiple DRN paths that are connected to a single OpenStreetM
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/node-merging.pdf}
-\caption{Duplicated nodes (left) are merged together (right) to avoid detours. [\hyperref[attribution]{Attribution}]}
+\caption{Duplicated nodes (left) are merged together (right) to avoid detours. Source: \cite{lorenz_2022}, [\hyperref[attribution]{Attribution}]}
 \label{fig:node-merging}
 \end{figure}
 
@@ -203,7 +203,7 @@ The second issue in the DRN dataset requiring additional processing is non-cross
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{images/oneway-travel-fix.pdf}
-\caption{Detour (left) that can be fixed by enabling opposite-direction one-way travel on foot (right), compared to OpenStreetMap route (blue). [\hyperref[attribution]{Attribution}]}
+\caption{Detour (left) that can be fixed by enabling opposite-direction one-way travel on foot (right), compared to OpenStreetMap route (blue). Source: \cite{lorenz_2022}, [\hyperref[attribution]{Attribution}]}
 \label{fig:oneway-travel-fix}
 \end{figure}
 
@@ -266,7 +266,7 @@ In Hamburg, inclinations may be less of a concern, but there are still several r
 
 SRTM-1 offers a horizontal resolution of approximately 30m (1 arcsecond). For specific areas, additional SRTM X-SAR 25m data is provided by the DLR. For the covered regions of the SRTM X-SAR 25m model, the vertical precision is specified at $\pm$ 6m (relative vertical error at 90\% confidence level)\footnote{SRTM X-SAR 25m specification: \url{https://geoservice.dlr.de/web/dataguide/srtm/}}. An even higher precision is offered by the DGM-1 model for Hamburg, in which the one stands for one meter of horizontal resolution. In DGM-1, the vertical resolution is specified as $\pm$ 15cm\footnote{\url{https://metaver.de/trefferanzeige?docuuid=A39B4E86-15E2-4BF7-BA82-66F9913D5640}}. The high precision is reached by airborne laser scanning. Downscaled resolutions are available as DGM-10 (10m) and DGM-25 (25m).
 
-To evaluate if the DGM models provide an overall better height profile than SRTM, cross-sections of the height models were analyzed by Max Lorenz. Another important question was how much resources the model consumes when loaded into the routing engine. The results indicated that the best tradeoff between resource usage and model accuracy is provided by the DGM-10 model. Thus, the DGM-10 model was integrated as the final digital elevation model into the GraphHopper routing engine using a custom tileset download and parsing plugin. The result is a GraphHopper routing engine that not only runs on the DRN dataset but also utilizes the DGM-10 model to provide accurate, personalized routing while consuming an acceptable amount of resources. 
+To evaluate if the DGM models provide an overall better height profile than SRTM, cross-sections of the height models were analyzed by Max Lorenz in a preliminary investigation. Another important question was how much resources the model consumes when loaded into the routing engine. The results indicated that the best tradeoff between resource usage and model accuracy is provided by the DGM-10 model. Thus, the DGM-10 model was integrated as the final digital elevation model into the GraphHopper routing engine using a custom tileset download and parsing plugin. The result is a GraphHopper routing engine that not only runs on the DRN dataset but also utilizes the DGM-10 model to provide accurate, personalized routing while consuming an acceptable amount of resources. 
 
 \subsubsection{Distance-to-Signal Estimation and Mitigating GNSS Inaccuracies}
 
@@ -345,9 +345,9 @@ After we have compared the routing accuracy to a hand-drawn ground truth and tra
 \label{fig:routing-drn-osm-map}
 \end{figure}
 
-Based on an analysis conducted by Max Lorenz, the converted DRN path network encompasses roughly 7,689 kilometers in comparison to OpenStreetMap, which covers approximately 10,557 kilometers. The reported coverage for OpenStreetMap excludes paths inaccessible for cyclists, marked with \texttt{highway=motorway}, \texttt{highway=motorway\_line}, \texttt{highway=trunk\_link}, \texttt{access=private}, or \texttt{bi\allowbreak cycle=no}. Footpaths are also excluded unless bicycles are allowed with \texttt{bicycle=yes}. 
+Based on an analysis conducted by Max Lorenz \cite{lorenz_2022}, the converted DRN path network encompasses roughly 7,689 kilometers in comparison to OpenStreetMap, which covers approximately 10,557 kilometers. The reported coverage for OpenStreetMap excludes paths inaccessible for cyclists, marked with \texttt{highway=motorway}, \texttt{highway=motorway\_line}, \texttt{highway=trunk\_link}, \texttt{access=private}, or \texttt{bi\allowbreak cycle=no}. Footpaths are also excluded unless bicycles are allowed with \texttt{bicycle=yes}. 
 
-The size difference is mainly due to additional accessory paths that are contained in OpenStreetMap but not on DRN. As a consequence, when generating 10,000 random routes throughout the city, the average distance that has to be traveled to the next available path segment varies slightly: 77.04 meters in DRN and 52.80 meters in OpenStreetMap. Even though the DRN network seems to encompass fewer paths, those that are captured are more detailed. The average path segment length in OpenStreetMap was calculated as 102.39 meters compared to 79.16 meters in DRN.
+The size difference is mainly due to additional accessory paths that are contained in OpenStreetMap but not on DRN. As a consequence, when Max Lorenz \cite{lorenz_2022} generated 10,000 random routes throughout the city, the average distance that has to be traveled to the next available path segment varies slightly: 77.04 meters in DRN and 52.80 meters in OpenStreetMap. Even though the DRN network seems to encompass fewer paths, those that are captured are more detailed. The average path segment length in OpenStreetMap was calculated as 102.39 meters compared to 79.16 meters in DRN.
 
 The structural differences are highlighted in \Cref{fig:routing-drn-osm-map}. Here, it can not only be seen that OpenStreetMap provides more accessory paths, but also its higher diversity in path categories than present in the mapped DRN network. It can also be seen that DRN tends not to capture ways through green spaces. As a result, one minor drawback is that routes with DRN can be generated until the border of a park area but not inside or throughout. The same is true for intermodal connections such as railroads and ferries, which are mapped as unclassified paths in the displayed example. DRN does not capture these connections.
 
@@ -413,7 +413,7 @@ Google Maps & Hausdorff distance (m) & 216.4 & 8.7 & 19.3 & 26.3 & 52.6 & 16.7 \
 \bottomrule
 \end{tabular}
 }
-\caption{Measured deviations from actual bike infrastructure.}%
+\caption{Measured deviations from actual bike infrastructure. Results for DRN and OpenStreetMap are based on \cite{lorenz_2022}.}%
 \label{tab:accuracy-comparison}%
 \end{table}
 
@@ -541,7 +541,7 @@ Skipping or crossing additional signals & 1 & 3 \\
 Generally problematic road crossings & 1 & 4 \\
 \hline
 \end{tabular}
-\caption{Observed error cases among an arbitrary sample of 72 routes.}%
+\caption{Observed error cases among an arbitrary sample of 72 routes. Based on results from \cite{lorenz_2022}.}%
 \label{tab:accuracy-comparison}%
 \end{table}
 
