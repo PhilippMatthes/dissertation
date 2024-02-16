@@ -69,10 +69,10 @@
 \pgfusepath{clip}%
 \pgfsetbuttcap%
 \pgfsetroundjoin%
-\definecolor{currentfill}{rgb}{0.000000,0.450980,1.000000}%
+\definecolor{currentfill}{rgb}{0.000000,0.188235,0.364706}%
 \pgfsetfillcolor{currentfill}%
 \pgfsetlinewidth{1.505625pt}%
-\definecolor{currentstroke}{rgb}{0.000000,0.450980,1.000000}%
+\definecolor{currentstroke}{rgb}{0.000000,0.188235,0.364706}%
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetdash{}{0pt}%
 \pgfsys@defobject{currentmarker}{\pgfqpoint{-0.049105in}{-0.049105in}}{\pgfqpoint{0.049105in}{0.049105in}}{%
@@ -656,7 +656,7 @@
 \pgfsetbuttcap%
 \pgfsetroundjoin%
 \pgfsetlinewidth{1.003750pt}%
-\definecolor{currentstroke}{rgb}{0.000000,0.450980,1.000000}%
+\definecolor{currentstroke}{rgb}{0.000000,0.188235,0.364706}%
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetdash{{3.700000pt}{1.600000pt}}{0.000000pt}%
 \pgfpathmoveto{\pgfqpoint{1.406551in}{2.523676in}}%
@@ -669,7 +669,7 @@
 \pgfsetbuttcap%
 \pgfsetroundjoin%
 \pgfsetlinewidth{1.003750pt}%
-\definecolor{currentstroke}{rgb}{0.000000,0.450980,1.000000}%
+\definecolor{currentstroke}{rgb}{0.000000,0.188235,0.364706}%
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetdash{{3.700000pt}{1.600000pt}}{0.000000pt}%
 \pgfpathmoveto{\pgfqpoint{2.374411in}{1.254139in}}%
@@ -743,10 +743,10 @@
 \pgfusepath{clip}%
 \pgfsetbuttcap%
 \pgfsetroundjoin%
-\definecolor{currentfill}{rgb}{0.000000,0.450980,1.000000}%
+\definecolor{currentfill}{rgb}{0.000000,0.188235,0.364706}%
 \pgfsetfillcolor{currentfill}%
 \pgfsetlinewidth{1.505625pt}%
-\definecolor{currentstroke}{rgb}{0.000000,0.450980,1.000000}%
+\definecolor{currentstroke}{rgb}{0.000000,0.188235,0.364706}%
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetdash{}{0pt}%
 \pgfsys@defobject{currentmarker}{\pgfqpoint{-0.049105in}{-0.049105in}}{\pgfqpoint{0.049105in}{0.049105in}}{%
@@ -1210,7 +1210,7 @@
 \pgfsetrectcap%
 \pgfsetroundjoin%
 \pgfsetlinewidth{1.003750pt}%
-\definecolor{currentstroke}{rgb}{0.000000,0.450980,1.000000}%
+\definecolor{currentstroke}{rgb}{0.000000,0.188235,0.364706}%
 \pgfsetstrokecolor{currentstroke}%
 \pgfsetdash{}{0pt}%
 \pgfpathmoveto{\pgfqpoint{6.072524in}{0.676639in}}%
