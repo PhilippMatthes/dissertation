@@ -224,30 +224,30 @@ The evaluation of the prediction infrastructure is divided into two parts: the a
 
 First, we examine how well the prediction system interacts with the Hamburg Traffic Lights Data platform and identify potential weaknesses. This involves analyzing the spatial coverage and trends of traffic light predictions over an extended period, utilizing recorded metrics from the implemented monitoring system. We investigate the temporal availability of predictions to understand the number of traffic lights in Hamburg where speed recommendations can be expected. Our findings indicate that the availability is significantly lower than desired. To delve deeper into the reasons for this, we examine the recorded metrics from the implemented monitoring tool, identifying recurring error patterns that suggest systematic issues in Hamburg's data infrastructure. Collaborating with the data platform operators, we draw conclusions about the root causes of these problems and propose potential solutions. To further demonstrate the scalability of the prediction algorithm, we briefly examine the CPU, RAM, and network usage of the prediction service.
 
-The second part of the evaluation focuses on studying traffic adaptability through real-time data. We analyze the day-night cycle of traffic adaptiveness from weekday to weekday, examining how much the green phase of traffic lights fluctuates forward and backward in a cycle, utilizing the developed cycle discrepancy metric. Additionally, we investigate whether green phases tend to distribute evenly within the cycle or if there are traffic lights with step patterns where the green phase only fluctuates forward or backward. Using a map, we assess whether traffic dependence affects entire intersections with multiple traffic lights as expected or if it also impacts individual traffic lights. These analyses provide insights into estimating the suitability of the designed prediction process and point out intersections at which another prediction method could be a better option.
+The second part of the evaluation focuses on our study of traffic light predictability in Hamburg. Based on related work and our inquiry to Hamburg's authorities, we expect at least 90.7\% of traffic lights to be capable of traffic adaptiveness. Through an analysis of the predictability metrics throughout the week and their distributions across Hamburg, we cross-check this value and analyze how well Hamburg is suited in general for a GLOSA system.
 
 \begin{table}[b]
     \centering
-    \begin{tabular}{@{}l|ccccccccc|r@{}}
-        \hline
-        \textbf{Lane type} & \multicolumn{9}{c|}{\textbf{Tag according to \texttt{Thing/properties/laneType}}} & $\Sigma$ \\
-        \hline
+    \begin{tabular}{@{}lcccccccccr@{}}
+        \toprule
+        \textbf{Lane Type} & \multicolumn{9}{c}{\textbf{Tag from Metadata in Traffic Lights Data Platform}} & \textbf{$\Sigma$} \\
+        \midrule
         Car        & $\times$ & $\times$ & $\times$ &   &   & $\times$ &   &   &   &  9649 \\
         Bus        &   &   & $\times$ &   &   & $\times$ & $\times$ &   & $\times$ &  1309 \\
         Bike     & $\times$ &   & $\times$ & $\times$ &   &   &   & $\times$ & $\times$ &  5477 \\
         Pedestrian &   &   &   &   & $\times$ &   &   & $\times$ &   &  6408 \\
-        \hline
+        \midrule
         $\Sigma$ (unique) & 1509 & 7077 & 217 & 3646 & 6315 & 846 & 234 & 93 & 12 & \\
-        \hline
+        \bottomrule
     \end{tabular}
-    \caption{Number of individual traffic lights in the Traffic Lights Data platform, as of Dec 4, 2023.}
+    \caption{Number of individual traffic lights in the Traffic Lights Data platform as of Dec 4, 2023.}
     \label{tab:tld-number-of-things}
 \end{table}
 
 
 \subsection{Long-Term Study of Prediction Availability, Quality, and Scalability}
 
-When examining the temporal progression of the prediction, it is crucial to note the continuous increase in the number of traffic lights in the Traffic Lights Data platform. The ID of individual traffic lights (connections) can be utilized to determine the number of intersections, such as \texttt{353\_12} for intersection node 353 and Connection 12. Referring to \Cref{tab:tld-number-of-things}, as of December 2023, there are 19,951 connections distributed across 791 intersection nodes in the system. This constitutes coverage of 45.7\% (of 1,731) of signalized intersections, assuming that every traffic light control method reported by Hamburg's authorities maps to one individual intersection. During a preliminary examination of traffic lights, two minor errors were identified:
+Based on \Cref{tab:tld-number-of-things}, as of December 2023, the Traffic Lights Data system contains 19,951 individual traffic lights distributed across 791 intersection nodes, based on their ID that contains the intersection number. The overall number of traffic lights in the system gradually changes over time as new ones are added or outdated entries are removed. This constitutes coverage of 45.7\% (of 1,731) of signalized intersections, assuming that every traffic light control method reported by Hamburg's authorities maps to one individual intersection. During a preliminary examination of traffic lights, two minor errors were identified:
 
 \begin{enumerate}
     \item One of the traffic lights (132\_22) exhibited a duplicated \texttt{cycle\_second} data stream.
