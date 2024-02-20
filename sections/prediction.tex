@@ -339,7 +339,7 @@ To conduct these evaluations, real-time data was recorded for four weeks from 00
 
 Nonetheless, the supplementation was still effective in addressing partial data outages, as seen in \Cref{fig:adaptiveness-mqtt-http}. On multiple days, approximately half of all recorded observations were supplemented by the HTTP interface because they were lost preliminarily via MQTT. However, a minor dip in messages remained for some days, meaning that small parts of the messages could not be recovered.
 
-The detection of faulty cycles, also implemented in the prediction service, was utilized for problem identification. Out of approximately 424 million reconstructed cycles, 13.8 million cycles were discarded. Here, 90\% of faulty cycles are distributed across 10\% of the connections. These numbers are related to the 40\% 
+The detection of faulty cycles, also implemented in the prediction service, was utilized for problem identification. Out of approximately 424 million reconstructed cycles, 13.8 million cycles were discarded. Here, 90\% of faulty cycles are distributed across 10\% of the connections. These numbers are related to the 40\% of traffic lights that were detected to si
 
 By examining the faulty connections on the map, one of the known faulty traffic controllers could be identified as the main cause. 40\% of the traffic lights could be supervised by our color-order error detection
 
