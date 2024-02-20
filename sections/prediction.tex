@@ -378,9 +378,9 @@ Out of the evaluated 2,793,786 traffic light hours, 43\% (1,206,817) have a cycl
     \caption{Green length and cycle discrepancy.}\label{fig:green-length-cycle-discrepancy}
 \end{figure}
 
-The results must be seen in correspondence to the measured green length, which determines how much green overlaps between cycles. A high green overlap, even in the presence of a high cycle discrepancy, would mean that our probabilistic prediction method still finds safely green regions that are suitable for speed advisory. 
+The results must be seen in correspondence to the measured green length, which determines how much green overlaps between cycles. A high green overlap, even in the presence of a high cycle discrepancy, would mean that our probabilistic prediction method still finds safely green regions that are suitable for speed advisory. As seen in \Cref{fig:green-length-cycle-discrepancy} for 90\% of recorded traffic light hours, the median green phase is longer than the median cycle discrepancy. What should be noted here, again, is that most of the traffic light hours reside all the way to the left at a cycle discrepancy of zero seconds.
 
-
+Interestingly, there are also some patterns that allow us to further understand the constraints in traffic light behavior. First, a clear cutoff at 5 seconds of green length can be seen, which is also prescribed by German traffic light planning \cite{TN_libero_mab2}. When extracting and analyzing random examples from specific regions, we find that the horizontal concentrations at 90 seconds, 75 seconds, and 60 seconds primarily stem from traffic lights that switch green for the complete cycle. These buckets are occasionally shifted to the right by red phases of different lengths that interrupt the otherwise switched green phase. Top-left to bottom-right diagonal lines seem to come from traffic lights that extend their green phase until a maximum green duration is reached. Since shorter green phases can be placed more flexibly in the cycle, a decreased green length leads to a higher cycle discrepancy. These constraints could be detected and used to improve the prediction.
 
 \begin{figure}[t]
     \centering
@@ -388,15 +388,9 @@ The results must be seen in correspondence to the measured green length, which d
     \caption{Examples of recorded traffic light histories, ordered by their classification according to our two metrics.}\label{fig:types-of-instability}
 \end{figure}
 
-\Cref{fig:types-of-instability} illustrates randomly chosen examples for each section of the instability diagram. Seen in this visualization are also examples from case C, towards which some traffic lights drift throughout the day. The observed patterns indeed indicate some fully traffic-dependent traffic lights triggered very frequently. However, this random sample also suggests that such patterns may be rarer than expected. Overall, most patterns, as described by Protschky et al. (2014) \cite{protschky_extensive_2014}, appear to be synchronized with the cycle length in this range.
+So far, we have considered abstract measures of predictability to obtain an overall understanding of how many traffic lights are hard to predict. Finally, we validate our findings through a random sample of traffic light hours that were extracted from the recorded database. The extracted sample is highlighted in \Cref{fig:types-of-instability}.
 
-Data errors can not be seen as frequently as expected for case C. Instead, a substantial part of examples in this region are traffic lights frequently switching between two stages. Although the switching pattern within each stage is stable and aligned with the cycle, the median of cycle discrepancy is high due to the frequent switching between both stages. As a consequence, programs located in the lower right of the diagram are unexpectedly well predictable, at least for the secure recurring green phase, even with the probabilistic approach. Step patterns seem to be less prevalent, even for traffic lights measured in the lower right of the diagram.
-
-In category D, as expected, there are initially traffic lights with strong adaptability. Surprisingly, this area also contains traffic lights that occasionally switch at a recurring time. More frequently, however, there are traffic lights with data errors. Blue lines indicate cycles that are discarded more often due to detected faulty switching behavior. Specifically, cycle observations are frequently missing, resulting in the cycle length doubling or tripling. Overall, it can be observed that many traffic lights measured in the upper right have a high data error rate. Nevertheless, assuming perfect data transmission, the predictability of these traffic lights is likely to be relatively poor based on the observed patterns in these case studies.
-
-In conclusion, even with increased cycle-independent and cycle discrepancy, partially stable patterns can still be measured, while problematic traffic lights are less common. Therefore, the forecasting situation can be considered relatively favorable.
-
-Finally, we examine the distribution of instability across individual modes of transportation and the spatial distribution. It is noteworthy that there are almost no differences in instability among different modes of transportation. Once again, the pattern emerges that traffic lights experience little to no persistent instability for the majority of the time. Overall, this implies that the predictability situation is similarly favorable for all modes of transportation.
+In this diagram, we can make the key observation that there are many stable patterns, or patterns that vary in a minor time frame. 
 
 \begin{figure}[t]
 \centering 
