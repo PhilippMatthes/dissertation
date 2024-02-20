@@ -388,9 +388,11 @@ Interestingly, there are also some patterns that allow us to further understand 
     \caption{Examples of recorded traffic light histories, ordered by their classification according to our two metrics. Title format: median (cycle discrepancy, wait time diversity).}\label{fig:types-of-instability}
 \end{figure}
 
-So far, we have considered abstract measures of predictability to obtain an overall understanding of how many traffic lights are hard to predict. Finally, we validate our findings through a random sample of traffic light hours that were extracted from the recorded database. The extracted sample is highlighted in \Cref{fig:types-of-instability}.
+So far, we have considered abstract measures of predictability to obtain an overall understanding of how many traffic lights are hard to predict. Finally, we validate our findings through a random sample of traffic light hours that were extracted from the recorded database. The extracted sample is highlighted in \Cref{fig:types-of-instability} together with the associated values for cycle discrepancy and wait time diversity. As seen in the visualization, the sample also contains traffic lights that switch between green and black, as well as samples in which the cycle length differed in between, indicated by the blue background.
 
-In this diagram, we can make the key observation that there are many stable patterns, or patterns that vary in a minor time frame. 
+Overall, most recorded buckets in this sample contain behavior that can be considered predictable. Only in the first row, there are already 6 out of 10 cases (B1, C1, E1, G1, H1, I1) in which there are clear columns in the switching pattern, that can be easily predicted. There are also cases such as D1, A2, D2, or G2, in which an adaption is clearly visible but limited to a few seconds. In examples such as F2, D5, or H8, we can see traffic lights that are always green until disrupted by a red phase. For cases such as C2, E3, H3, A7, or J7, the traffic adaptivity is clearly more pronounced, as also reflected by the high cycle discrepancy score. However, in these cases, as seen before, a common part in which all cycles are green can still be identified. This is not the case for examples such as D6 or G6, while these examples also indicate that there are more likely areas in the cycle for the green phase to appear than elsewhere.
+
+A4 - G7
 
 \begin{figure}[t]
 \centering 
