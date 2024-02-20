@@ -360,21 +360,17 @@ The first chart displayed in \Cref{fig:adaptiveness-weekdays-distance} looks at 
 
 As a result, we observe that instability correlates, as expected, with traffic volume. While the instability is at its lowest during the night, it rises rapidly during the morning traffic surge. However, it then remains relatively constant after reaching an upper bound until the evening before decreasing again. The plateaus of instability during daytime indicate that there may be limits to the instability even in the presence of increasing traffic. 
 
-Another significant observation is that most traffic lights reside within a low range of instability by one order of magnitude. Measured across all traffic lights, the median cycle discrepancy ranges between 0 and 2 seconds depending on the daytime. This means that the highest median cycle discrepancy during the day comprises only 10\% of the median green length that is measured at 20 to 23 seconds during these times, and a large overlap between cycles is seen. The wait time diversity shows a similar pattern, although the number of traffic lights with 100\% increases during nighttime. The reason for this increase is likely that traffic lights switch fewer green phases, increasing the chance that the waiting time between green phases is unique.
+Another finding is that most traffic lights reside within a low range of instability by one order of magnitude. Measured across all traffic lights, the median cycle discrepancy ranges between 0 and 2 seconds depending on the daytime. This means that the highest median cycle discrepancy during the day comprises only 10\% of the median green length that is measured at 20 to 23 seconds during these times, and a large overlap between cycles is seen. The wait time diversity shows a similar pattern, although the number of traffic lights with 100\% increases during nighttime. The reason for this increase is likely that traffic lights switch to fewer green phases, increasing the chance that the waiting time between green phases is unique.
 
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=\linewidth]{images/predictability-week-heatmap-per-thing.pdf}
+    \caption{Weekly progression of both predictability metrics for each traffic light, represented by a vertical line each.}\label{fig:predictability-week-heatmap-per-thing}
+\end{figure}
 
+As seen in \Cref{fig:predictability-week-heatmap-per-thing}, there are many traffic lights that only express one of both unpredictabilities. In the leftmost part of the diagram, traffic lights can be seen that have a low cycle discrepancy but express a high wait time diversity. In the rightmost part, there are also traffic lights with high cycle discrepancy that express low wait time diversity. For these traffic lights, our chosen prediction method may not be ideal. 
 
-Above the median cycle discrepancy, given by the horizontal center of the diagram, there are also some traffic lights that express an opposite behavior, i.e., low wait time diversity with a high cycle discrepancy. The origin of this observation will be studied further in the upcoming sections. Overall, the day-night cycle can be clearly distinguished for almost all traffic lights. However, in the highest 10\% proportion of the upper diagram, there are also traffic lights with high adaptivity that fully saturate the diagram for every hour, indicating an exceptionally poor predictability. 
-
-Out of the evaluated 2,793,786 traffic light hours, 43\% (1,206,817) have a cycle discrepancy of less than 5 seconds and a wait time diversity of less than 10\%. Traffic lights with more green phases tend to have lower wait time diversity than those with fewer green phases. Nevertheless, this visualization shows again that a large proportion of traffic lights reside within a relatively stable regime.
-
-Outside of the large stable proportion of traffic lights, there are three other notable observations. First, a vertical line at cycle discrepancy = 0 indicates traffic lights that only occasionally switch to green. Approximately 9\% (245,379) of recorded traffic light hours can be associated with this behavior: they have a median cycle discrepancy of 0 seconds but a wait time diversity higher than 10\%. 
-
-Second, the horizontal line at wait time diversity = 1 suggests cases where cycles are highly unstable or non-green signal colors alternate unevenly, such as black-amber. This is likely a measurement artifact and does not necessarily indicate a causal relationship with the actual switching behavior. Finally, background noise recorded above 50 seconds of cycle discrepancy, especially visible vertical line artifacts, generally suggests faulty data in these areas. Excluding traffic lights with more than 10\% of cycles discarded due to detected errors largely eliminates these error patterns from the visualization, confirming this interpretation.
-
-Some recorded hours exhibit low wait time diversity but high cycle discrepancy. This suggests the presence of step patterns but may also result from data errors such as missing cycle observations.
-
-
+Out of the evaluated 2,793,786 traffic light hours, 43\% (1,206,817) have a cycle discrepancy of less than 5 seconds and a wait time diversity of less than 10\%. For 67\% of hourly buckets, a cycle discrepancy lower than 5 seconds could be measured, which may also contain higher wait time diversities. Only regarding wait time diversity, 77\% of recorded hourly buckets reside below 20\%. Hardly predictable traffic light hours, meaning that the wait time diversity is above 20\% and the cycle discrepancy is above 5 seconds, only comprise 12\% of the overall dataset. Note that the 5-second cycle discrepancy and 20\% wait time diversity were chosen here somewhat arbitrarily as a decision boundary, which we felt constituted a good predictability for our scenario. The decision boundary may be chosen more loosely or also strictly, depending on the requirements.
 
 \begin{figure}[t]
     \centering
@@ -382,13 +378,9 @@ Some recorded hours exhibit low wait time diversity but high cycle discrepancy. 
     \caption{Green length and cycle discrepancy.}\label{fig:green-length-cycle-discrepancy}
 \end{figure}
 
+The results must be seen in correspondence to the measured green length, which determines how much green overlaps between cycles. A high green overlap, even in the presence of a high cycle discrepancy, would mean that our probabilistic prediction method still finds safely green regions that are suitable for speed advisory. 
 
 
-When comparing hours, a distinct difference is observed before 6 AM and after 6 AM, persisting until around 11 PM. The increase in adaptiveness during the day aligns with the moment when adaptivity, as shown in \Cref{fig:adaptiveness-weekdays-distance}, starts to increase. 
-
-Interestingly, although many traffic lights experience an increased wait time diversity during that period, there are also some traffic lights that express a decreased wait time diversity while having a high cycle discrepancy. One potential interpretation is that, during the plateau of instability during the day, these traffic lights are permanently triggered by traffic participants, resulting in a relatively stable period of green phases and a step-like pattern unaligned with the cycle time.
-
-However, this interpretation should be handled with caution since 6 AM is also the time when, according to \Cref{fig:monitoring-7-days}, data failures become more prevalent. Examining case studies of this period helps us understand whether the interpretation of increased step patterns during the day is valid or whether the observed relation is solely induced by data errors.
 
 \begin{figure}[t]
     \centering
