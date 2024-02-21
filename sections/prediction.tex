@@ -142,15 +142,15 @@ Based on discarded erroneous cycles, drops in the number of Observation messages
 
 For example, by viewing the prediction quality on a map, we can directly identify whether an outage is related to a specific traffic controller or associated with the complete city. In case all city districts are affected, the problem is more likely to originate from the data pooling or load balancing components further along the chain of information. Furthermore, we can study the time and duration of error patterns, giving us and the system's operators more clues about where to look for data issues. Finally, we deployed two monitoring instances, one at TU Dresden and one at Hetzner Cloud, to cross out issues from our cloud provider. Which error patterns could be identified and how the long-term data quality evolved will be discussed in the Results section of this chapter.
 
-\subsection{Predictability Analysis}
+\subsection{Predictability Metrics}
 
 Apart from dropped or delayed traffic light data, another aspect that influences the prediction quality is how unpredictably a traffic light switches. Taking the word of previous studies, it could be challenging overall to generate a reliable forecast for traffic-adaptive signals, especially in Hamburg. However, as we have seen in our literature study, direct predictability measurements have not been conducted so far. 
 
 Since we had already established a method to obtain traffic light data from thousands of traffic lights in Hamburg, we identified a large potential knowledge gain in conducting such a study. However, one key challenge is to find metrics that give us generalizable insights into predictability without being strictly bound to one kind of prediction method. The idea is to measure how many predictable patterns are present or absent in the recorded data streams, i.e., how much the traffic light follows a predictable rhythm. The question is how to measure such a rhythm, as patterns could take various arrangements.
 
-Until we arrived at our final metrics, we investigated various methods from other disciplines. For example, one idea was to measure the Shannon entropy of the traffic light's data stream, indicating how much information content and, thus, complexity of the switching behavior is present. Similarly, we attempted to use compression techniques to find to how much information the present traffic light program could be compressed. Another idea was to utilize a fast Fourier transform to find how many different frequencies in the switching patterns were present, mapping a signal between green (1) and red (0). However, in the end, none of the attempted methods yielded a satisfactory measurement of how many predictable patterns were present while comparing the calculated values against case studies. 
+Until we arrived at our final metrics, we investigated various methods from other disciplines to measure if are present in the switching behavior. For example, one idea was to measure the Shannon entropy of the traffic light's data stream, indicating how much information content and, thus, complexity of the switching behavior is present. Similarly, we attempted to use compression techniques to find to how much information the present traffic light program could be compressed. Another idea was to utilize a fast Fourier transform to find how many different frequencies in the switching patterns were present, mapping a signal between green (1) and red (0). However, in the end, none of the attempted methods yielded a satisfactory measurement of how many predictable patterns were present while comparing the calculated values against case studies. 
 
-Directly measuring the absence or presence of predictable patterns, agnostic from their concrete arrangement, seemed to be not possible based on the methods we considered. As an alternative, we found two simpler metrics that each capture one important kind of unpredictability and can be used in conjunction.
+Directly measuring the absence or presence of predictable patterns, agnostic from their concrete arrangement, seemed to be challenging based on the methods we considered. As an alternative, we found two simpler metrics that each capture one important kind of unpredictability and can be used in conjunction.
 
 The first kind of unpredictability we measure is the cycle discrepancy. This metric is calculated by counting different seconds between two cycles $C_1$ and $C_2$ with the length $l_1$ and $l_2$ in the recorded history:
 
@@ -245,7 +245,7 @@ The second part of the evaluation focuses on our study of traffic light predicta
 \end{table}
 
 
-\subsection{Long-Term Data Infrastructure and Prediction Algorithm Study}
+\subsection{Long-Term Data and Prediction Study}
 
 As seen in \Cref{tab:tld-number-of-things}, as of December 2023, the Traffic Lights Data system contains 19,951 individual traffic lights distributed across 791 intersection nodes, based on their ID that contains the intersection number. The overall number of traffic lights in the system gradually changes over time as new ones are added or outdated entries are removed. When compared to our inquiry that referenced 1,731 signalized intersections in total, 45.7\% of signalized intersections were supported in December 2023.
 
@@ -330,7 +330,7 @@ After identifying issues with the traffic controllers and falsely importing traf
     \caption{Cycles rejected due to out-of-order phase sequence.}\label{fig:monitoring-rejected-cycles}
 \end{figure}
 
-\subsection{Study of Traffic-Adaptivity in Hamburg}
+\subsection{Study of Traffic Light Predictability in Hamburg}
 
 In the previous section, we found that the prediction availability for traffic lights in Hamburg was low during 2023, but the main part of this issue could be attributed to data issues. The prediction quality was also likely affected by data issues, as predictions would be invalidated by the missing data, resulting in a prediction quality of -1 (no validation possible) that was mapped to 0\% in the monitoring. We found that the remaining predictions were mostly centered on 90\% to 100\% quality, more than we expected with the high prevalence of adaptivity-capable traffic lights in Hamburg. This finding was also one of the key motivations for us to further investigate the overall predictability of traffic light patterns. 
 
@@ -362,13 +362,25 @@ As a result, we observe that instability correlates, as expected, with traffic v
 
 Another finding is that most traffic lights reside within a low range of instability by one order of magnitude. Measured across all traffic lights, the median cycle discrepancy ranges between 0 and 2 seconds depending on the daytime. This means that the highest median cycle discrepancy during the day comprises only 10\% of the median green length that is measured at 20 to 23 seconds during these times, and a large overlap between cycles is seen. The wait time diversity shows a similar pattern, although the number of traffic lights with 100\% increases during nighttime. The reason for this increase is likely that traffic lights switch to fewer green phases, increasing the chance that the waiting time between green phases is unique.
 
+\begin{figure}[t]
+\centering 
+\begin{tabular}{@{}cc@{}}
+\includegraphics[width=0.46\linewidth]{images/predictability-map.pdf} & \includegraphics[width=0.46\linewidth]{images/predictability-map-diversity.pdf}
+\end{tabular}
+\caption{Spatial distribution of predictability. [\hyperref[attribution]{Attribution}]}\label{fig:predictability-map}
+\end{figure}
+
+\Cref{fig:predictability-map} shows how our predictability metrics are spatially distributed across intersections in Hamburg. While the majority of traffic lights in both images are located in the blue range of the color scale, indicating a high level of predictability, there are indeed traffic lights where a higher cycle discrepancy or wait time diversity can be observed. 
+
+As expected, traffic lights with higher unpredictability seem to be located together at the same intersection since they share a common program and depend on each other's entrance directions. This can be seen in the zoomed-in part of the diagram. However, it can also be seen that in many cases, traffic lights only exhibit one kind of unpredictability and not both. Traffic lights exhibiting both unpredictabilities seem to be quite rare.
+
 \begin{figure}[!t]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-week-heatmap-per-thing.pdf}
     \caption{Weekly progression of both predictability metrics for each traffic light, represented by a vertical line each.}\label{fig:predictability-week-heatmap-per-thing}
 \end{figure}
 
-As seen in \Cref{fig:predictability-week-heatmap-per-thing}, there are many traffic lights that only express one of both unpredictabilities. In the leftmost part of the diagram, traffic lights can be seen that have a low cycle discrepancy but express a high wait time diversity. In the rightmost part, there are also traffic lights with high cycle discrepancy that express low wait time diversity. For these traffic lights, our chosen prediction method may not be ideal. 
+This aspect is explored further in \Cref{fig:predictability-week-heatmap-per-thing}. In the leftmost part of the diagram, traffic lights can be seen that have a low cycle discrepancy but express a high wait time diversity. In the rightmost part, there are also traffic lights with high cycle discrepancy that express low wait time diversity. For these traffic lights, our chosen prediction method may not be ideal. 
 
 Out of the evaluated 2,793,786 traffic light hours, 43\% (1,206,817) have a cycle discrepancy of less than 5 seconds and a wait time diversity of less than 10\%. For 67\% of hourly buckets, a cycle discrepancy lower than 5 seconds could be measured, which may also contain higher wait time diversities. Only regarding wait time diversity, 77\% of recorded hourly buckets reside below 20\%. Hardly predictable traffic light hours, meaning that the wait time diversity is above 20\% and the cycle discrepancy is above 5 seconds, only comprise 12\% of the overall dataset. Note that the 5-second cycle discrepancy and 20\% wait time diversity were chosen here somewhat arbitrarily as a decision boundary, which we felt constituted a good predictability for our scenario. The decision boundary may be chosen more loosely or also strictly, depending on the requirements.
 
@@ -394,20 +406,14 @@ Overall, most recorded buckets in this sample contain behavior that can be consi
 
 In general, while there are examples in which a clear adaptive behavior can be seen, most recorded switching behaviors contain predictable patterns. This can also be seen by the probabilistic prediction below each cycle diagram, which is only blurred out marginally for most predictions. Most predictions contain at least a small fraction of each green phase that is certain. Thus, our case study, while highlighting a few interesting examples, generally confirms our previous findings.
 
-\begin{figure}[t]
-\centering 
-\begin{tabular}{@{}cc@{}}
-\includegraphics[width=0.46\linewidth]{images/predictability-map.pdf} & \includegraphics[width=0.46\linewidth]{images/predictability-map-diversity.pdf}
-\end{tabular}
-\caption{Spatial distribution of predictability. [\hyperref[attribution]{Attribution}]}\label{fig:predictability-map}
-\end{figure}
-
-TODO: Map und Summary
-
 \begin{Summary}[Summary and Discussion of Results]
-Our results clearly show that we cannot assume from traffic light data systems that they deliver stable and consistent data. Previous studies may have been too optimistic here, especially studies that don’t work with a real-world system. The highly federated architecture in such systems leads to complex failure patterns that must be accounted for in the prediction algorithm. Through the developed monitoring system, we could identify and help fix multiple systematic issues in Hamburg’s Traffic Lights Data infrastructure, taking over parts of the urgently needed quality assurance process. In particular, we could determine a failure pattern related to the traffic controllers that reoccurred daily, helping the operators to scale the data brokers accordingly. Even in the presence of these harsh circumstances, the probabilistic approach seems to scale well and shows good accuracy at most intersections, while the prediction availability is often not optimal due to the described data outages.
+Our results clearly show that we cannot assume from centralized traffic light data systems that they deliver stable and consistent data. In our case, long-term collaboration with platform operators and active error searching were necessary to ultimately stabilize the data system. Previous studies may have been too optimistic here, especially studies that don’t work with a real-world system. The highly federated architecture in such systems may lead to complex failure patterns that must be accounted for in the prediction algorithm. 
 
-Then, we looked at the general predictability of traffic lights in a broader perspective. We found that the predictability decreases during the day together with the traffic surge, but not as much as expected. The cycle-dependent and cycle-independent instabilities quickly reach a plateau during the day, while a large proportion of traffic lights stay entirely unaffected. Thus, we find that even when traffic lights can theoretically adapt to changing traffic conditions, this adaption is only occasionally expressed. Most observed switching patterns align with the cycle length, meaning that the probabilistic approach, which highly depends on this alignment is overall a good choice. Since low predictability seems to affect complete intersections and not individual connections, these intersections provide an opportunity to test more advanced models.
+Through the developed monitoring system, we could identify and help fix multiple systematic issues in Hamburg’s Traffic Lights Data infrastructure, taking over parts of the urgently needed quality assurance process. In particular, we could determine a failure pattern related to the traffic controllers that reoccurred daily, helping the operators to scale the data brokers accordingly. Multiple other issues at various parts of the data platform's pipeline were also found and could ultimately be identified and fixed. Even in the presence of these harsh circumstances, the probabilistic approach seemed to scale well and showed good accuracy at most intersections, while the prediction availability was often not optimal due to the described data outages.
+
+Then, we looked at the general predictability of traffic lights in a broader perspective. We found that the predictability decreases during the day together with the traffic surge, but not as much as expected. We measured that lights seem to indeed switch more traffic-adaptive and thus unpredictable during daytime. However, the traffic adaptation seems to be highly limited for most traffic lights, as the predictability only decreases to a limited extent, while a large proportion of traffic lights stay entirely unaffected. 
+
+Thus, we find that even when traffic lights can theoretically adapt to changing traffic conditions, this adaptation is only minorly expressed. Most observed switching patterns align with the cycle length, meaning that the probabilistic approach, which highly depends on this alignment is overall a good choice. If shifts of the phases in cycles are seen, they are usually shorter than the green time, meaning that some parts of the green phases overlap, allowing our method to predict certainly green parts of the traffic light switching behavior. This was also seen in our randomized case study. Nonetheless, a few intersections were seen at which future experimentation with other methods may be indicated.
 \end{Summary}
 
 \section{Conclusions}
