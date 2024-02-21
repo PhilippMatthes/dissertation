@@ -204,9 +204,9 @@ In summary, the smartphone application not only displays a bare route geometry a
 
 Now that we have looked at the many details of the speed recommendation, it is vital to take another look at the overall picture. In this way, we gain a thorough understanding of how all the designed components from the four discussed chapters work together to create the final Green Light Optimal Speed Advisory system for bikes. We will also briefly go over additional components for traffic prediction, geocoding, and map layers that are used to provide convenience features for pathfinding.
 
-\begin{figure}[t]
+\begin{figure}[!b]
 \caption{Final application infrastructure.}\label{fig:architecture}
-\includegraphics[width=\linewidth]{images/architecture.png}
+\includegraphics[width=\linewidth]{images/architecture.pdf}
 \end{figure}
 
 As seen in \Cref{fig:architecture}, the main application flow is divided into three views. The home view, serving as an entry point after opening the app, is intended to display the current data availability upfront. With the information fetched from the prediction service monitoring, users are directly informed about potential data outages. These can occur spontaneously, as we have seen in \Cref{ch:prediction}. A modification of the routing profile is also possible in the home view.
@@ -244,7 +244,7 @@ The core of our quantitative evaluation focuses on the impact of speed advisorie
 
 \subsection{Collected Data}
 
-\begin{figure}[t]
+\begin{figure}[!b]
 \caption{Collected ratings, tracks, and completed survey answers over time.}\label{fig:app-usage-over-time}
 \includegraphics[width=\linewidth]{images/app-usage-over-time.pdf}
 \end{figure}
@@ -274,7 +274,7 @@ All respondents of the survey considered themselves to be experienced cyclists -
 
 Based on the survey answers, a noticeable part of respondents seem to strongly advocate for cycling, and only utilize a car whenever no other option is present. Three subjects responded they avoid a car in any situation. Thus, we generally observe that many users who responded to our survey are already highly engaged in bike riding: 26 users use their bike on a daily basis, 12 users occasionally during the week, and two users sometimes on a monthly basis. These aspects will be considered when interpreting individual feedback, but also give insights into the representativeness of the collected tracks.
 
-\begin{figure}[t]
+\begin{figure}[!b]
 \caption{Route fit for bike paths and planning intuitiveness.}\label{fig:route-fit-bike-paths}
 \includegraphics[width=\linewidth]{images/app-usability-questions-route-fit-bike-paths.pdf}
 \\
