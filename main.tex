@@ -127,25 +127,25 @@
       {]}{{{\color{cidarkblue}{]}}}}{1},
 }
 
-\usepackage[framemethod=tikz]{mdframed}
+\usepackage{mdframed}
 \newcounter{Summary}[section]
 \newenvironment{Summary}[1][]{%
-\stepcounter{Summary}%
-\ifstrempty{#1}%
-{\mdfsetup{%
-frametitle={%
-\tikz[baseline=(current bounding box.east)]
-% Theorem
-\node[anchor=east,rectangle,fill=ciblue]
-{\strut};}}
-}%
-{\mdfsetup{%
-frametitle={%
-{\strut \color{cidarkblue}\textrm{#1}}}}%
-}%
-\mdfsetup{innertopmargin=0pt,innerbottommargin=0pt,innerrightmargin=16pt,innerleftmargin=0pt,linecolor=cidarkblue,linewidth=2pt,topline=false,bottomline=false,leftline=false,}
-\begin{mdframed}[]\relax%
-}{\end{mdframed}}
+    \stepcounter{Summary}%
+    \begin{mdframed}[
+        linewidth=2,
+        linecolor=cidarkblue,
+        innertopmargin=-18pt, 
+        innerbottommargin=0em, 
+        innerleftmargin=0em,
+        innerrightmargin=16pt,
+        topline=false, 
+        leftline=false, 
+        bottomline=false
+    ]
+    \subsubsection*{#1}
+}{%
+    \end{mdframed}
+}
 
 % use this custom theorem for research questions
 \newtheorem{researchquestion}{Research Question}
