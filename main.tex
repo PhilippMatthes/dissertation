@@ -131,10 +131,11 @@
 \newcounter{Summary}[section]
 \newenvironment{Summary}[1][]{%
     \stepcounter{Summary}%
+    \vspace{6mm}
     \begin{mdframed}[
         linewidth=2,
         linecolor=cidarkblue,
-        innertopmargin=-18pt, 
+        innertopmargin=0pt, 
         innerbottommargin=0em, 
         innerleftmargin=0em,
         innerrightmargin=16pt,
@@ -142,6 +143,7 @@
         leftline=false, 
         bottomline=false
     ]
+    \vspace{-6mm}
     \subsubsection*{#1}
 }{%
     \end{mdframed}
