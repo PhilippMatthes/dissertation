@@ -549,7 +549,14 @@ In conclusion, the DRN routes closely align with bicycle infrastructure and exhi
 
 \subsection{Alignment with User Trajectories}
 
-Finally, we assess the alignment of the DRN network with user journeys and examine how well the route-based estimated distance to the traffic light matches the distance to be covered compared to the direct straight-line distance. Based on 1327 user tracks recorded during the Beta period in 2023, covering a total distance of 6,716.03 km, rerouting was triggered 7030 times, with reroutings occurring every 1.39 km in the median. In 20.27\% of journeys, no rerouting was triggered.
+\begin{figure}[!b]
+\centering 
+\includegraphics[width=\linewidth]{images/routing-reroutes-distribution.pdf}
+\caption{Reroutes triggered during user rides.}
+\label{fig:routing-reroutes-distribution}
+\end{figure}
+
+Finally, we assess the alignment of the DRN network with user journeys and examine how well the route-based estimated distance to the traffic light matches the distance to be covered compared to the direct straight-line distance. Based on 1327 user tracks recorded during the Beta period in 2023, covering a total distance of 6,716.03 km, rerouting was triggered 7030 times, with reroutings occurring every 1.39 km in the median. In 20.27\% of journeys, no rerouting was triggered. As seen in \Cref{fig:routing-reroutes-distribution}, reroutes are more frequently triggered directly after the ride has started or shortly before the ride is finished.
 
 \begin{figure}[t]
 \centering 
