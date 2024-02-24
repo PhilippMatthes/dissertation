@@ -230,9 +230,9 @@
 
 \sloppy
 
-\TUDoption{abstract}{section,multiple}
+\TUDoption{abstract}{section,multiple,markboth}
 \renewcommand\abstractname{Abstract}
-\begin{abstract}
+\begin{abstract}\small
 Promoting cycling is a crucial solution to improve the livability of urban environments. A non-invasive way to promote cycling is to enhance the bike ride experience via Green Light Optimal Speed Advisory (bike-GLOSA). This work presents such a system for Hamburg, making bike-GLOSA practical in real-world urban environments and evaluating its impact on bike rides. 
 
 The first challenge to overcome is predicting the switching behavior of thousands of traffic lights and making this information available to cyclists. We establish a data infrastructure that ingests real-time data from thousands of traffic lights throughout the city. Through a long-term study, we find that data outages require robust prediction, thorough monitoring, and quality assurance to operate a bike-GLOSA system on a centralized data infrastructure. Affected by data outages, the deployed probabilistic prediction algorithm achieves a median availability of 55\% (max: 91\%) and prediction quality of 86\%. Based on four weeks of data for 18,009 traffic lights, we analyze the general predictability and contrast previous work. 
@@ -241,7 +241,9 @@ Afterward, we develop a novel method to match traffic lights along the user's tr
 
 Building on these results, we focus on reducing bike routing errors and enhancing route alignment with actual bike paths. Our solution involves an authoritative bike routing dataset and cross-border routing to OpenStreetMap. Apart from a more consistent surface coverage, we find better alignment with actual cycling infrastructure, traffic lights, and user trajectories than with other routing providers. Enhanced alignment and 37\% fewer routing errors lead to a 4.74\% increase in traffic light matching F1 score. A route-based distance-to-signal estimation is proposed, showing a more stable distance estimation than the over-the-air distance from related work. 
 
-Finally, combining in-app bike routing with a speedometer visualization of the traffic light prediction, a mobile app is developed that provides city-wide access to the bike-GLOSA system. By inviting Hamburg citizens and studying their app usage throughout 2023, we find a twofold effect of the speed advisory. Adherence to the speed advisory leads to 15.32\% fewer stops but a 3.3\% increase in energy expenditure to catch the green phase by cycling 2.92 km/h faster. Cases without adherence show that users anticipate a red light rolling out earlier with 12.85\% more stops and a 3.39 km/h decrease in speed while saving 5.5\% in energy. A survey shows an average System Usability Scale of 73, with improvable reliability and coverage of speed advisories. Among many ways to improve our developed solution, users see enhanced informedness, reduced stops, and increased comfort as key benefits. We thoroughly analyze these findings and outline potential directions for future research.
+Finally, combining in-app bike routing with a speedometer visualization of the traffic light prediction, a mobile app is developed that provides city-wide access to the bike-GLOSA system. By inviting Hamburg citizens and studying their app usage throughout 2023, we find a twofold effect of the speed advisory. Adherence to the speed advisory leads to 15.32\% fewer stops but a 3.3\% increase in energy expenditure to catch the green phase by cycling 2.92 km/h faster. Cases without adherence show that users anticipate a red light rolling out earlier with 12.85\% more stops and a 3.39 km/h decrease in speed while saving 5.5\% in energy. 
+
+A survey shows an average System Usability Scale of 73, with improvable reliability and coverage of speed advisories. Among many ways to improve our developed solution, users see enhanced informedness, reduced stops, and increased comfort as key benefits. We thoroughly analyze these findings and outline potential directions for future research.
 \end{abstract}
 
 \newpage
