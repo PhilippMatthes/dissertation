@@ -566,16 +566,20 @@ In conclusion, the DRN routes closely align with bicycle infrastructure and exhi
 
 Finally, we assess the alignment of the DRN network with user journeys and examine how well the route-based estimated distance to the traffic light matches the distance to be covered compared to the direct straight-line distance. Based on 1327 user tracks recorded during the Beta period in 2023, covering a total distance of 6,716.03 km, rerouting was triggered 7030 times, with reroutings occurring every 1.39 km in the median. In 20.27\% of journeys, no rerouting was triggered. As seen in \Cref{fig:routing-reroutes-distribution}, reroutes are more frequently triggered directly after the ride has started or shortly before the ride is finished.
 
-\begin{figure}[t]
+By overlaying the GNSS trajectories of users onto both routing networks, we can determine whether the actual positions align more closely with the OpenStreetMap network or the DRN network. It is important to note again that GNSS positions naturally vary around the actual position. However, considering the mass of tracks, we should observe a discernible trend, assuming GNSS approximates a normal distribution around the actual position and systematic effects like GNSS drift are negligible in the variety of tracks.
+
+\begin{figure}[!b]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-mapmatching-distance.pdf}
 \caption{Alignment of user trajectories with DRN and OpenStreetMap paths. [\hyperref[attribution]{Attribution}]}
 \label{fig:routing-mapmatching-distance}
 \end{figure}
 
-By overlaying the GNSS trajectories of users onto both routing networks, we can determine whether the actual positions align more closely with the OpenStreetMap network or the DRN network. It is important to note again that GNSS positions naturally vary around the actual position. However, considering the mass of tracks, we should observe a discernible trend, assuming GNSS approximates a normal distribution around the actual position and systematic effects like GNSS drift are negligible in the variety of tracks.
-
 The results are plotted in \Cref{fig:routing-mapmatching-distance}, depicting two intersections in the central area of Hamburg, chosen to minimize identifiable personal references in the tracks. Despite the visible scattering of GNSS positions, it is evident that the recorded cycling trajectories align significantly better with the DRN path network than with OpenStreetMap.
+
+To provide a more comprehensive comparison of all trajectories with the routing network, we perform an aggregated comparison using the GraphHopper map matching API\footnote{\url{https://docs.graphhopper.com/\#tag/Map-Matching-API}}, employing the method proposed by Newson and Krumm \cite{newson_hidden_2009} on both OpenStreetMap and DRN. Subsequently, we measure the distance from each GNSS point using the Vincenty estimator to the nearest map-matched segment.
+
+The results reveal two half-normal distributions: DRN positions at a median distance of 2.90m from the nearest path and OpenStreetMap positions at 4.41m. The dispersion in DRN is notably lower, with an interquartile range of 5.40m compared to 7.09m in OpenStreetMap. This underscores the more accurate and consistent representation of bicycle paths in DRN. Consequently, our proposed GNSS correction, facilitated through snapping onto the route, is likely less distorted with DRN routes.
 
 \begin{figure}[t]
 \centering 
@@ -583,10 +587,6 @@ The results are plotted in \Cref{fig:routing-mapmatching-distance}, depicting tw
 \caption{Distance of each GNSS sample in user trajectories when map-matched onto DRN and OpenStreetMap networks.}
 \label{fig:routing-gnss-mapmatching-distribution}
 \end{figure}
-
-To provide a more comprehensive comparison of all trajectories with the routing network, we perform an aggregated comparison using the GraphHopper map matching API\footnote{\url{https://docs.graphhopper.com/\#tag/Map-Matching-API}}, employing the method proposed by Newson and Krumm \cite{newson_hidden_2009} on both OpenStreetMap and DRN. Subsequently, we measure the distance from each GNSS point using the Vincenty estimator to the nearest map-matched segment.
-
-The results reveal two half-normal distributions: DRN positions at a median distance of 2.90m from the nearest path and OpenStreetMap positions at 4.41m. The dispersion in DRN is notably lower, with an interquartile range of 5.40m compared to 7.09m in OpenStreetMap. This underscores the more accurate and consistent representation of bicycle paths in DRN. Consequently, our proposed GNSS correction, facilitated through snapping onto the route, is likely less distorted with DRN routes.
 
 To evaluate our approach for distance-to-signal estimation, we compare the distance estimated for each GNSS sample to the measured distance driven to the next traffic light. We calculate the distance by determining the position at which the GNSS trajectory will pass the matched upcoming traffic light. Then, we trace the GNSS trajectory back to the current position and measure the Vincenty distance along the backtracked path. GNSS samples not having an upcoming traffic light, e.g., at the end of a track, are not considered here. This method assumes that cases in which users preliminarily deviate from their intended path over the traffic light are sufficiently rare and that the correct traffic light is matched sufficiently often. The GNSS is also expected to scatter in a normal distribution, slightly increasing the measured ground truth distance over the actual traveled distance. Thus, gaussian noise in the measurement is intended.
 
