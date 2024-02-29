@@ -7,7 +7,7 @@ This chapter is based on the following two papers in which the author was the pr
 
 \cite{matthes2023geo} \fullcite{matthes2023geo}
 
-This chapter integrates concepts and results from a Master thesis, where the author identified the topic and was also involved as the primary supervisor:
+This chapter integrates concepts and results from a Master's thesis, where the author identified the topic and was also involved as the primary supervisor: Which specific parts have been contributed from the Master's thesis will be referenced in \Cref{sec:jeschor1} and \Cref{sec:jeschor2}. In the Master's thesis, the author of this work contributed initial geometrical features and the traffic light matching framework as a foundation for the development of a Machine Learning model. The author also contributed the tool for ground truth generation and a preliminary method with unsupervised learning. The Machine Learning model presented in this work has been mainly developed by
 
 \cite{jeschor_2022} \fullcite{jeschor_2022}
 \end{Summary}
@@ -427,7 +427,7 @@ The final filtering pipeline has several thresholds that must be carefully selec
 
 To prepare the model for hyperparameter tuning, search spaces for each hyperparameter must be defined. These search spaces are summarized in \Cref{tab:hyperparameter-space}. The Tree-Structured Parzen Estimator hyperparameter tuning algorithm \cite{ozaki_multiobjective_2020} is utilized to find a suitable configuration on the ground truth benchmark. The objective function given to the tuner algorithm is the F1 score. As a result, we obtain a tuned hypermodel that can be executed on route geometries, matching the suitable traffic lights as accurately as possible.
 
-\subsection{Machine Learning Filtering Approach}
+\subsection{Machine Learning Filtering Approach}\label{sec:jeschor1}
 
 One identified problem of the algorithmic approach is that each threshold is defined globally and equally applied to all situations. However, not all intersections are crossed similarly by routes. Thus, the filtering pipeline would be applied too strictly in some situations, while the thresholds are not applied strictly enough in others. Here, an ML model can be useful to employ a more flexible and interlinked mapping of the geometric properties. After this opportunity was identified, such an ML model was investigated under supervision in Daniel Jeschor's Master thesis \cite{jeschor_2022}. The following concepts for the ML approach are based on this thesis.
 
@@ -583,7 +583,7 @@ This creation process results in most lanes (connections) being assigned to only
 
 Overall, the distribution indicates that there may be significantly more duplicates in the 2022 OSM dataset compared to the 2023 OSM dataset. Whether these duplicates are excessive cannot be accurately assessed without testing the model's generalization capability on unseen data, which we will address in detail in the next section.
 
-\subsection{Model Evaluation}
+\subsection{Model Evaluation}\label{sec:jeschor2}
 
 Two models were designed: the algorithmic model and the ML model. Each model was trained and evaluated on the ground truths presented in the previous section. First is the algorithmic model. The same version of the algorithmic model was trained once on the 2022 OSM dataset and once on the 2023 OSM dataset. This separate training resulted in two distinct models validated on the other dataset.
 
