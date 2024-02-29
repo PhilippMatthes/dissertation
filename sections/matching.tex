@@ -151,20 +151,18 @@ While exploring potential methods to solve the traffic light matching problem, s
 
 \subsubsection{H3 Approach}
 
-The H3 approach emerged from the Movebis\footnote{\url{https://bmdv.bund.de/SharedDocs/DE/Artikel/DG/mfund-projekte/verbesserung-der-fahrradinfrastruktur-movebis.html}} project which applied a similar method to cluster inaccurately aligned GNSS paths, obtaining the main directions of intersection traversal and stopping points. The core of this approach is the H3 raster, which subdivides the earth primarily into hexagonal cells\footnote{Strictly speaking, the H3 raster has 12 additional pentagons on every level to complete a seamless shape. See: \url{https://h3geo.org/docs/core-library/restable/}}. On the top resolution level (1), there are 122 cells covering the earth's surface. On level 2, the 122 cells are subdivided into 842 cells, and so forth. As a result, the H3 model contains 15 levels, which are hierarchically connected in a tree structure. This hierarchical structure makes it possible to efficiently navigate through the index, e.g., to find neighbor cells. 
-
-In the Movebis project, after the GNSS samples of each user track were assigned to an H3 cell, the resulting cells each contained a number of samples and travel direction (edge of the H3 cell), resembling a histogram of the trajectories spatially aligned with the intersections. Assuming a normally distributed GNSS scattering around the actual position, the buckets could then be used to sift out the most frequently used pathways of cyclists statistically. Minor GNSS errors or individualities in the user movement do not fall into weight as they are clustered together. Since this approach was found useful in the Movebis project, the fundamental idea was further explored to identify potential methods for aligning the traffic light geometries with the inaccurate bike route.
+The H3 approach emerged from the Movebis\footnote{\url{https://bmdv.bund.de/SharedDocs/DE/Artikel/DG/mfund-projekte/verbesserung-der-fahrradinfrastruktur-movebis.html}} project and was applied there to cluster inaccurately aligned GNSS tracks of cyclists. At its foundation, it uses the H3 raster, which subdivides the earth into hexagonal cells\footnote{Strictly speaking, the H3 raster has 12 additional pentagons on every level to complete a seamless shape. See: \url{https://h3geo.org/docs/core-library/restable/}}. Each recorded track was overlayed onto this raster, combining the tracks that are close together but not perfectly aligned. As a result, minor GNSS errors or individualities statistically even out. The traffic light matching problem can be considered similar: instead of imperfectly aligned user tracks, we have traffic light geometries that do not align perfectly with the route. Thus, the motivation was to try if the H3 raster could also be used for traffic light matching.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-h3-approach.pdf}
-\caption{Illustration of the matching procedure behind the developed H3 approach.}
+\caption{Illustration of the H3 approach: If H3 cells directly over the traffic light geometry are hit, the score increases. Neighboring cells decrease the score when hit. The total score is subjected to a threshold, determining whether the traffic light is counted as a match or not.}
 \label{fig:sg-selection-h3-approach}
 \end{figure}
 
-The initial idea was to count the cells aligned between route geometry and traffic light geometries. The traffic light is detected as a match if sufficient overlap is found. After testing multiple H3 levels, the H3 level 14 was determined empirically to provide the best tradeoff between resolution and tolerance to imperfect alignment. To emphasize the importance of a near-parallel alignment, a ring-based scoring schema, as illustrated in \Cref{fig:sg-selection-h3-approach}, was tested that penalizes crossing geometries (2) and favors parallel-aligned geometries (1). This ring-based scoring schema uses H3's tree structure to find neighboring cells of the traffic light geometry efficiently.
+The initial idea was to measure if the route and traffic lights fall in the same H3 cells. Whenever a sufficient overlap is detected, the traffic light would be counted as a match. After testing multiple H3 levels, the H3 level 14 was determined to provide a good tradeoff between resolution and tolerance to imperfect alignment. To favor traffic lights that are aligned parallel to the route (1), a scoring schema, as illustrated in \Cref{fig:sg-selection-h3-approach}, was tested that penalizes crossing geometries (2). This scoring schema uses H3's tree structure to find neighboring cells of the traffic light geometry. The goal is that misaligned traffic lights are always below the score threshold and matching traffic lights are above.
 
-Nonetheless, a significant challenge is finding a suitable scoring threshold for the number of matched cells until a traffic light is counted as a "match." Some traffic light geometries may be only a few meters long, while others are much longer. Since longer geometries contain more cells, it is more likely that these are false-positively matched to the route, while short geometries often produce false negatives. After testing multiple different scoring schemas and thresholds and coming to the final scoring schema highlighted in \Cref{fig:sg-selection-h3-approach}, achieving a sufficiently good matching was impossible. In the developed benchmark, an F1 score of 50\% was never exceeded. 
+Finding a suitable threshold was challenging, as some traffic light geometries may be only a few meters long, while others are much longer. Since longer geometries contain more cells, it is more likely that these are false-positively matched to the route (3), while short geometries often produce false negatives. After testing multiple different scoring schemas, a sufficiently good matching could not be achieved. In the developed benchmark, an F1 score of 50\% was never exceeded. 
 
 One identified improvement possibility was applying a relative scoring schema for each traffic light. Instead of applying absolute values to each H3 cell around the line geometry, the scoring schema would be scaled inversely proportional to the number of cells. This means a longer line geometry would have more cells with lower individual scores than a short geometry. Ideally, the result would be a normalized alignment score for each traffic light geometry that can be subjected to a universal threshold. Figuratively, the score would depict how much both geometries align. However, this potential solution was not thoroughly explored due to other systematic limitations of the H3 approach.
 
@@ -175,7 +173,7 @@ One identified improvement possibility was applying a relative scoring schema fo
 \label{fig:sg-selection-h3-example}
 \end{figure}
 
-The main limitation of the H3 approach is that it assumes that the route geometry is near enough to the matching traffic light geometries. However, considering OSM's mixed coverage of bike paths, many false negatives were produced when the route was mapped on the car lanes while the appropriate bike traffic light was located on the bike path a few meters to the side of the road. 
+The main systematic limitation of the H3 approach is that it assumes that the route geometry is near enough to the matching traffic light geometries. However, considering OSM's mixed coverage of bike paths, many false negatives were produced when the route was mapped on the car lanes while the appropriate bike traffic light was located on the bike path a few meters to the side of the road.
 
 A potential solution to this problem would be to choose a larger raster, which would worsen the score even more since many traffic lights' geometries are no longer captured adequately. Instead, they would resemble a circular "blob," as highlighted on the left side of \Cref{fig:sg-selection-h3-example}. The "blob" problem does not only appear when upscaling the raster to H3 level 13. It appears at level 14 as well. Some traffic lights would have such short geometries that only one H3 cell was matched, especially concerning pedestrian traffic lights crossing the road. Since many of these traffic lights are aligned orthogonally to the road's direction, the loss of the traffic light's direction information in the "blob"-shaped scoring schema would ultimately lead to erroneous matchings. Increasing the resolution level to 15 would mitigate this problem and introduce a more shaped raster around the line geometries. However, it would again increase the volatility against offset traffic lights along the route.
 
@@ -194,7 +192,7 @@ The second approach is inspired by the map-matching procedure proposed by Newson
 
 The proposed approach operates as illustrated in \Cref{fig:sg-selection-graph-approach}. First, traffic lights along the route are prefiltered using a rough distance threshold of 20m. The remaining traffic lights are clustered into intersections based on the intersection node ID. The procedure undergoes three steps around these intersections: (1) A bounding box is calculated with an additional padding. The route enters and exits the bounding box at one point. (2) A fully connected graph is generated between the route's entry and exit points and each traffic light geometry's start and end points. (3) A cost is assigned to each transition in the graph based on the transition's length. Finally, the least costly path is calculated using the Dijkstra pathfinding algorithm\footnote{An emission/transition probability approach using the Viterbi algorithm was also tested.}. This path should then represent the most likely utilized trajectory over the traffic light geometries.
 
-The cost function is defined to penalize traversal between traffic lights, and traversal using the traffic lights is preferred. Otherwise, the most optimal path would often be the direct connection between the entry and exit points. Specifically, every transition in the graph  $(p_{1} \rightarrow p_{2})$ has the cost $dist(p_{1}, p_{2})$, while transitions between traffic lights have the cost $dist(p_{1}, p_{2}) \times \text{penalty}$. Thus, the penalty value represents a hyperparameter of the model together with the dimensions of the intersection padding. 
+The cost function is defined to penalize traversal between traffic lights, and traversal using the traffic lights is preferred. Otherwise, the most optimal path would often be the direct connection between the entry and exit points. Specifically, every transition in the graph  $(p_{1} \rightarrow p_{2})$ has the cost $\text{dist}(p_{1}, p_{2})$, while transitions between traffic lights have the cost $\text{dist}(p_{1}, p_{2}) \times \text{penalty}$. Thus, the penalty value represents a hyperparameter of the model together with the dimensions of the intersection padding. 
 
 Which penalty value and intersection padding to choose may depend on each intersection's characteristics. Thus, defining these hyperparameters by hand would not be the best option. A better option is to utilize a tuning algorithm that automatically approximates the optimal configuration based on the developed ground truth. Specifically, the Tree-Structured Parzen Estimator hyperparameter tuning algorithm is utilized \cite{ozaki_multiobjective_2020}. This tuner considers each hyperparameter (intersection padding and penalty) independently from each other. During the tuning, the model undergoes inference for all routes in the dataset (one trial). After each trial, the F1 score is evaluated, and the tuner adjusts the hyperparameters into a direction estimated to result in a better score.
 
@@ -282,33 +280,33 @@ The idea of the algorithmic approach is to tell apart matching from non-matching
 \textbf{\color{cidarkblue}Step 2 -- Bearing Filter:} As a next step, the bearing between the traffic light's geometry and the route is compared. As a result of this, we can exclude traffic lights that are angled too steeply or even inverted to the route. As a foundation, the atan2 function is used to calculate the bearing between two coordinates on the earth\footnote{\url{https://www.movable-type.co.uk/scripts/latlong.html}}:
 
 \begin{equation}
-x(c_1, c_2) = sin(lon_2 - lon_1) \times cos(lat_2)
+x(c_1, c_2) = \text{sin}(\text{lon}_2 - \text{lon}_1) \times \text{cos}(\text{lat}_2)
 \end{equation}
 \begin{equation}
-y(c_1, c_2) = cos(lat_1) \times sin(lat_2) - (sin(lat_1) \times cos(lat_2) \times cos(lon_2 - lon_1))
+y(c_1, c_2) = \text{cos}(\text{lat}_1) \times \text{sin}(\text{lat}_2) - (\text{sin}(\text{lat}_1) \times \text{cos}(\text{lat}_2) \times \text{cos}(\text{lon}_2 - \text{lon}_1))
 \end{equation}
 \begin{equation}
-bear(c_1, c_2) = atan2(x(c_1, c_2), y(c_1, c_2))
+\text{bear}(c_1, c_2) = \text{atan2}(x(c_1, c_2), y(c_1, c_2))
 \end{equation}
 
-where $c_1 = (lat_1, lng_1)$ and $c_2 = (lat_2, lng_2)$ are WGS84 coordinates (in radians), $x(c_1, c_2)$ calculates the component in the eastward direction, and $y(c_1, c_2)$ calculates the component in the northward direction. Using this function, we calculate the bearing of the traffic light's geometry $(c_1, \dots, c_n)$ based on its first two coordinates. Then, to compare this bearing to the route geometry, the traffic light geometry is projected onto the route. Every coordinate $(c_1, \dots, c_n)$ is mapped to the nearest point on the route geometry $(\bar{c_1}, \dots, \bar{c_n})$. Then, the bearing diff $\bar{\Delta}_{bear_1}$ is calculated as:
+where $c_1 = (\text{lat}_1, \text{lng}_1)$ and $c_2 = (\text{lat}_2, \text{lng}_2)$ are WGS84 coordinates (in radians), $x(c_1, c_2)$ calculates the component in the eastward direction, and $y(c_1, c_2)$ calculates the component in the northward direction. Using this function, we calculate the bearing of the traffic light's geometry $(c_1, \dots, c_n)$ based on its first two coordinates. Then, to compare this bearing to the route geometry, the traffic light geometry is projected onto the route. Every coordinate $(c_1, \dots, c_n)$ is mapped to the nearest point on the route geometry $(\bar{c_1}, \dots, \bar{c_n})$. Then, the bearing diff $\bar{\Delta}_{\text{bear}_1}$ is calculated as:
 
 \begin{equation}
-    \bar{\Delta}_{bear_{i=1}} = 
-        abs(\underbrace{bear(c_{i=1}, c_{i+1=2})}_{\text{Bearing of traffic light geometry}} - \underbrace{bear(\bar{c}_{i=1}, \bar{c}_{i+1=2})}_{\text{Bearing of projection on route}})
+    \bar{\Delta}_{\text{bear}_{i=1}} = 
+        \text{abs}(\underbrace{\text{bear}(c_{i=1}, c_{i+1=2})}_{\text{Bearing of traffic light geometry}} - \underbrace{\text{bear}(\bar{c}_{i=1}, \bar{c}_{i+1=2})}_{\text{Bearing of projection on route}})
 \end{equation}
 
-The bearing diff $\bar{\Delta}_{bear_1}$ denotes how much the traffic light's angle differs from the route's at the nearest point to the first traffic light geometry coordinate. 0° means that both geometries are perfectly aligned by angle. The calculated value can be subjected to a bearing threshold $t_{bear}$, which defines if the traffic light's geometry is counted as a match or not:
+The bearing diff $\bar{\Delta}_{\text{bear}_1}$ denotes how much the traffic light's angle differs from the route's at the nearest point to the first traffic light geometry coordinate. 0° means that both geometries are perfectly aligned by angle. The calculated value can be subjected to a bearing threshold $t_{\text{bear}}$, which defines if the traffic light's geometry is counted as a match or not:
 
 \begin{equation}
-\Psi_{bear_{i=1}} = 
+\Psi_{\text{bear}_{i=1}} = 
     \begin{cases}
-            1,& \text{if } \bar{\Delta}_{bear_{i=1}} \in \left(-t_{bear}, t_{bear}\right)\\
+            1,& \text{if } \bar{\Delta}_{\text{bear}_{i=1}} \in \left(-t_{\text{bear}}, t_{\text{bear}}\right)\\
             0,              & \text{otherwise}
         \end{cases}
 \end{equation}
 
-where $\Psi_{bear_{i=1}} = 1$ means that the segment is angled similarly enough to the nearby route and is considered a match. All traffic lights that are not a match ($\Psi_{bear_{i=1}} = 0$) are filtered out. For example, if $t_{bear} = 45^{\circ}$, we will filter out all geometries whose first coordinate is angled more than $\pm 45^{\circ}$ relative to the projection onto the route. 
+where $\Psi_{\text{bear}_{i=1}} = 1$ means that the segment is angled similarly enough to the nearby route and is considered a match. All traffic lights that are not a match ($\Psi_{\text{bear}_{i=1}} = 0$) are filtered out. For example, if $t_{\text{bear}} = 45^{\circ}$, we will filter out all geometries whose first coordinate is angled more than $\pm 45^{\circ}$ relative to the projection onto the route. 
 
 \begin{figure}[b]
 \centering
@@ -317,17 +315,17 @@ where $\Psi_{bear_{i=1}} = 1$ means that the segment is angled similarly enough 
 \label{fig:sg-selection-bearing-filter}
 \end{figure}
 
-Examples of this process are illustrated in \Cref{fig:sg-selection-bearing-filter}. In cases (1), (2), and (3), the alignment of both geometries is classified correctly. However, (4) illustrates one particular weakness: traffic light geometries initially aligned but then curving away from the route are not filtered out correctly. The reason is that only the first coordinate is compared, not the complete geometry. To compare the complete geometry, all coordinates $c_i$ of the traffic light geometry are compared to the route. Then, a weighted sum $\phi_{bear}$ is calculated, incorporating the length of each geometry segment relative to the complete geometry. In this way, longer parts of the traffic light's geometry are emphasized:
+Examples of this process are illustrated in \Cref{fig:sg-selection-bearing-filter}. In cases (1), (2), and (3), the alignment of both geometries is classified correctly. However, (4) illustrates one particular weakness: traffic light geometries initially aligned but then curving away from the route are not filtered out correctly. The reason is that only the first coordinate is compared, not the complete geometry. To compare the complete geometry, all coordinates $c_i$ of the traffic light geometry are compared to the route. Then, a weighted sum $\phi_{\text{bear}}$ is calculated, incorporating the length of each geometry segment relative to the complete geometry. In this way, longer parts of the traffic light's geometry are emphasized:
 
 \begin{equation} 
-\phi_{bear} = 
+\phi_{\text{bear}} = 
     \underbrace{\sum_{i=1}^{n-1} 
-    \frac{\Psi_{bear_i}}{dist(c_i, c_{i+1})}}_{\text{Sum of matching segment lengths}}
+    \frac{\Psi_{\text{bear}_i}}{\text{dist}(c_i, c_{i+1})}}_{\text{Sum of matching segment lengths}}
     \times
-    \underbrace{(\sum_{i=1}^{n-1} dist(c_i, c_{i+1}))^{-1}}_{\text{Sum of segment lengths}}
+    \underbrace{(\sum_{i=1}^{n-1} \text{dist}(c_i, c_{i+1}))^{-1}}_{\text{Sum of segment lengths}}
 \end{equation}
 
-where $dist$ is calculated as the Euclidean distance and $n$ is the number of coordinates in the traffic light's geometry. As a result, $\phi_{bear}$ is normalized between 0 and 1. $\phi_{bear} = 0$ means none of the traffic light geometry's segments matches the angular threshold $t_{bear}$, while a value of 1 represents a full match. To determine the decision boundary between match and no match, $\phi_{bear}$ is subjected to another threshold $t_{bear\_sum} \in [0, 1]$. This threshold is chosen to exclude traffic lights curving away from the route.
+where $\text{dist}$ is calculated as the Euclidean distance and $n$ is the number of coordinates in the traffic light's geometry. As a result, $\phi_{\text{bear}}$ is normalized between 0 and 1. $\phi_{\text{bear}} = 0$ means none of the traffic light geometry's segments matches the angular threshold $t_{\text{bear}}$, while a value of 1 represents a full match. To determine the decision boundary between match and no match, $\phi_{\text{bear}}$ is subjected to another threshold $t_{\text{bear\_sum}} \in [0, 1]$. This threshold is chosen to exclude traffic lights curving away from the route.
 
 \begin{figure}[b]
 \centering
@@ -336,9 +334,9 @@ where $dist$ is calculated as the Euclidean distance and $n$ is the number of co
 \label{fig:sg-selection-bearing-filter-sum}
 \end{figure}
 
-\Cref{fig:sg-selection-bearing-filter-sum} gives an intuition for the final working principle of the bearing filter. In example (1), all the traffic light's geometry segments are sufficiently aligned to the route. Examples (2) and (3) depict cases where none of the segments are within the angular threshold $t_{bear}$. Example (4) highlights a case where the first 60\% of the traffic light geometry matches the route. In the illustration, $t_{bear\_sum}$ is assumed to be larger than 60\%, so the traffic light that curves away is filtered out. The higher this threshold is configured, the more aggressively the filter excludes inclined geometries.
+\Cref{fig:sg-selection-bearing-filter-sum} gives an intuition for the final working principle of the bearing filter. In example (1), all the traffic light's geometry segments are sufficiently aligned to the route. Examples (2) and (3) depict cases where none of the segments are within the angular threshold $t_{\text{bear}}$. Example (4) highlights a case where the first 60\% of the traffic light geometry matches the route. In the illustration, $t_{\text{bear\_sum}}$ is assumed to be larger than 60\%, so the traffic light that curves away is filtered out. The higher this threshold is configured, the more aggressively the filter excludes inclined geometries.
 
-\textbf{\color{cidarkblue}Step 3 -- Length Filter:} With the previous two steps, we have two bearing thresholds ($t_{bear}$ and $t_{bear\_sum}$) in addition to the distance threshold $t_{dist}$. However, during the systematic testing of the thresholds, it quickly became apparent that they alone cannot sufficiently distinguish matching traffic lights from non-matching traffic lights. A key observation was made during the search for other characteristics that distinguish matching from non-matching traffic lights: Non-matching traffic light geometries often have a shorter projection onto the route relative to their original length. This feature is also related to the traffic light geometry's angular position to the route but incorporates the shape of the route in between projected traffic light geometry coordinates.
+\textbf{\color{cidarkblue}Step 3 -- Length Filter:} With the previous two steps, we have two bearing thresholds ($t_{\text{bear}}$ and $t_{\text{bear\_sum}}$) in addition to the distance threshold $t_{\text{dist}}$. However, during the systematic testing of the thresholds, it quickly became apparent that they alone cannot sufficiently distinguish matching traffic lights from non-matching traffic lights. A key observation was made during the search for other characteristics that distinguish matching from non-matching traffic lights: Non-matching traffic light geometries often have a shorter projection onto the route relative to their original length. This feature is also related to the traffic light geometry's angular position to the route but incorporates the shape of the route in between projected traffic light geometry coordinates.
 
 \begin{figure}[t]
 \centering
@@ -347,39 +345,39 @@ where $dist$ is calculated as the Euclidean distance and $n$ is the number of co
 \label{fig:sg-selection-length-filter-sum}
 \end{figure}
 
-To mathematically represent this intuition, a cumulative score $\phi_{len}$ is calculated similarly to the bearing filter and then subjected to a threshold $t_{len\_sum}$. The score $\phi_{len}$ quantifies the difference from 0 (no matching segments) to 1 (all segments matching), again weighted by the length of each segment. Example (3) shows that the length filter does not detect inversely aligned geometries well. However, since the bearing filter is assumed to handle this case, the length filter will likely not encounter such constellations.
+To mathematically represent this intuition, a cumulative score $\phi_{\text{len}}$ is calculated similarly to the bearing filter and then subjected to a threshold $t_{\text{len\_sum}}$. The score $\phi_{\text{len}}$ quantifies the difference from 0 (no matching segments) to 1 (all segments matching), again weighted by the length of each segment. Example (3) shows that the length filter does not detect inversely aligned geometries well. However, since the bearing filter is assumed to handle this case, the length filter will likely not encounter such constellations.
 
-Due to the similarity with the bearing filter, we can reuse its formulas and only have to replace the metric $\Psi$, which determines whether a segment is counted as a match. First, each segment $(c_1, \dots, c_n)$ is again projected onto the route as $(\bar{c_1}, \dots, \bar{c_n})$. Then, the length diff $\bar{\Delta}_{len_1}$ for the i-th segment is calculated as:
+Due to the similarity with the bearing filter, we can reuse its formulas and only have to replace the metric $\Psi$, which determines whether a segment is counted as a match. First, each segment $(c_1, \dots, c_n)$ is again projected onto the route as $(\bar{c_1}, \dots, \bar{c_n})$. Then, the length diff $\bar{\Delta}_{\text{len}_1}$ for the i-th segment is calculated as:
 
 \begin{equation}
-    \bar{\Delta}_{len_i} = 
+    \bar{\Delta}_{\text{len}_i} = 
         \begin{cases}
-            0,& \text{if } line\_dist(\bar{c}_i, \bar{c}_{i+1}) = 0 \\
-            \frac{dist(c_{i}, c_{i+1})}{line\_dist(\bar{c}_{i}, \bar{c}_{i+1})},              & \text{otherwise}
+            0,& \text{if } \text{line\_dist}(\bar{c}_i, \bar{c}_{i+1}) = 0 \\
+            \frac{\text{dist}(c_{i}, c_{i+1})}{\text{line\_dist}(\bar{c}_{i}, \bar{c}_{i+1})},              & \text{otherwise}
         \end{cases}
 \end{equation}
 
-where $dist$ is calculated as the Euclidean distance, and $line\_dist(\bar{c}_i, \bar{c}_{i+1})$ represents the distance along the route's geometry between $\bar{c}_i$ and $\bar{c}_{i+1}$. To calculate $line\_dist$, it is necessary to interpolate along the route's geometry. Using the calculated length diff, each segment of the traffic light's geometry is mapped as:
+where $\text{dist}$ is calculated as the Euclidean distance, and $\text{line\_dist}(\bar{c}_i, \bar{c}_{i+1})$ represents the distance along the route's geometry between $\bar{c}_i$ and $\bar{c}_{i+1}$. To calculate $\text{line\_dist}$, it is necessary to interpolate along the route's geometry. Using the calculated length diff, each segment of the traffic light's geometry is mapped as:
 
 \begin{equation}
-\Psi_{len_i} = 
+\Psi_{\text{len}_i} = 
     \begin{cases}
-            1,& \text{if } \bar{\Delta}_{len_{i}} \in \left(1 - t_{len}, 1 + t_{len}\right)\\
+            1,& \text{if } \bar{\Delta}_{\text{len}_{i}} \in \left(1 - t_{\text{len}}, 1 + t_{\text{len}}\right)\\
             0,              & \text{otherwise}
         \end{cases}
 \end{equation}
 
-where $\Psi_{len_i} = 1$ means the segment matches the length diff threshold $t_{len}$. Finally, the weighted sum of all traffic light geometry segments is calculated as follows:
+where $\Psi_{\text{len}_i} = 1$ means the segment matches the length diff threshold $t_{\text{len}}$. Finally, the weighted sum of all traffic light geometry segments is calculated as follows:
 
 \begin{equation} 
-\phi_{len} = 
+\phi_{\text{len}} = 
     \underbrace{\sum_{i=1}^{n-1} 
-    \frac{\Psi_{len_i}}{dist(c_i, c_{i+1})}}_{\text{Sum of matching segment lengths}}
+    \frac{\Psi_{\text{len}_i}}{\text{dist}(c_i, c_{i+1})}}_{\text{Sum of matching segment lengths}}
     \times
-    \underbrace{(\sum_{i=1}^{n-1} dist(c_i, c_{i+1}))^{-1}}_{\text{Sum of segment lengths}}
+    \underbrace{(\sum_{i=1}^{n-1} \text{dist}(c_i, c_{i+1}))^{-1}}_{\text{Sum of segment lengths}}
 \end{equation}
 
-Here, $\phi_{len} = 0$ means that all of the traffic light geometry's segments are shortened too much when projecting them onto the route geometry, indicating a traffic light that is not aligned with the route. Likewise, $\phi_{len} = 1$ means that all segments roughly stay the same length when projected onto the route. To distinguish when a traffic light is counted as a match, the thresholds $t_{len}$ and $t_{len\_sum}$ can be optimized accordingly.
+Here, $\phi_{\text{len}} = 0$ means that all of the traffic light geometry's segments are shortened too much when projecting them onto the route geometry, indicating a traffic light that is not aligned with the route. Likewise, $\phi_{\text{len}} = 1$ means that all segments roughly stay the same length when projected onto the route. To distinguish when a traffic light is counted as a match, the thresholds $t_{\text{len}}$ and $t_{\text{len\_sum}}$ can be optimized accordingly.
 
 \textbf{\color{cidarkblue}Step 4 -- Overlap Matcher:} The previous matching steps often struggle with one particular problem: multiple parallel-aligned traffic lights. Often, this case leads to a multi-selection of these traffic lights, while only one of them will be taken by the cyclist. On the other hand, especially on complex intersections, there may be multiple consecutive traffic lights whose geometries partially overlap along the route but are still a valid match. Thus, some overlaps must be filtered out, while others are intentional.
 
@@ -393,19 +391,19 @@ Here, $\phi_{len} = 0$ means that all of the traffic light geometry's segments a
 First, the overlaps between traffic lights with respect to the route are determined. To accomplish this, the traffic lights' geometries are snapped onto the route. As a result, each traffic light's start and end points along the route are determined, as highlighted in \Cref{fig:sg-matching-overlap-filter}. For each pair of matched traffic light geometries $(l_1, l_2)$, an overlap percentage $\phi_{overlap}$ is calculated as:
 
 \begin{equation}
-    \phi_{overlap} = \frac{min(l_{1_{end}}, l_{2_{end}}) - max(l_{1_{start}}, l_{2_{start}})}{max(l_{1_{end}}, l_{2_{end}}) - min(l_{1_{start}}, l_{2_{start}})}
+    \phi_{\text{overlap}} = \frac{\text{min}(l_{1_{\text{end}}}, l_{2_{\text{end}}}) - \text{max}(l_{1_{\text{start}}}, l_{2_{\text{start}}})}{\text{max}(l_{1_{\text{end}}}, l_{2_{\text{end}}}) - \text{min}(l_{1_{\text{start}}}, l_{2_{\text{start}}})}
 \end{equation}
 
-In the error case that the denominator is zero, $\phi_{overlap}$ is also mapped to zero. As soon as this percentage exceeds a threshold $t_{overlap\_pct}$, a decision process between both geometries is initiated:
+In the error case that the denominator is zero, $\phi_{\text{overlap}}$ is also mapped to zero. As soon as this percentage exceeds a threshold $t_{\text{overlap\_pct}}$, a decision process between both geometries is initiated:
 
 \begin{enumerate}
     \item According to the traffic light metadata, if one of the traffic lights is a dedicated bike traffic light, choose that one.
-    \item If one of both traffic lights perfectly matches the route, select that one. To determine whether a traffic light perfectly matches the route, a distance threshold $t_{perfect\_match}$ is configured.
-    \item If both traffic lights are on different sides of the route and the distance between both traffic lights is smaller than a threshold $t_{road\_side}$, prefer the ordinary traffic side (in Germany, right-hand traffic). Whether a traffic light is left or right from the route is determined through $\bar{\Delta}_{bear_{i=1}}$.
+    \item If one of both traffic lights perfectly matches the route, select that one. To determine whether a traffic light perfectly matches the route, a distance threshold $t_{\text{perfect\_match}}$ is configured.
+    \item If both traffic lights are on different sides of the route and the distance between both traffic lights is smaller than a threshold $t_{\text{road\_side}}$, prefer the ordinary traffic side (in Germany, right-hand traffic). Whether a traffic light is left or right from the route is determined through $\bar{\Delta}_{\text{bear}_{i=1}}$.
     \item Otherwise, decide purely by the distance to the route.
 \end{enumerate}
 
-The thresholds $t_{overlap\_pct}$, $t_{perfect\_match}$, and $t_{road\_side}$ can be used to tune the final result. In the case of $\phi_{overlap} < t_{overlap\_pct}$, both traffic lights are kept. This threshold allows for intentional small overlaps at complex intersections without filtering consecutive traffic lights out.
+The thresholds $t_{\text{overlap\_pct}}$, $t_{\text{perfect\_match}}$, and $t_{\text{road\_side}}$ can be used to tune the final result. In the case of $\phi_{\text{overlap}} < t_{\text{overlap\_pct}}$, both traffic lights are kept. This threshold allows for intentional small overlaps at complex intersections without filtering consecutive traffic lights out.
 
 \begin{table}[!b]
 \caption{Summary of thresholds and search space.}
@@ -413,15 +411,15 @@ The thresholds $t_{overlap\_pct}$, $t_{perfect\_match}$, and $t_{road\_side}$ ca
 \toprule
 \textbf{Hyperparameter}  & \textbf{Explanation} & \textbf{Search Interval} \\
 \midrule
-T1 ($t_{dist}$) & Traffic light geometries must be within this distance of the route. & $[1m, 100m]$ \\
-T2 ($t_{bear\_sum}$) & The minimum proportion of the traffic light's geometry matching $t_{bear}$. & $[0, 100\%]$ \\
-T3 ($t_{bear}$) & If segments of the traffic light geometry are angled more steeply to the route than this value, they are not counted for $t_{bear\_sum}$. & $[0^{\circ}, 180^{\circ}]$ \\
-T4 ($t_{inv}$) & Whether inverted traffic light geometries should be matched. & $[\text{False}, \text{True}]$ \\
-T5 ($t_{len\_sum}$) & The minimum proportion of the traffic light's geometry matching $t_{len}$. & $[0, 100\%]$ \\
-T6 ($t_{len}$) & If segments of the traffic light geometry are elongated or shortened more than $1 \pm t_{len}$ when projected onto the route, they are not counted for $t_{len\_sum}$. & $[0, 1]$\\
-T7 ($t_{road\_side}$) & If two overlapping traffic lights are on opposite sides of the route and less than this distance away, decide by the ordinary traffic side. & $[0, 100m]$ \\
-T8 ($t_{perfect\_match}$) & If a traffic light's geometry is closer to the route than this value, it is preferred over another overlapping traffic light geometry. & $[0, 50m]$ \\
-T9 ($t_{overlap\_pct}$) & If two traffic lights overlap more relative to their combined length, a decision process between both traffic lights is initiated. & $[0, 100\%]$ \\
+T1 ($t_{\text{dist}}$) & Traffic light geometries must be within this distance of the route. & $[1m, 100m]$ \\
+T2 ($t_{\text{bear\_sum}}$) & The minimum proportion of the traffic light's geometry matching $t_{\text{bear}}$. & $[0, 100\%]$ \\
+T3 ($t_{\text{bear}}$) & If segments of the traffic light geometry are angled more steeply to the route than this value, they are not counted for $t_{\text{bear\_sum}}$. & $[0^{\circ}, 180^{\circ}]$ \\
+T4 ($t_{\text{inv}}$) & Whether inverted traffic light geometries should be matched. & $[\text{False}, \text{True}]$ \\
+T5 ($t_{\text{len\_sum}}$) & The minimum proportion of the traffic light's geometry matching $t_{\text{len}}$. & $[0, 100\%]$ \\
+T6 ($t_{\text{len}}$) & If segments of the traffic light geometry are elongated or shortened more than $1 \pm t_{\text{len}}$ when projected onto the route, they are not counted for $t_{\text{len\_sum}}$. & $[0, 1]$\\
+T7 ($t_{\text{road\_side}}$) & If two overlapping traffic lights are on opposite sides of the route and less than this distance away, decide by the ordinary traffic side. & $[0, 100m]$ \\
+T8 ($t_{\text{perfect\_match}}$) & If a traffic light's geometry is closer to the route than this value, it is preferred over another overlapping traffic light geometry. & $[0, 50m]$ \\
+T9 ($t_{\text{overlap\_pct}}$) & If two traffic lights overlap more relative to their combined length, a decision process between both traffic lights is initiated. & $[0, 100\%]$ \\
 \bottomrule
 \end{tabular}
 \label{tab:hyperparameter-space}
@@ -457,7 +455,7 @@ To ensure comparability during the model testing process, each model feature pip
 \begin{itemize}
     \item The lane type of the traffic light. This property is extracted from the traffic light's metadata and one-hot-encoded.
     \item The roadside of the traffic light. To calculate this property, it is determined on which side of the route the first coordinate of the traffic light geometry is located.
-    \item The maximum and minimum bearing diffs between the traffic light geometry segments and their projections onto the route ($\bar{\Delta}_{bear_i}$).
+    \item The maximum and minimum bearing diffs between the traffic light geometry segments and their projections onto the route ($\bar{\Delta}_{\text{bear}_i}$).
     \item The change in route bearing from the first to the last route segment. 
     \item The first, last, and shortest distance between traffic light geometry coordinates and their projections onto the route.
     \item The length of the traffic light geometry's projection onto the route.
@@ -595,7 +593,7 @@ Two models were designed: the algorithmic model and the ML model. Each model was
 \caption{Tuned hyperparameters for the algorithmic matching model.}
 \resizebox{\linewidth}{!}{\begin{tabular}{@{}llllllllll@{}}
 \toprule
-\textbf{Ground Truth} & $t_{dist}$ & $t_{bear}$ & $t_{bear\_sum}$ & $t_{inv}$ & $t_{len}$ & $t_{len\_sum}$ & $t_{road\_side}$ &  $t_{perfect\_m.}$ & $t_{overlap}$ \\
+\textbf{Ground Truth} & $t_{\text{dist}}$ & $t_{\text{bear}}$ & $t_{\text{bear\_sum}}$ & $t_{\text{inv}}$ & $t_{\text{len}}$ & $t_{\text{len\_sum}}$ & $t_{\text{road\_side}}$ &  $t_{\text{perfect\_m.}}$ & $t_{\text{overlap}}$ \\
   \midrule
   OSM (2022) & 20m & 33° & 79\% & False & 0.99 & 93\% & 59m & 50m & 43\% \\
   OSM (2023) & 19m & 50° & 78\% & False & 0.96 & 77\% & 95m & 46m & 5\% \\
@@ -604,7 +602,7 @@ Two models were designed: the algorithmic model and the ML model. Each model was
 \label{tab:hyperparameter-tuning-results}
 \end{table}
 
-The specific model configurations are detailed in \Cref{tab:hyperparameter-tuning-results}. The hyperparameter tuning process selected similar values for the initial thresholds along the filter pipeline. Ignoring the parameters of the overlap matchers initially, notable differences are observed only in the chosen bearing threshold $t_{bear}$ and the length filter. While the 2023 model is less strict in filtering steeply angled lane geometries, the length filter is configured more strictly. This is not surprising, as the bearing and length filters pertain to similar properties between the route and the lane. The overlap matcher, which comes last in the filter pipeline, exhibits more pronounced differences between the two model variants. 
+The specific model configurations are detailed in \Cref{tab:hyperparameter-tuning-results}. The hyperparameter tuning process selected similar values for the initial thresholds along the filter pipeline. Ignoring the parameters of the overlap matchers initially, notable differences are observed only in the chosen bearing threshold $t_{\text{bear}}$ and the length filter. While the 2023 model is less strict in filtering steeply angled lane geometries, the length filter is configured more strictly. This is not surprising, as the bearing and length filters pertain to similar properties between the route and the lane. The overlap matcher, which comes last in the filter pipeline, exhibits more pronounced differences between the two model variants. 
 
 \Cref{fig:hyperparameter-contourplot} provides more detailed insights into interpreting the hyperparameter tuning. The figure shows the direction in which the parameter configuration was estimated to improve the maximum F1 score. As a foundation, this plot was generated using the training history of the 2023 model.
 
