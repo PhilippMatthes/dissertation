@@ -9,7 +9,7 @@ This chapter integrates concepts and results from a Diploma thesis, where the au
 
 \cite{lorenz_2022} \fullcite{lorenz_2022}
 
-Which specific parts have been contributed from the Diploma thesis will be referenced appropriately in \Cref{sec:lorenz1}, \Cref{sec:lorenz2}, \Cref{sec:lorenz3}, and \Cref{sec:lorenz4}. In the Diploma thesis, the author of this work proposed the DRN routing dataset as a potential solution for more accurate bike routing. The author of this work was also involved in the identification of concrete steps to merge the routing datasets together, as presented in this work. These include map conflation at the city border and the mapping of metadata. After completion of the Diploma thesis, the author of this work also developed the routing service further. Specifically, the metadata mapping of the "Wege in Grünflächen" path type and the allowance of bikes on certain path types were adjusted based on real-world test results. The mapping presented in this work (see \Cref{tab:tag-mapping}) documents these changes. Based on the further developed routing service, analysis results from the above Diploma thesis have also been reproduced and extended significantly in this work.
+Which specific parts have been contributed from the Diploma thesis will be referenced appropriately in \Cref{sec:lorenz1}, \Cref{sec:lorenz2}, \Cref{sec:lorenz3}, and \Cref{sec:lorenz4}. In the Diploma thesis, the author of this work was involved in the identification of DRN and concrete steps to merge the routing datasets together, as presented in this work. Specifically, these include map conflation at the city border and the mapping of metadata. The author was also involved substantially in the intermediate and final review process of the work. The author of this work fine-tuned the metadata mapping of the "Wege in Grünflächen" path type and the allowance of bikes on certain path types based on real-world test results. The mapping presented in this work (see \Cref{tab:tag-mapping}) documents these changes. Analysis results from the above Diploma thesis were reproduced and extended significantly in this work.
 \end{Summary}
 
 \section{Introduction}
@@ -103,7 +103,7 @@ Distinguished by its routing capability, the dataset encompasses interconnected 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-intersection.pdf}
-\caption{Alignment of OpenStreetMap vs. DRN with the intersection topology. [\hyperref[attribution]{Attribution}]}
+\caption{Alignment of OpenStreetMap vs. DRN with the intersection topology.}
 \label{fig:comparison}
 \end{figure}
 
@@ -118,7 +118,7 @@ Our final routing foundation will be established once metadata and geometric str
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn.pdf}
-\caption{An overview of the DRN dataset and its bike path types, as of December 23, 2023. [\hyperref[attribution]{Attribution}]}
+\caption{An overview of the DRN dataset and its bike path types, as of December 23, 2023.}
 \label{fig:drn-map}
 \end{figure}
 
@@ -194,7 +194,7 @@ Since multiple DRN paths may be connected to a single OpenStreetMap node, the sa
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/node-merging.pdf}
-\caption{Duplicated nodes (left) are merged (right) to avoid detours. Source: \cite{lorenz_2022}, [\hyperref[attribution]{Attribution}]}
+\caption{Duplicated nodes (left) are merged (right) to avoid detours. Source: \cite{lorenz_2022}}
 \label{fig:node-merging}
 \end{figure}
 
@@ -209,7 +209,7 @@ The second issue in the DRN dataset requiring additional processing is non-cross
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/oneway-travel-fix.pdf}
-\caption{Detour (left) that can be fixed by enabling opposite-direction one-way travel on foot (right), compared to OpenStreetMap route (blue). Source: \cite{lorenz_2022}, [\hyperref[attribution]{Attribution}]}
+\caption{Detour (left) that can be fixed by enabling opposite-direction one-way travel on foot (right), compared to OpenStreetMap route (blue). Source: \cite{lorenz_2022}}
 \label{fig:oneway-travel-fix}
 \end{figure}
 
@@ -222,7 +222,7 @@ Having addressed the issues of duplicated nodes and detours due to non-crossable
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-border.pdf}
-\caption{Example of stitching around the DRN dataset's border. [\hyperref[attribution]{Attribution}]}
+\caption{Example of stitching around the DRN dataset's border.}
 \label{fig:routing-drn-osm-border}
 \end{figure}
 
@@ -238,7 +238,7 @@ So far, we have investigated how to establish a routing foundation based on the 
 
 \subsubsection{Automated Deployment}
 
-\begin{figure}[b]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/load-distribution-containerization-preheating.pdf}
 \caption{CI/CD pipeline for automated rollouts of routing network updates.}
@@ -262,7 +262,7 @@ Here, a short routing option was also provided preliminarily, in addition to fas
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-profile-mapping.pdf}
-\caption{Mapping of routing profiles for route personalization. [\hyperref[attribution]{Attribution}]}
+\caption{Mapping of routing profiles for route personalization.}
 \label{fig:routing-profile-mapping}
 \end{figure}
 
@@ -351,7 +351,7 @@ After we compare the routing accuracy to a hand-drawn ground truth and traffic l
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-map.pdf}
-\caption{Mapping of path types. [\hyperref[attribution]{Attribution}]}
+\caption{Mapping of path types.}
 \label{fig:routing-drn-osm-map}
 \end{figure}
 
@@ -364,7 +364,7 @@ The structural differences are highlighted in \Cref{fig:routing-drn-osm-map}. He
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-map-surfaces.pdf} 
-\caption{Mapping of surface types. [\hyperref[attribution]{Attribution}]}
+\caption{Mapping of surface types.}
 \label{fig:routing-drn-osm-map-surfaces}
 \end{figure}
 
@@ -379,7 +379,7 @@ To measure the alignment of generated bike routes with actual cycling infrastruc
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-hand-drawn-ground-truth.pdf}
-\caption{Best-fit routes for each routing provider in relation to the hand-drawn ground truth. [\hyperref[attribution]{Attribution}]}
+\caption{Best-fit routes for each routing provider in relation to the hand-drawn ground truth.}
 \label{fig:routing-hand-drawn-ground-truth}
 \end{figure}
 
@@ -423,20 +423,20 @@ Google Maps & Hausdorff distance (m) & 216.4 & 8.7 & 19.3 & 26.3 & 52.6 & 16.7 \
 \bottomrule
 \end{tabular}
 }
-\caption{Measured deviations from actual bike infrastructure. Source for DRN and OpenStreetMap results: \cite{lorenz_2022}}%
+\caption{Measured deviations from actual bike infrastructure. DRN and OpenStreetMap results (Hausdorff distance and mean distance) were reproduced from \cite{lorenz_2022}}%
 \label{tab:accuracy-comparison}%
 \end{table}
 
 The alignment is measured by two metrics: the Hausdorff distance, an established measure to calculate two geometries' shapes, and the mean distance, as calculated through the Vincenty estimator, accurate up to 0.5mm. Based on Max Lorenz's \cite{lorenz_2022} method, the Hausdorff distance is calculated through the Shapely\footnote{\url{https://github.com/shapely/shapely}} Python library in the EPSG:32633\footnote{\url{https://epsg.io/32633}} projection that utilizes meters as a distance unit. In our extended study, it is also utilized as a reference to determine the best-fitting route. To measure detours and the overall estimation quality of path length, we also calculate the difference in length, subtracting the length of the reference geometry from the route's length, again using the Vincenty estimator. Here, negative values indicate an underestimation, and positive values indicate an overestimation of the actual path length.
 
-As depicted in \Cref{fig:routing-hand-drawn-ground-truth}, four routing providers are compared: our method DRN, OpenStreetMap using a GraphHopper, the Bing Maps routing API\footnote{\url{https://learn.microsoft.com/en-us/bingmaps/rest-services/routes/calculate-a-route}}, and the Google Maps routing API\footnote{\url{https://developers.google.com/maps/documentation/routes/reference/rest/v2/TopLevel/computeRoutes?hl=de}}. For DRN and OpenStreetMap, the GraphHopper routing profile \texttt{bike2} is utilized. For Google Maps, \texttt{travelMode=\allowbreak BICYCLE} is selected. Bing Maps is utilized by the modes \texttt{Driving} and \texttt{Walking} as no bike mode was available to determine which option is the best proxy for a bike route.
+As depicted in \Cref{fig:routing-hand-drawn-ground-truth}, four routing providers are compared: our method DRN, OpenStreetMap using a GraphHopper, the Bing Maps routing API\footnote{\url{https://learn.microsoft.com/en-us/bingmaps/rest-services/routes/calculate-a-route}}, and the Google Maps routing API\footnote{\url{https://developers.google.com/maps/documentation/routes/reference/rest/v2/TopLevel/computeRoutes}}. For DRN and OpenStreetMap, the GraphHopper routing profile \texttt{bike2} is utilized. For Google Maps, \texttt{travelMode=\allowbreak BICYCLE} is selected. Bing Maps is utilized by the modes \texttt{Driving} and \texttt{Walking} as no bike mode was available to determine which option is the best proxy for a bike route.
 
 The best fits are highlighted in \Cref{fig:routing-hand-drawn-ground-truth}. In example (b), it can be seen that the DRN bike route aligns almost perfectly with the hand-drawn reference track. The OpenStreetMap route generated by GraphHopper tends to switch between the bike path and the center of the road -- a behavior seen before in \Cref{ch:matching} with this routing foundation. However, OpenStreetMap is still closer to the bike infrastructure than Google and Bing Maps routing profiles. In this case, choosing the \texttt{Walking} profile for Bing Maps seems to make no significant difference in whether the footpath is chosen.
 
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-convergence-process.pdf}
-\caption{Visualization of routing convergence depending on the number of waypoints interpolated along the desired trajectory. [\hyperref[attribution]{Attribution}]}
+\caption{Visualization of routing convergence depending on the number of waypoints interpolated along the desired trajectory.}
 \label{fig:routing-convergence-process}
 \end{figure}
 
@@ -453,7 +453,7 @@ This first study already gives us some initial insights into the accuracy of the
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-drn.pdf}
-\caption{DRN 2023 traffic light matching ground truth. [\hyperref[attribution]{Attribution}]}
+\caption{DRN 2023 traffic light matching ground truth.}
 \label{fig:matching-ground-truth-drn}
 \end{figure}
 
@@ -570,10 +570,10 @@ Finally, we assess the alignment of the DRN network with user journeys and exami
 
 By overlaying the GNSS trajectories of users onto both routing networks, we can determine whether the actual positions align more closely with the OpenStreetMap network or the DRN network. It is important to note again that GNSS positions naturally vary around the actual position. However, considering the mass of tracks, we should observe a discernible trend, assuming GNSS approximates a normal distribution around the actual position and systematic effects like GNSS drift are negligible in the variety of tracks.
 
-\begin{figure}[!b]
+\begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-mapmatching-distance.pdf}
-\caption{Alignment of user trajectories with DRN and OpenStreetMap paths. [\hyperref[attribution]{Attribution}]}
+\caption{Alignment of user trajectories with DRN and OpenStreetMap paths.}
 \label{fig:routing-mapmatching-distance}
 \end{figure}
 

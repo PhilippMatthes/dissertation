@@ -28,7 +28,9 @@ While cars are usually restricted by a few available lanes, cyclists or pedestri
 
 This chapter aims to address this problem and develop a practical solution for cyclist traffic light matching. First, we review related works and how they address the problem, identifying three core approaches: vision-based using cameras or similar sensors for traffic light identification, location-based using global navigation and satellite systems (GNSS) for lane positioning, and route-based using semantic information such as turns for lane selection. We find that route-based approaches are currently the most promising for bicycle applications. 
 
-Based on this finding, two new route-based traffic light matching methods are proposed: algorithmic and Machine Learning (ML) methods. We also focus on approaches that did not yield the desired results and the reasons behind them. Finally, we evaluate the accuracy of the developed approach using multiple ground truths to make well-founded statements about the method's suitability. A critical summary of the state-of-the-art, developed methods and results is provided to indicate future work directions.
+Based on this finding, two new route-based traffic light matching methods are proposed. As a foundation for our approach, we will utilize traffic light geometries. These geometries each follow the turn's shape that is served by an individual traffic light, often referred to in traffic engineering as a "connection" on an intersection. Each traffic light geometry connects an individual ingress lane at an intersection with a corresponding egress lane following the associated turn. The goal of this chapter is to find methods that can compare these traffic light geometries to the route geometry and tell which traffic lights match the given trajectory.
+
+To achieve this goal, we will develop an algorithmic and a Machine Learning (ML) method. We also focus on approaches that did not yield the desired results and the reasons behind them. Finally, we evaluate the accuracy of the developed approach using multiple ground truths to make well-founded statements about the method's suitability. A critical summary of the state-of-the-art, developed methods and results is provided to indicate future work directions.
 
 \section{Related Work}
 
@@ -95,7 +97,7 @@ We aim to address the described research gap as follows. In this concept, we wil
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-example.png}
-\caption{In this case, the OpenStreetMap route does not accurately depict the cyclist's most optimal path and runs over car traffic light 1. In reality, the bike path and four bike/pedestrian traffic lights to the right of the route are utilized: 2, 3, 4, and 5. Source: \cite{matthes2023geo}, [\hyperref[attribution]{Attribution}]}
+\caption{In this case, the OpenStreetMap route does not accurately depict the cyclist's most optimal path and runs over car traffic light 1. In reality, the bike path and four bike/pedestrian traffic lights to the right of the route are utilized: 2, 3, 4, and 5. Source: \cite{matthes2023geo}}
 \label{fig:sg-selection-example}
 \end{figure}
 
@@ -114,7 +116,7 @@ Assuming that cyclists will follow specific movement patterns at each intersecti
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-ground-truth.pdf}
-\caption{Ground truth creation process through the developed Route Composer app. Sources: \cite{matthes2022matching, matthes2023geo},  [\hyperref[attribution]{Attribution}]}
+\caption{Ground truth creation process through the developed Route Composer app. Sources: \cite{matthes2022matching, matthes2023geo}}
 \label{fig:sg-selection-ground-truth}
 \end{figure}
 
@@ -149,9 +151,9 @@ While exploring potential methods to solve the traffic light matching problem, s
 
 \subsubsection{H3 Approach}
 
-The H3 approach is based on an idea by colleagues who applied a similar method to cluster inaccurately aligned GNSS paths, obtaining the main directions of intersection traversal and stopping points. The core of this approach is the H3 raster, which subdivides the earth primarily into hexagonal cells\footnote{Strictly speaking, the H3 raster has 12 additional pentagons on every level to complete a seamless shape. See: \url{https://h3geo.org/docs/core-library/restable/}}. On the top resolution level (1), there are 122 cells covering the earth's surface. On level 2, the 122 cells are subdivided into 842 cells, and so forth. As a result, the H3 model contains 15 levels, which are hierarchically connected in a tree structure. This hierarchical structure makes it possible to efficiently navigate through the index, e.g., to find neighbor cells. 
+The H3 approach emerged from the Movebis\footnote{\url{https://bmdv.bund.de/SharedDocs/DE/Artikel/DG/mfund-projekte/verbesserung-der-fahrradinfrastruktur-movebis.html}} project which applied a similar method to cluster inaccurately aligned GNSS paths, obtaining the main directions of intersection traversal and stopping points. The core of this approach is the H3 raster, which subdivides the earth primarily into hexagonal cells\footnote{Strictly speaking, the H3 raster has 12 additional pentagons on every level to complete a seamless shape. See: \url{https://h3geo.org/docs/core-library/restable/}}. On the top resolution level (1), there are 122 cells covering the earth's surface. On level 2, the 122 cells are subdivided into 842 cells, and so forth. As a result, the H3 model contains 15 levels, which are hierarchically connected in a tree structure. This hierarchical structure makes it possible to efficiently navigate through the index, e.g., to find neighbor cells. 
 
-In the work by colleagues, after the GNSS samples of each user track were assigned to an H3 cell, the resulting cells each contained a number of samples and travel direction (edge of the H3 cell), resembling a histogram of the trajectories spatially aligned with the intersections. Assuming a normally distributed GNSS scattering around the actual position, the buckets could then be used to sift out the most frequently used pathways of cyclists statistically. Minor GNSS errors or individualities in the user movement do not fall into weight as they are clustered together. Since this approach was described as remarkably successful, the fundamental idea was further explored to identify potential methods for aligning the traffic light geometries with the inaccurate bike route.
+In the Movebis project, after the GNSS samples of each user track were assigned to an H3 cell, the resulting cells each contained a number of samples and travel direction (edge of the H3 cell), resembling a histogram of the trajectories spatially aligned with the intersections. Assuming a normally distributed GNSS scattering around the actual position, the buckets could then be used to sift out the most frequently used pathways of cyclists statistically. Minor GNSS errors or individualities in the user movement do not fall into weight as they are clustered together. Since this approach was found useful in the Movebis project, the fundamental idea was further explored to identify potential methods for aligning the traffic light geometries with the inaccurate bike route.
 
 \begin{figure}[t]
 \centering
@@ -169,7 +171,7 @@ One identified improvement possibility was applying a relative scoring schema fo
 \begin{figure}[t]
 \centering
 \frame{\includegraphics[width=\linewidth]{images/sg-selection-h3-example.png}}
-\caption{Example of four traffic lights matched using the H3 approach along the route. [\hyperref[attribution]{Attribution}]}
+\caption{Example of four traffic lights matched using the H3 approach along the route.}
 \label{fig:sg-selection-h3-example}
 \end{figure}
 
@@ -199,7 +201,7 @@ Which penalty value and intersection padding to choose may depend on each inters
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/matching-dijkstra-correct.pdf}
-\caption{Examples of correct matching using the graph approach. [\hyperref[attribution]{Attribution}]}
+\caption{Examples of correct matching using the graph approach.}
 \label{fig:sg-selection-graph-example}
 \end{figure}
 
@@ -208,7 +210,7 @@ After tuning the model to the ground truth, the model reached an F1 score of 75.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/matching-dijkstra-incorrect.pdf}
-\caption{Examples of false matching using the graph approach. [\hyperref[attribution]{Attribution}]}
+\caption{Examples of false matching using the graph approach.}
 \label{fig:sg-selection-graph-fails}
 \end{figure}
 
@@ -221,16 +223,16 @@ However, the final result is still not convincing, considering that the measured
 
 Option one initially may seem like a good choice here. However, this strategy would worsen another problem highlighted in \Cref{fig:sg-selection-graph-fails}: traffic light geometries are often falsely traversed because their exit point is slightly more proximal to the egress point. A higher penalty amplifies this problem. Thus, option two was implemented instead. 
 
-Unfortunately, the result of the adjusted graph generation procedure's result is a worse F1 score after hyperparameter tuning of 60.7\% (penalty = 9.68, intersection padding = 42m). In many cases, the model would now avoid shortcutting as intended, but the model would also be noticeably more strict. The reason is that the traffic lights' geometries are no longer connected but rather through the route (see \Cref{fig:sg-selection-graph-strict}). Jumping on and off the traffic light geometries would often be a worse option for the pathfinding algorithm than staying on the route, even with a remarkably higher penalty. 
-
-Another variation of the graph-based approach would be to cut out the intersections, reconnect the OSM paths via the traffic light geometries, and then calculate the route using these. However, the main problems here are similar, especially the problem of connecting the traffic light geometries and the problem of stitching at the edges. Thus, this idea was not further explored.
-
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/matching-dijkstra-strict.pdf}
-\caption{Examples of matching using the adjusted graph generation procedure. [\hyperref[attribution]{Attribution}]}
+\caption{Examples of matching using the adjusted graph generation procedure.}
 \label{fig:sg-selection-graph-strict}
 \end{figure}
+
+Unfortunately, the result of the adjusted graph generation procedure's result is a worse F1 score after hyperparameter tuning of 60.7\% (penalty = 9.68, intersection padding = 42m). In many cases, the model would now avoid shortcutting as intended, but the model would also be noticeably more strict. The reason is that the traffic lights' geometries are no longer connected but rather through the route (see \Cref{fig:sg-selection-graph-strict}). Jumping on and off the traffic light geometries would often be a worse option for the pathfinding algorithm than staying on the route, even with a remarkably higher penalty. 
+
+Another variation of the graph-based approach would be to cut out the intersections, reconnect the OSM paths via the traffic light geometries, and then calculate the route using these. However, the main problems here are similar, especially the problem of connecting the traffic light geometries and the problem of stitching at the edges. Thus, this idea was not further explored.
 
 Although the developed graph-based methods initially promised good results, they were ultimately not further studied in favor of more promising ideas. Even if the graph approach seems less susceptible to offsets and longer traffic light geometries, it falls short when considering the curvature and not only the absolute location of the traffic light geometries. In the end, only the start and end points of each traffic light geometry are considered. However, the curvature is similarly essential to decide which traffic light could match the associated route.
 
@@ -252,7 +254,7 @@ The approach by Newson and Krumm (2009) \cite{newson_hidden_2009} is utilized as
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-map-matching-fails.pdf}
-\caption{Distortion of traffic light geometries after map-matching. [\hyperref[attribution]{Attribution}]}
+\caption{Distortion of traffic light geometries after map-matching.}
 \label{fig:sg-selection-map-matching-fails}
 \end{figure}
 
@@ -466,7 +468,7 @@ A feature scaling algorithm is employed to optimize the ML model's learning and 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-overlap-cleanup.pdf}
-\caption{Model selection without (left) and with (right) overlap cleanup. Source: \cite{matthes2023geo}, [\hyperref[attribution]{Attribution}]}
+\caption{Model selection without (left) and with (right) overlap cleanup. Source: \cite{matthes2023geo}}
 \label{fig:sg-selection-overlap-cleanup}
 \end{figure}
 
@@ -509,7 +511,7 @@ As of December 8, 2023, 85.6\% of the 791 available intersection nodes in the sy
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/lanes-map.pdf}
-\caption{Types of transport modes served by traffic lights in Hamburg (extracted from metadata). [\hyperref[attribution]{Attribution}]}
+\caption{Types of transport modes served by traffic lights in Hamburg (extracted from metadata).}
 \label{fig:lanes-map}
 \end{figure}
 
@@ -537,7 +539,7 @@ The development of the route-based matching method involved creating several gro
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-osm-old.pdf}
-\caption{OSM 2022 ground truth for model training and evaluation. [\hyperref[attribution]{Attribution}]}
+\caption{OSM 2022 ground truth for model training and evaluation.}
 \label{fig:matching-ground-truth-osm-old}
 \end{figure}
 
@@ -552,7 +554,7 @@ While only 549 unique connections are identified at least once as a "match," an 
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-osm.pdf}
-\caption{Additional OSM 2023 ground truth for model training and evaluation. [\hyperref[attribution]{Attribution}]}
+\caption{Additional OSM 2023 ground truth for model training and evaluation.}
 \label{fig:matching-ground-truth-osm}
 \end{figure}
 
