@@ -8,6 +8,8 @@ This chapter is based on the following paper in which the author was the princip
 This chapter integrates concepts and results from a Diploma thesis, where the author identified the topic and was also involved as the primary supervisor:
 
 \cite{lorenz_2022} \fullcite{lorenz_2022}
+
+Which specific parts have been contributed from the Diploma thesis will be referenced appropriately in \Cref{sec:lorenz1}, \Cref{sec:lorenz2}, \Cref{sec:lorenz3}, and \Cref{sec:lorenz4}. In the Diploma thesis, the author of this work proposed the DRN routing dataset as a potential solution for more accurate bike routing. The author of this work was also involved in the identification of concrete steps to merge the routing datasets together, as presented in this work. These include map conflation at the city border and the mapping of metadata. After completion of the Diploma thesis, the author of this work also developed the routing service further. Specifically, the metadata mapping of the "Wege in Grünflächen" path type and the allowance of bikes on certain path types were adjusted based on real-world test results. The mapping presented in this work (see \Cref{tab:tag-mapping}) documents these changes. Based on the further developed routing service, analysis results from the above Diploma thesis have also been reproduced and extended significantly in this work.
 \end{Summary}
 
 \section{Introduction}
@@ -92,7 +94,7 @@ The concept aims to address the described research gaps in two ways. First, we d
 
 In the second part of our concept, we focus on the routing's integration into our bike-GLOSA app. Using the full automatability of our concept, we develop an integration pipeline that delivers day-accurate map materials to the app's users. We discuss how route personalization is realized and which digital elevation model is selected to provide inclination-sensitive routing. Afterward, we address the described scarcity in investigations of distance-to-signal estimation by discussing our concrete method in more detail, including the role of routing in our GNSS error correction. To complete the picture, we will briefly examine our method for automated rerouting.
 
-\subsection{DRN Routing}
+\subsection{DRN Routing}\label{sec:lorenz1}
 
 The DRN dataset is an authoritative routing network for Hamburg, designed explicitly for bicycle paths. Published by the Free and Hanseatic City of Hamburg, Behörde für Verkehr und Mobilitätswende (BVM), it is made available under the DL-DE BY-2.0\footnote{\url{https://www.govdata.de/dl-de/by-2-0}} license. The dataset undergoes continuous updates and is currently in production as of 2023. Users can access the dataset through a public interface at no cost. 
 
@@ -204,7 +206,7 @@ This method assumes small distances between the coordinates that are not noticea
 
 The second issue in the DRN dataset requiring additional processing is non-crossable roads, as highlighted in \Cref{fig:oneway-travel-fix}. Since bike paths on both roadsides are captured as individual geometries in the DRN dataset, there may be long road segments with bike paths running in parallel. However, without interconnections between the roadsides, the route cannot also cross the road. Sometimes, this represents a problem since side roads attached to the opposite roadside can only be reached by long detours. This is a lesser problem with OpenStreetMap since it often captures roads as a singular path running in the center of all lanes.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/oneway-travel-fix.pdf}
 \caption{Detour (left) that can be fixed by enabling opposite-direction one-way travel on foot (right), compared to OpenStreetMap route (blue). Source: \cite{lorenz_2022}, [\hyperref[attribution]{Attribution}]}
@@ -344,7 +346,7 @@ In the third part of our evaluation, we will revisit the traffic light matching 
 
 After we compare the routing accuracy to a hand-drawn ground truth and traffic light geometries, we validate our results with our users' recorded GNSS trajectories. In this study, we also compare our approach to distance-to-signal estimation with the linear distance approach to find in which situations our approach may perform better or worse. Finally, we will investigate where and how often users deviate from precalculated routes and its relationship to the preselected routing profile.
 
-\subsection{Completeness}
+\subsection{Completeness}\label{sec:lorenz2}
 
 \begin{figure}[t]
 \centering
@@ -366,13 +368,11 @@ The structural differences are highlighted in \Cref{fig:routing-drn-osm-map}. He
 \label{fig:routing-drn-osm-map-surfaces}
 \end{figure}
 
-On the other hand, as seen in \Cref{fig:routing-drn-osm-map-surfaces}, OpenStreetMap contains large proportions of paths with an unclassified surface. Overall, only 66.4\% (7,014.52 km) of paths in OpenStreetMap's representation of Hamburg are tagged with a surface instead of 99.9\% (7,682.24 km) in the DRN network. However, OpenStreetMap also contains an additional surface quality tag for 783.56 km (7.4\%), which is not mapped by our approach but can be parsed by GraphHopper as an additional source of information to estimate the path speed\footnote{\url{https://github.com/graphhopper/graphhopper/blob/71d2de049f2f4f52453a6fb1b7d558b9f0fa011f/core/src/main/java/com/graphhopper/routing/util/parsers/BikeCommonAverageSpeedParser.java\#L103}}. 
-
-Other metadata, such as road width, is even rarer in OpenStreetMap, with only 9.2\% (704.47 km) of paths containing this information, in contrast to 99.9\% (7,687.69 km) in the DRN routing foundation. An additional property analyzed is the coverage of velo routes, which resides at 1,794.55 km in OpenStreetMap and 1,149.8 km in DRN.
+On the other hand, as seen in \Cref{fig:routing-drn-osm-map-surfaces}, OpenStreetMap contains large proportions of paths with an unclassified surface. Overall, only 66.4\% (7,014.52 km) of paths in OpenStreetMap's representation of Hamburg are tagged with a surface instead of 99.9\% (7,682.24 km) in the DRN network. However, OpenStreetMap also contains an additional surface quality tag for 783.56 km (7.4\%), which is not mapped by our approach but can be parsed by GraphHopper as an additional source of information to estimate the path speed\footnote{\url{https://github.com/graphhopper/graphhopper/blob/71d2de049f2f4f52453a6fb1b7d558b9f0fa011f/core/src/main/java/com/graphhopper/routing/util/parsers/BikeCommonAverageSpeedParser.java\#L103}}. Other metadata, such as road width, is even rarer in OpenStreetMap, with only 9.2\% (704.47 km) of paths containing this information, in contrast to 99.9\% (7,687.69 km) in the DRN routing foundation. An additional property analyzed is the coverage of velo routes, which resides at 1,794.55 km in OpenStreetMap and 1,149.8 km in DRN. These results are based on Max Lorenz's \cite{lorenz_2022} evaluation.
 
 Despite fewer paths being captured, the DRN network offers more detailed and well-documented path segments, with a higher percentage tagged with surface information, road width, and other valuable metadata. As DRN aims to capture bike paths accurately to their actual position, it is generally not a problem if intermodal connections are not contained. However, a higher coverage of green spaces and accessory paths could be desirable. 
 
-\subsection{Alignment with Actual Bike Paths}\label{sec:routing-alignment}
+\subsection{Alignment with Actual Bike Paths}\label{sec:routing-alignment}\label{sec:lorenz3}
 
 To measure the alignment of generated bike routes with actual cycling infrastructure, we create a separate ground truth by hand-drawing reference bike paths with the help of satellite imagery. Although we will not reach centimeter-level accuracy with this method, it will help measure general misalignments in the bike routes we previously encountered. This method generally assumes relatively recent satellite image tiles aligned well with the actual position using an appropriate projection.
 
@@ -383,7 +383,9 @@ To measure the alignment of generated bike routes with actual cycling infrastruc
 \label{fig:routing-hand-drawn-ground-truth}
 \end{figure}
 
-As part of Max Lorenz's work \cite{lorenz_2022}, six reference tracks were created, containing three pairs of routes running in opposite directions: one from east to west and one from west to east. These reference tracks are depicted in \Cref{fig:routing-hand-drawn-ground-truth} as red cross-marks. Afterward, routes are generated by the map providers and compared for alignment with the reference geometry. Although it would be possible to use corresponding map-matching APIs here, the intention is to emulate user behavior in creating waypoints and check whether the generated route matches the reference geometry. In this experiment, we assume that the user wants to follow the reference geometry as accurately as possible.
+As part of Max Lorenz's work \cite{lorenz_2022}, six reference tracks were created, containing three pairs of routes running in opposite directions: one from east to west and one from west to east. These reference tracks are depicted in \Cref{fig:routing-hand-drawn-ground-truth} as red cross-marks. Afterward, routes are generated by the map providers and compared for alignment with the reference geometry. The results from Max Lorenz's work \cite{lorenz_2022}, which were focused on a comparison between DRN and OpenStreetMap, are augmented with Google Maps and Bing Maps as other alternative route providers.
+
+Although it would be possible to use corresponding map-matching APIs here, the intention is to emulate user behavior in creating waypoints and check whether the generated route matches the reference geometry. In this experiment, we assume that the user wants to follow the reference geometry as accurately as possible.
 
 One challenge during this process is a curved reference geometry such as \texttt{3\_West\_Ost}, which tends to be shortcutted via a more direct connection between start and endpoints. Thus, assuming that a user wants to follow the reference track, the number of waypoints is gradually increased from 2 to 10 using the same waypoint interpolation across all compared providers. In each step, the alignment is measured, ultimately taking the best fit out of all attempts to give each provider multiple chances at generating the most accurate route. In this way, not only the best alignment is measured, but also the tendency to deviate from an intended route even when new waypoints are added, indicating the user's intention.
 
@@ -425,7 +427,7 @@ Google Maps & Hausdorff distance (m) & 216.4 & 8.7 & 19.3 & 26.3 & 52.6 & 16.7 \
 \label{tab:accuracy-comparison}%
 \end{table}
 
-The alignment is measured by two metrics: the Hausdorff distance, an established measure to calculate two geometries' shapes, and the mean distance, as calculated through the Vincenty estimator, accurate up to 0.5mm. The Hausdorff distance is calculated through the Shapely\footnote{\url{https://github.com/shapely/shapely}} Python library in the EPSG:32633\footnote{\url{https://epsg.io/32633}} projection that utilizes meters as a distance unit. It is also utilized as a reference to determine the best-fitting route. To measure detours and the overall estimation quality of path length, we also calculate the difference in length, subtracting the length of the reference geometry from the route's length, again using the Vincenty estimator. Here, negative values indicate an underestimation, and positive values indicate an overestimation of the actual path length.
+The alignment is measured by two metrics: the Hausdorff distance, an established measure to calculate two geometries' shapes, and the mean distance, as calculated through the Vincenty estimator, accurate up to 0.5mm. Based on Max Lorenz's \cite{lorenz_2022} method, the Hausdorff distance is calculated through the Shapely\footnote{\url{https://github.com/shapely/shapely}} Python library in the EPSG:32633\footnote{\url{https://epsg.io/32633}} projection that utilizes meters as a distance unit. In our extended study, it is also utilized as a reference to determine the best-fitting route. To measure detours and the overall estimation quality of path length, we also calculate the difference in length, subtracting the length of the reference geometry from the route's length, again using the Vincenty estimator. Here, negative values indicate an underestimation, and positive values indicate an overestimation of the actual path length.
 
 As depicted in \Cref{fig:routing-hand-drawn-ground-truth}, four routing providers are compared: our method DRN, OpenStreetMap using a GraphHopper, the Bing Maps routing API\footnote{\url{https://learn.microsoft.com/en-us/bingmaps/rest-services/routes/calculate-a-route}}, and the Google Maps routing API\footnote{\url{https://developers.google.com/maps/documentation/routes/reference/rest/v2/TopLevel/computeRoutes?hl=de}}. For DRN and OpenStreetMap, the GraphHopper routing profile \texttt{bike2} is utilized. For Google Maps, \texttt{travelMode=\allowbreak BICYCLE} is selected. Bing Maps is utilized by the modes \texttt{Driving} and \texttt{Walking} as no bike mode was available to determine which option is the best proxy for a bike route.
 
@@ -446,7 +448,7 @@ Overall, OpenStreetMap quickly converges the desired paths in these examples as 
 
 This first study already gives us some initial insights into the accuracy of the routing foundations. However, there are also some aspects to consider. Assuming the seen issues originated in a non-captured path within the routing foundations, we could have picked bad examples here by accident. Thus, the unnecessary detours may not be seen on all routes. To rule this aspect out, we would need a larger sample size. Addressing this issue, we will conduct larger-scale quality comparisons in the following sections.
 
-\subsection{Alignment with Traffic Light Geometries}
+\subsection{Alignment with Traffic Light Geometries} \label{sec:lorenz4}
 
 \begin{figure}[t]
 \centering 
