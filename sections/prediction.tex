@@ -60,7 +60,7 @@ Due to the increased availability of traffic light data, it also becomes more vi
 \footnotesize{(a) Fixed-time} & \footnotesize{(b) Partially adaptive} & \footnotesize{(c) Fully adaptive} \\
 \includegraphics[width=0.3\linewidth]{images/explanation-fixed-time.png} & \includegraphics[width=0.3\linewidth]{images/explanation-partially-adaptive.png} & \includegraphics[width=0.3\linewidth]{images/explanation-fully-adaptive.png}
 \end{tabular}
-\caption{Probabilistic (cycle-stacking) method for prediction and its reaction to traffic-adaptive switching.}
+\caption{Taxonomy of the three types of traffic light adaptivity. Seen are the traffic light program cycles that contain the switched colors. }
 \label{fig:prediction}
 \end{figure}
 
@@ -255,7 +255,7 @@ Out of the 19951 traffic lights, 5477 are designated for use by cyclists and wer
     \caption{Cadvisor statistics for prediction service.}\label{fig:monitoring-prediction-service-load}
 \end{figure}
 
-Based on collected Cadvisor\footnote{\url{https://github.com/google/cadvisor}} metrics on CPU load, RAM usage, and network load, the prediction algorithm scaled well to the multiple thousand traffic lights. The algorithm was implemented in a Java service that also controlled receiving Observations and sending Predictions to our prediction MQTT broker. We measured the service on a TU Dresden Enterprise VM with 6 CPU cores. The CPU percentage utilization of the prediction service was measured via CPU time. In this context, the service consumes approximately 60\% of the CPU time of a single CPU, translating to around 10\% of the total possible computing capacity when considering the 6 CPUs available on our VM. Both network usage and RAM consumption also remained within acceptable limits. 
+Based on collected Cadvisor\footnote{\url{https://github.com/google/cadvisor}} metrics on CPU load, RAM usage, and network load, the prediction algorithm scaled well to the multiple thousand traffic lights. The algorithm was implemented in a Java service that also controlled receiving Observations and sending Predictions to our prediction MQTT broker. We measured the service on a TU Dresden server using 6 of 12 cores of an Intel Xeon Gold 6136 CPU running at 3.00 GHz. The CPU percentage utilization of the prediction service was measured via CPU time. In this context, the service consumes approximately 60\% of the CPU time of a single CPU, translating to around 10\% of the total possible computing capacity when considering the 6 CPUs available on our VM. Both network usage and RAM consumption also remained within acceptable limits. 
 
 \begin{figure}[t]
     \centering
