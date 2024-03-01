@@ -60,7 +60,7 @@ Due to the increased availability of traffic light data, it also becomes more vi
 \footnotesize{(a) Fixed-time} & \footnotesize{(b) Partially adaptive} & \footnotesize{(c) Fully adaptive} \\
 \includegraphics[width=0.3\linewidth]{images/explanation-fixed-time.png} & \includegraphics[width=0.3\linewidth]{images/explanation-partially-adaptive.png} & \includegraphics[width=0.3\linewidth]{images/explanation-fully-adaptive.png}
 \end{tabular}
-\caption{Taxonomy of the three types of traffic light adaptivity. Seen are the traffic light program cycles that contain the switched colors. With a fixed-time switc}
+\caption{Taxonomy of the three types of traffic light adaptivity. Seen are the traffic light program cycles that contain the switched colors. On the bottom, we see a probabilistic prediction generated from the cycles and how the different types of adaptive switching behavior influence it.}
 \label{fig:prediction}
 \end{figure}
 
@@ -110,10 +110,10 @@ One challenge of using the Traffic Lights Data platform for prediction and speed
 
 The Traffic Lights Data platform was designed based on an existing traffic controller infrastructure and implemented by various stakeholders. The system design of the platform follows these technical and organizational constraints, resulting in a rather complex chain of information. As we will later see, precisely understanding this chain of information is crucial to tracing data issues that may arise. Thus, through dialogues with various Hamburg authorities, we reconstructed a precise picture of the infrastructure and potential points of failure.
 
-\begin{figure}[!b]
+\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/traffic-light-data-infrastructure.pdf}
-\caption{Designed traffic light data adapter for Hamburg's Traffic Lights Data platform.}
+\caption{Data flow diagram of the established traffic light data infrastructure. Highlighted in grey are the components of the Traffic Lights Data infrastructure. Blue components highlight our implemented data adapter and prediction services.}
 \label{fig:traffic-light-data-infrastructure}
 \end{figure}
 
@@ -128,7 +128,7 @@ At its foundation, the integrated prediction method is equivalent to the probabi
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/monitoring-screenshot.png}
-\caption{Screenshot of the developed monitoring solution.}
+\caption{Screenshot of the developed monitoring solution. Within the Grafana dashboard, three key aspects of data quality can be observed: the number of messages (top right), the distribution of prediction quality (bottom right), and the quality of predictions throughout the city (left).}
 \label{fig:monitoring-screenshot}
 \end{figure}
 
@@ -174,7 +174,7 @@ Since the wait time diversity does not necessarily capture the amount of shift b
 \begin{table}[!b]
 \centering
 \def\arraystretch{1.5}
-\caption{Types of predictability mapped by our two metrics.}
+\caption{Types of predictability mapped by our two metrics. This schema can be utilized to determine which kind of prediction algorithm may be suitable.}
 \label{tab:cases}
 \begin{tabular}{c|c|c|}
 \multicolumn{1}{c}{} & \multicolumn{2}{c}{Cycle Discrepancy} \\
@@ -236,7 +236,7 @@ The second part of the evaluation focuses on our study of traffic light predicta
         $\Sigma$ (unique) & 1509 & 7077 & 217 & 3646 & 6315 & 846 & 234 & 93 & 12 & \\
         \bottomrule
     \end{tabular}
-    \caption{Number of individual traffic lights in the Traffic Lights Data platform as of December 4, 2023.}
+    \caption{Number of individual traffic lights in the Traffic Lights Data platform as of December 4, 2023. Some traffic lights are marked for shared usage between multiple modes of transport, leading to overlaps in the numbers on the right side. The necessary metadata is provided by Hamburg authorities.}
     \label{tab:tld-number-of-things}
 \end{table}
 
@@ -252,7 +252,7 @@ Out of the 19951 traffic lights, 5477 are designated for use by cyclists and wer
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-prediction-service-load.pdf}
-    \caption{Cadvisor statistics for prediction service.}\label{fig:monitoring-prediction-service-load}
+    \caption{Cadvisor statistics for prediction service. Seen here is that the load metrics of the prediction service are within acceptable limits when running the prediction for real-time data of approximately 5000 bike traffic lights.}\label{fig:monitoring-prediction-service-load}
 \end{figure}
 
 Based on collected Cadvisor\footnote{\url{https://github.com/google/cadvisor}} metrics on CPU load, RAM usage, and network load, the prediction algorithm scaled well to the multiple thousand traffic lights. The algorithm was implemented in a Java service that also controlled receiving Observations and sending Predictions to our prediction MQTT broker. We measured the service on a TU Dresden server using 6 of 12 cores of an Intel Xeon Gold 6136 CPU running at 3.00 GHz. The CPU percentage utilization of the prediction service was measured via CPU time. In this context, the service consumes approximately 60\% of the CPU time of a single CPU, translating to around 10\% of the total possible computing capacity when considering the 6 CPUs available on our VM. Both network usage and RAM consumption also remained within acceptable limits. 
@@ -260,7 +260,7 @@ Based on collected Cadvisor\footnote{\url{https://github.com/google/cadvisor}} m
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-availability.pdf}
-    \caption{Long-term development of prediction availability.}\label{fig:monitoring-availability}
+    \caption{Long-term development of prediction availability. Shown here is for how many traffic lights a prediction was available during 2023, and how drops in availability directly relate to data outages or errors.}\label{fig:monitoring-availability}
 \end{figure}
 
 The long-term data trend and prediction availability are depicted in \Cref{fig:monitoring-availability}. The prediction availability is calculated by dividing the number of predictions generated per minute by the total number of available traffic lights. In the upper part of the figure, we observe that prediction availability typically fluctuates between 40\% and 80\%, with 100\% never being reached. For the period given in the diagram, we calculate a median prediction availability of 55.07\% (IQR: 28.23\%). The maximum observed prediction availability resides at 90.63\%, recorded on September 17, 2023, at 0:00. Thus, the median prediction availability is relatively low throughout the studied period, lower than the minimum of 69\% reported by Protschky et al. (2014) \cite{protschky_extensive_2014, protschky_adaptive_2014} in Munich, while some weeks showed good service availability.
@@ -272,7 +272,7 @@ Although an increase in prediction availability can be seen around November 23, 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-long-term-study.pdf}
-    \caption{Long-term development of prediction quality.}\label{fig:monitoring-long-term-study}
+    \caption{A heatmap displaying the long-term development of prediction quality throughout 2023. The prediction quality was recorded in 10\% buckets for a more responsive analysis in our monitoring tool. In the best case, all predictions should be in the top 10\% bucket. Seen here is how data outages in late 2023 degraded the prediction quality.}\label{fig:monitoring-long-term-study}
 \end{figure}
 
 In addition to the prediction availability, we measured the prediction quality by continuously comparing the prediction with the actual incoming data. If every second in the prediction vector aligns with the currently running cycle, the prediction quality is calculated as 100\%. If no seconds align, this results in 0\% prediction quality. The running cycle is not incorporated into the prediction vector yet at the time of prediction quality calculation, ensuring that no running information sinks into the calculated prediction quality. In the current implementation of the prediction procedure, there is also a prediction quality of -1, generated when real-time data is no longer available to validate the prediction for an extended period. In \Cref{fig:monitoring-long-term-study} that shows the result of this recording, this is mapped as a prediction with 0\% quality.
@@ -282,7 +282,7 @@ Considering the 10\% buckets in which the prediction quality was monitored, the 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-before-after-failure.pdf}
-    \caption{Before and after traffic controller failure on October 11, 2023.}\label{fig:monitoring-before-after-failure}
+    \caption{Before and after traffic controller failure on October 11, 2023. Black predictions indicate outages when the prediction service is unable to verify the prediction quality due to the lack of real-time data. In this case, entire city districts were affected by the outage, pointing to a systematic issue.}\label{fig:monitoring-before-after-failure}
 \end{figure}
 
 The decline in prediction availability observed in the summer of 2023 has had multiple origins, many of which could be identified, reported, and addressed through our monitoring tools. The first two kinds of data error that could be pinpointed are highlighted in  \Cref{fig:monitoring-before-after-failure}: blackouts of individual traffic lights (on the left and right) and blackouts affecting entire city districts (on the right only).
@@ -294,7 +294,7 @@ Turning our attention to failures affecting entire city districts, \Cref{fig:mon
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-failure.pdf}
-    \caption{Monitored metrics during traffic controller failure on October 11, 2023.}\label{fig:monitoring-failure}
+    \caption{Monitored metrics during traffic controller failure on October 11, 2023. Seen on the bottom are typical patterns of real-time state messages that arrive at the prediction service. Here, no specific issue can be seen. However, the prediction quality heatmap shows a rapid decline in prediction quality that persists for multiple hours. This failure is related to \Cref{fig:monitoring-before-after-failure}.}\label{fig:monitoring-failure}
 \end{figure}
 
 To better understand the occurrence of such a failure, we examined the daily data course recorded by our monitoring system, as depicted in \Cref{fig:monitoring-failure}. At 3:00 AM UTC, within the timeline of \texttt{signal\_program} Observations, many traffic lights switch their programs. As confirmed by traffic light operators, this pattern represents the morning program of the weekly automation of the traffic lights being scheduled.
@@ -308,7 +308,7 @@ Once this finding was communicated to the Traffic Lights Data platform operators
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-7-days.pdf}
-    \caption{Reoccurring traffic controller failures after 6:00 UTC.}\label{fig:monitoring-7-days}
+    \caption{Heatmap depicting the reoccurring nature of the traffic controller failures after 6:00 UTC. Each time a failure happens, we can see a clear decline in prediction quality, filling up the 0\% bucket.}\label{fig:monitoring-7-days}
 \end{figure}
 
 In the weekly progression illustrated in \Cref{fig:monitoring-7-days}, it becomes evident that this situation repeated almost daily at the same hour. Only on Saturdays and Sundays does the issue manifest later, around 7:00 -- 8:00 AM UTC, due to reduced and delayed traffic leading to fewer green phases.
@@ -322,7 +322,7 @@ After identifying issues with the traffic controllers and falsely importing traf
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-rejected-cycles.pdf}
-    \caption{Cycles rejected due to out-of-order phase sequence.}\label{fig:monitoring-rejected-cycles}
+    \caption{Line chart depicting the number of cycles rejected due to out-of-order switching. The clear decline after October 31 at 6:40 AM local time indicates that parts of the traffic light data network infrastructure were fixed, decreasing the number of incomplete cycles.}\label{fig:monitoring-rejected-cycles}
 \end{figure}
 
 \subsection{Study of Traffic Light Predictability in Hamburg}
@@ -337,7 +337,7 @@ Nonetheless, the supplementation was still effective in addressing partial data 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/adaptiveness-mqtt-http.pdf}
-    \caption{Supplementation of recorded MQTT observations through HTTP interface.}\label{fig:adaptiveness-mqtt-http}
+    \caption{Line chart depicting how many messages were supplemented by browsing through the Traffic Light Data platform's HTTP API, recovering messages that were lost via MQTT.}\label{fig:adaptiveness-mqtt-http}
 \end{figure}
 
 The detection of faulty cycles, also implemented in the prediction service, was utilized for problem identification. Out of approximately 424 million reconstructed cycles, 13.8 million cycles were discarded. Here, 90\% of faulty cycles are distributed across 10\% of the connections. One of the known faulty traffic controllers could be identified as the leading cause by examining the faulty connections on the map\footnote{Unfortunately, we cannot disclose the specific traffic controller here due to compliance concerns of Hamburg authorities, although we would have wished to do so.}. 
@@ -347,7 +347,7 @@ These numbers are related to the 40\% of traffic lights that were detected to sw
 \begin{figure}[!t]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-week-heatmap.pdf}
-    \caption{Measured traffic light instability over weekdays in relation to the measured traffic volume.}\label{fig:adaptiveness-weekdays-distance}
+    \caption{Measured weekly progression of our two predictability metrics, cycle discrepancy and wait time diversity, in relation to the green length and the number of measured green phases throughout the day and the measured traffic volume from vehicle detector observations. A higher number of vehicle detector observations indicates a higher traffic density.}\label{fig:adaptiveness-weekdays-distance}
 \end{figure}
 
 Thus, we could not eliminate all errors, but they are present only to a minor extent. We assume that the mass of valid data overshadows isolated recording errors. However, it is important to note for subsequent analyses that recording errors may have occurred, e.g., missing cycle Observations leading to multiplied cycle lengths. Accordingly, we will use statistics for evaluation that are robust to outliers.
@@ -363,7 +363,7 @@ When looking closer at the distribution and not only the general trend, the bigg
 \begin{tabular}{@{}cc@{}}
 \includegraphics[width=0.46\linewidth]{images/predictability-map.pdf} & \includegraphics[width=0.46\linewidth]{images/predictability-map-diversity.pdf}
 \end{tabular}
-\caption{Spatial distribution of predictability.}\label{fig:predictability-map}
+\caption{Measured spatial distribution of predictability. Depicted are the traffic light's lanes, colored by their median cycle discrepancy and wait time diversity. Blue parts in the diagram indicate high predictability.} \label{fig:predictability-map}
 \end{figure}
 
 \Cref{fig:predictability-map} shows how our predictability metrics are spatially distributed across intersections in Hamburg. While most traffic lights in both images are located in the blue range of the color scale, indicating a high level of predictability, there are a few traffic lights where a higher cycle discrepancy or wait time diversity can be observed. 
@@ -373,7 +373,7 @@ As expected, traffic lights with higher unpredictability tend to be located toge
 \begin{figure}[!t]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-week-heatmap-per-thing.pdf}
-    \caption{Weekly progression of both predictability metrics for each traffic light, represented by a vertical line each.}\label{fig:predictability-week-heatmap-per-thing}
+    \caption{Measured weekly progression of both predictability metrics for each traffic light, represented by a vertical line each. Blue parts in the diagram indicate high predictability.}\label{fig:predictability-week-heatmap-per-thing}
 \end{figure}
 
 This aspect is explored further in \Cref{fig:predictability-week-heatmap-per-thing}. In the leftmost part of the diagram, traffic lights can be seen that have a low cycle discrepancy but express a high wait time diversity. In the rightmost part, we also find traffic lights with high cycle discrepancy that express low wait time diversity. For these traffic lights, our chosen prediction method may not be ideal. 
@@ -383,7 +383,7 @@ Of the evaluated 2,793,786 traffic light hours, 43\% (1,206,817) have a cycle di
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/cycle_discrepancy_green_length_heatmap.pdf}
-    \caption{Green length and cycle discrepancy.}\label{fig:green-length-cycle-discrepancy}
+    \caption{Heatmap of the recorded traffic light hours, mapped by their measured green length and cycle discrepancy. Above the depicted diagonal, the cycle discrepancy is shorter than the green length, indicating an overlap of green between cycles and a stable, predictable green phase.}\label{fig:green-length-cycle-discrepancy}
 \end{figure}
 
 The results must be viewed in correspondence to the measured green length, which determines how much green overlaps between cycles. Even in the presence of a high cycle discrepancy, a high green overlap would mean that our probabilistic prediction method still finds certain green regions suitable for speed advisory. As seen in \Cref{fig:green-length-cycle-discrepancy} for 90\% of recorded traffic light hours, the median green phase is longer than the median cycle discrepancy. What should be noted here, again, is that most of the traffic light hours reside to the left at a cycle discrepancy of zero seconds. The heatmap colors are scaled logarithmically to reveal more interesting patterns.
@@ -393,7 +393,7 @@ Looking more at the revealed patterns may allow us to understand some specific c
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-case-studies.pdf}
-    \caption{Examples of recorded traffic light histories, ordered by their classification according to our two metrics. Below each cycle diagram, a probabilistic prediction based on the cycles is shown. Title format: median (cycle discrepancy, wait time diversity).}\label{fig:types-of-instability}
+    \caption{Examples of recorded traffic light histories from our database, ordered by their classification according to our two metrics. Below each cycle diagram, a probabilistic prediction based on the cycles is shown. Title format: median (cycle discrepancy, wait time diversity). Low values indicate high predictability.}\label{fig:types-of-instability}
 \end{figure}
 
 To conclude this study, we validate our findings through a random sample of traffic light hours extracted from the recorded database. The extracted sample is highlighted in \Cref{fig:types-of-instability} with the associated values for cycle discrepancy and wait time diversity. Predictions incorporating all cycles in the recorded bucket are also shown to demonstrate how a probabilistic prediction displayed to the user would look. As seen in the visualization, the sample also contains traffic lights that switch between green and black and samples in which the cycle length changed in between, indicated by the blue background.
