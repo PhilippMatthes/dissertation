@@ -390,7 +390,7 @@ The results must be viewed in correspondence to the measured green length, which
 
 Looking more at the revealed patterns may allow us to understand some specific constraints in traffic light behavior. First, as prescribed by German traffic light planning, a cutoff at 5 seconds of green length can be seen \cite{TN_libero_mab2}. When extracting and analyzing random examples from specific regions, we find that the horizontal concentrations at 90 seconds, 75 seconds, and 60 seconds primarily stem from traffic lights that switch green for the complete cycle. These buckets are occasionally shifted to the right by red phases of different lengths that interrupt the otherwise switched green phase. Top-left to bottom-right diagonal lines come from traffic lights that extend their green phase until a maximum green duration is reached. Since shorter green phases can be placed more flexibly in the cycle, a decreased green length leads to a higher cycle discrepancy. These constraints could be detected and used to improve the prediction.
 
-\begin{figure}[t]
+\begin{figure}[!t]
     \centering
     \includegraphics[width=\linewidth]{images/predictability-case-studies.pdf}
     \caption{Random examples of recorded traffic light histories from our database, ordered by their classification according to our two metrics. Below each cycle diagram, a probabilistic prediction based on the cycles is shown. Title format: median (cycle discrepancy, wait time diversity). Low values indicate high predictability.}\label{fig:types-of-instability}
