@@ -116,7 +116,7 @@ Assuming that cyclists will follow specific movement patterns at each intersecti
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-ground-truth.pdf}
-\caption{Ground truth creation process through the developed Route Composer app. Sources: \cite{matthes2022matching, matthes2023geo}}
+\caption{Ground truth creation process through the developed Route Composer web application. The app can be used to browse through randomly generated routes and nearby intersections. When clicked, the traffic light geometries change color to green, indicating that the traffic light has been selected as a match. The matches are persisted in the ground truth dataset. The buttons on top allow the user to jump to Google Maps, to clarify ambiguous situations with StreetView. Sources: \cite{matthes2022matching, matthes2023geo}}
 \label{fig:sg-selection-ground-truth}
 \end{figure}
 
@@ -156,7 +156,7 @@ The H3 approach emerged from the Movebis\footnote{\url{https://bmdv.bund.de/Shar
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/sg-selection-h3-approach.pdf}
-\caption{Illustration of the H3 approach: If H3 cells directly over the traffic light geometry are hit, the score increases. Neighboring cells decrease the score when hit. The total score is subjected to a threshold, determining whether the traffic light is counted as a match or not.}
+\caption{Illustration of the H3 approach: If H3 cells directly over the traffic light geometry are hit, the score increases. Neighboring cells decrease the score when hit. The total score is subjected to a threshold, determining whether the traffic light is counted as a match or not. The same scoring schema is applied to all traffic light geometries.}
 \label{fig:sg-selection-h3-approach}
 \end{figure}
 
@@ -169,7 +169,7 @@ One identified improvement possibility was applying a relative scoring schema fo
 \begin{figure}[t]
 \centering
 \frame{\includegraphics[width=\linewidth]{images/sg-selection-h3-example.png}}
-\caption{Example of four traffic lights matched using the H3 approach along the route.}
+\caption{Example of four traffic lights matched using the H3 approach along the route. The CyclOSM map highlights that the route is mapped onto the car lanes, resulting in an offset between the bike path and the route geometry. Instead of the left matched traffic light (green) better match would be the two traffic lights above the route, since they are located on the bike path (blue).}
 \label{fig:sg-selection-h3-example}
 \end{figure}
 
