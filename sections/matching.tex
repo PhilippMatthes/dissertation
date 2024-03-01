@@ -612,7 +612,7 @@ The ML model was trained on the 2022 OSM dataset and is evaluated on both OSM gr
 \begin{figure}[!t]
 \centering 
 \includegraphics[width=\linewidth,bb=0 0 760 760]{images/decision-boundaries.pdf}
-\caption{Decision boundaries of the ML model's Yeo-Johnson-transformed non-categorical features. To create this plot, the ML model was executed multiple times on random routes, logging which constellations were marked as a match (green) or no match r)}
+\caption{Decision boundaries of the ML model's Yeo-Johnson-transformed non-categorical features. The seen shapes give further information where the ML model draws the boundary between a matching and non-matching traffic light geometry.}
 \label{fig:ml-model-decision-boundaries}
 \end{figure}
 
@@ -625,7 +625,7 @@ When the lane and the route are very close to each other (Point Dists), this is 
 Having explored the interpretability of the models, we next focus on the achieved scores. These are presented in \Cref{tab:model-scores}.
 
 \begin{table}[ht]
-\caption{Model evaluation scores.}
+\caption{Final model scores calculated on the OSM 2022 and OSM 2023 ground truth datasets. Highlighted are also the results of cross-validation on unseen data.}
 \begin{tabular}{@{}lllllllll@{}}
 \toprule
   \textbf{Model} & \textbf{Benchmark} & \textbf{Trained on} & \textbf{TP} & \textbf{FP} & \textbf{FN} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
@@ -656,7 +656,7 @@ Instead, what we can do is carefully examine areas where improvement potential e
 \centering 
 \includegraphics[width=\linewidth]{images/matching-constellations-osm-old.pdf} \\
 \includegraphics[width=\linewidth]{images/matching-route-errors-osm-old.pdf}
-\caption{Recorded types of routing errors and constellation between route and traffic light geometry.}
+\caption{Types of routing errors and constellations between route and traffic light geometry, recorded during ground truth generation with the Route Composer tool. Cases on the right depict where the model failed to match correctly.}
 \label{fig:matching-constellations-osm}
 \end{figure}
 
@@ -679,7 +679,7 @@ An alternative validation method was adopted. On March 21, 2023, four test rides
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-performance-556-routes.pdf}
-\caption{Relation between number of traffic lights, route length, and matching time measured on the Beta deployment.}
+\caption{Performance analysis of the developed traffic light matching service, which contains the ML model. Seen here is how the route length and number of traffic lights affect the processing time, with random routes through Hamburg.}
 \label{fig:matching-performance}
 \end{figure}
 

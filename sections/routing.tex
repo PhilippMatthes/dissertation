@@ -103,7 +103,7 @@ Distinguished by its routing capability, the dataset encompasses interconnected 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-intersection.pdf}
-\caption{Alignment of OpenStreetMap vs. DRN with the intersection topology.}
+\caption{Alignment of OpenStreetMap vs. DRN with the intersection topology. Depicted are traffic light geometries for cyclists on Millerntorplatz in Hamburg, as well as both routing network topologies. DRN shows fewer paths in total, but the bike paths align better with the bike traffic light geometries.}
 \label{fig:comparison}
 \end{figure}
 
@@ -113,14 +113,14 @@ An area where the geometric discrepancy becomes problematic is the boundary betw
 
 Our final routing foundation will be established once metadata and geometric structures are harmonized. This foundation will enable routing within Hamburg using the DRN dataset and beyond its borders on OpenStreetMap.
 
-\subsubsection{Metadata Harmonization}\label{sec:maxlorenz1}
-
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn.pdf}
-\caption{An overview of the DRN dataset and its bike path types, as of December 23, 2023.}
+\caption{An overview of the DRN dataset and its bike path types, as of December 23, 2023. Seen here is also the border of the authoritative routing foundation. The top six path types and surface types by the number of path segments are highlighted by different colors. The number of path segments is also given in the legend.}
 \label{fig:drn-map}
 \end{figure}
+
+\subsubsection{Metadata Harmonization}\label{sec:maxlorenz1}
 
 A zoomed-out perspective on the DRN dataset is given in \Cref{fig:drn-map}. The dataset can be downloaded as CSV, GeoJSON, or GML. These formats are typical for geodata but require additional processing to translate into the specialized \texttt{.osm} format, in which path geometries are given with specific OpenStreetMap attributes. The \texttt{.osm} format allows routing engines to understand bike surface properties and weigh them accordingly through bike-tailored routing profiles.  
 
@@ -144,7 +144,7 @@ The challenge here is that no one-to-one match exists between all DRN properties
 
 \begin{table}[!t]
 \centering
-\caption{Metadata mapping from DRN to OpenStreetMap.}\label{tab:tag-mapping}
+\caption{Full mapping of metadata from DRN to OSM. The OSM tags are given in the right four columns. The german name of the path type as contained in the DRN is highlighted in the left column. The bottom part of the table also shows the various surface mappings. The mapping is a modified version of the mapping developed in Max Lorenz's Diploma thesis \cite{lorenz_2022}.}\label{tab:tag-mapping}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{@{}p{5cm}p{3cm}p{3cm}p{3cm}p{5cm}@{}}
     \hline
@@ -176,7 +176,7 @@ The challenge here is that no one-to-one match exists between all DRN properties
     Wege in Grünflächen & \texttt{\textbf{path}} & \texttt{\textbf{designated}} & \texttt{\textbf{designated}} & \texttt{segregated=\textbf{no}} \\
     Wirtschaftsweg & \texttt{\textbf{track}} & -- & -- & -- \\
     \hline
-    \multicolumn{5}{p{20cm}}{\textbf{Surfaces}: befestigt - nicht genauer erkennbar $\rightarrow$ \texttt{\textbf{compacted}}, befestigt - zu detailieren $\rightarrow$ \texttt{\textbf{compacted}}, Wassergebundene Decke $\rightarrow$ \texttt{\textbf{compacted}}, unbefestigt $\rightarrow$ \texttt{\textbf{unpaved}}, Betonplatten $\rightarrow$ \texttt{\textbf{concrete:plates}}, Bituminöse Decke $\rightarrow$ \texttt{\textbf{asphalt}}, Holz $\rightarrow$ \texttt{\textbf{wood}}, Kunststein-Pflaster $\rightarrow$ \texttt{\textbf{paving\_stones}}, Metall $\rightarrow$ \texttt{\textbf{metal}}, Naturstein-Pflaster $\rightarrow$ \texttt{\textbf{cobblestone}}; \textbf{Obstacles}: Bahnübergang $\rightarrow$ \texttt{\textbf{railway=level\_crossing}}, Treppe $\rightarrow$ \texttt{\textbf{highway=steps}}, Fahrradroute $\rightarrow$ \texttt{\textbf{type=route, route=bicycle, network=lcn}}, Brücke $\rightarrow$ \texttt{\textbf{bridge=yes}}, Tunnel $\rightarrow$ \texttt{\textbf{tunnel=yes}}}. \\
+    \multicolumn{5}{@{}p{20cm}@{}}{\textbf{Surfaces}: befestigt - nicht genauer erkennbar $\rightarrow$ \texttt{\textbf{compacted}}, befestigt - zu detailieren $\rightarrow$ \texttt{\textbf{compacted}}, Wassergebundene Decke $\rightarrow$ \texttt{\textbf{compacted}}, unbefestigt $\rightarrow$ \texttt{\textbf{unpaved}}, Betonplatten $\rightarrow$ \texttt{\textbf{concrete:plates}}, Bituminöse Decke $\rightarrow$ \texttt{\textbf{asphalt}}, Holz $\rightarrow$ \texttt{\textbf{wood}}, Kunststein-Pflaster $\rightarrow$ \texttt{\textbf{paving\_stones}}, Metall $\rightarrow$ \texttt{\textbf{metal}}, Naturstein-Pflaster $\rightarrow$ \texttt{\textbf{cobblestone}}; \textbf{Obstacles}: Bahnübergang $\rightarrow$ \texttt{\textbf{railway=level\_crossing}}, Treppe $\rightarrow$ \texttt{\textbf{highway=steps}}, Fahrradroute $\rightarrow$ \texttt{\textbf{type=route, route=bicycle, network=lcn}}, Brücke $\rightarrow$ \texttt{\textbf{bridge=yes}}, Tunnel $\rightarrow$ \texttt{\textbf{tunnel=yes}}}. \\
 \end{tabular}
 }
 \end{table}
