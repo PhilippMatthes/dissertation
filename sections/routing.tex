@@ -194,7 +194,7 @@ Since multiple DRN paths may be connected to a single OpenStreetMap node, the sa
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/node-merging.pdf}
-\caption{Duplicated nodes (left) are merged (right) to avoid detours. Source: \cite{lorenz_2022}}
+\caption{Illustration of duplicated nodes (black circles) that lead to a detour in the route (red). On the right, the duplicated nodes (left) were merged (right) to avoid detours. Source: \cite{lorenz_2022}}
 \label{fig:node-merging}
 \end{figure}
 
@@ -204,12 +204,12 @@ The developed solution involves merging all found coordinates for a specific nod
 
 This method assumes small distances between the coordinates that are not noticeably affected by the curved WGS84 projection system. The maximum relocation distance between all $\text{Center}_{\text{k}}$ and $c \in C_k$ was calculated as 8.3 centimeters using the haversine formula. Based on this preliminary validation, no further points are falsely connected. Thus, this first issue could be resolved without further challenges or manual processing.
 
-The second issue in the DRN dataset requiring additional processing is non-crossable roads, as highlighted in \Cref{fig:oneway-travel-fix}. Since bike paths on both roadsides are captured as individual geometries in the DRN dataset, there may be long road segments with bike paths running in parallel. However, without interconnections between the roadsides, the route cannot also cross the road. Sometimes, this represents a problem since side roads attached to the opposite roadside can only be reached by long detours. This is a lesser problem with OpenStreetMap since it often captures roads as a singular path running in the center of all lanes.
+The second issue in the DRN dataset requiring additional processing is non-crossable roads, as highlighted in \Cref{fig:oneway-travel-fix}. Since bike paths on both roadsides are captured as individual geometries in the DRN dataset, there may be long road segments with bike paths running in parallel. However, without interconnections between the roadsides, the route cannot also cross the road. Sometimes, this represents a problem since side roads attached to the opposite roadside can only be reached by long detours. This is a lesser problem with OpenStreetMap since it often captures roads as a singular path running in the center of all lanes.\footnote{We can also learn something about OpenStreetMap here. Avoiding detours due to missing interconnections between both sides of the bike paths, as seen with DRN, may also be one additional reason why OpenStreetMap often maps the bike route onto the car lanes. Without the mapping onto the center of the road, the OpenStreetMap route may have to take a longer path.}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/oneway-travel-fix.pdf}
-\caption{Detour (left) that can be fixed by enabling opposite-direction one-way travel on foot (right), compared to OpenStreetMap route (blue). Source: \cite{lorenz_2022}}
+\caption{Example of a detour (left) that can be fixed by enabling opposite-direction one-way travel on foot (right), compared to OpenStreetMap route (blue). In the right example, the route traverses the road further upstream, applying a walking speed when traveling in the opposite direction. The OpenStreetMap route is calculated in the center of the road and thus does not have this problem. Source: \cite{lorenz_2022}}
 \label{fig:oneway-travel-fix}
 \end{figure}
 
