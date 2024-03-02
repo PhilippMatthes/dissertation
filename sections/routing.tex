@@ -222,7 +222,7 @@ Having addressed the issues of duplicated nodes and detours due to non-crossable
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-border.pdf}
-\caption{Example of stitching around the DRN dataset's border.}
+\caption{Particularily difficult example of stitching around the DRN dataset's border. The example also shows our red helper points inserted into paths on the border to identify matching path geometries. On the right, the conflated result is seen. We can also see the smooth transition into OpenStreetMap paths over the city border.}
 \label{fig:routing-drn-osm-border}
 \end{figure}
 
@@ -241,7 +241,7 @@ So far, we have investigated how to establish a routing foundation based on the 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/load-distribution-containerization-preheating.pdf}
-\caption{CI/CD pipeline for automated rollouts of routing network updates.}
+\caption{Process of deploying updates to the routing network in the mobile app. The flow diagram highlights the steps that are executed nightly or after updates to the routing engine. Docker images and the instantiated containers are highlighted in dark blue.}
 \label{fig:multi-stage-continuous-deployment}
 \end{figure}
 
@@ -262,7 +262,7 @@ Here, a short routing option was also provided preliminarily, in addition to fas
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-profile-mapping.pdf}
-\caption{Mapping of routing profiles for route personalization.}
+\caption{Mapping of routing profiles for route personalization. On the left, we see the profile view that is presented in the smartphone app. Based on the user selection, a suitable GraphHopper routing profile is selected.}
 \label{fig:routing-profile-mapping}
 \end{figure}
 
@@ -281,7 +281,7 @@ Focusing further on the applications of the developed routing engine within our 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/distance-to-signal-estimation.pdf}
-\caption{Distance-to-signal estimation along the route curvature for speed recommendation.}
+\caption{Illustration of our distance-to-signal estimation along the route curvature for speed recommendation. The dashed arrows highlight along which segments a linear distance is calculated to arrive at the aggregated distance estimate.}
 \label{fig:distance-to-signal-estimation}
 \end{figure}
 
