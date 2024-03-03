@@ -310,7 +310,7 @@ Route personalization is key for most users, especially those who ranked a low S
 Finally, we asked users whether they would prefer routing on the road instead of the bike path. This question is essential, as the developed bike routing and traffic light matching are designed to prefer a bike path whenever possible. Some users responded that they would prefer an on-road route, while a similarly large number of users opposed this idea, leading to an overall neutral evaluation of this question. The SUS distribution indicates that this aspect has only played a minor role in the overall usability.
 
 \begin{figure}[t]
-\caption{Survey responses for speed advisory satisfaction, reliability, and utility. The bar parts are color-coded with each user's SUS. Gray parts indicate missing responses to a part of the SUS questions.}\label{fig:speed-recommendations-satisfaction}
+\caption{Survey responses for speed advisory satisfaction, reliability, and utility. The same color-coding as in \Cref{fig:route-personalization} and \Cref{fig:route-fit-bike-paths} is applied.}\label{fig:speed-recommendations-satisfaction}
 \includegraphics[width=\linewidth]{images/app-usability-questions-speed-recommendations-satisfaction.pdf}
 \\
 \includegraphics[width=\linewidth]{images/app-usability-questions-speed-recommendations-reliability.pdf}
@@ -321,7 +321,7 @@ Regarding the second central aspect of usability, the speed advisory also provid
 In contrast, users find that the speed advisory could be followed well and that the speed recommendations were generally helpful. These results indicate that the user interface achieves its goal, instead pointing toward the prediction or known unreliable traffic light data as an issue. Interestingly, also some users with a lower SUS found the speed recommendations reliable and could follow them well. Overall, while the speed advisory's satisfaction and reliability are seen skeptically, usability and followability are seen positively.
 
 \begin{figure}[t]
-\caption{Perceived impact on waiting at red lights and safety}\label{fig:waiting-time-at-traffic-lights}
+\caption{Survey responses on the perceived impact on waiting at red lights and safety. The same color-coding as in \Cref{fig:route-personalization} and \Cref{fig:route-fit-bike-paths} is applied.}\label{fig:waiting-time-at-traffic-lights}
 \includegraphics[width=\linewidth]{images/app-usability-questions-waiting-time-at-traffic-lights.pdf} 
 \\
 \includegraphics[width=\linewidth]{images/app-usability-questions-app-impact-on-safety.pdf}
@@ -330,7 +330,7 @@ In contrast, users find that the speed advisory could be followed well and that 
 Although speed advisories or traffic light countdowns are sometimes perceived as unreliable, most users do not find they are engaged in riskier driving behavior, e.g., by running a red light. As shown in \Cref{fig:waiting-time-at-traffic-lights}, some respondents find an added potential for distraction. However, two aspects should be considered here. In addition to the fact that this represents a self-evaluation, it should be taken into account that most of the users in our study consider themselves experienced cyclists. So, a particular bias is to be expected, but cyclists with less experience might also have more problems with distraction.
 
 \begin{figure}[t]
-\caption{Enhanced orientation, comfort, and informedness with the app.}\label{fig:app-enhanced-orientation}
+\caption{Survey responses on enhanced orientation, comfort, and informedness with the app. The same color-coding as in \Cref{fig:route-personalization} and \Cref{fig:route-fit-bike-paths} is applied.}\label{fig:app-enhanced-orientation}
 \includegraphics[width=\linewidth]{images/app-usability-questions-app-enhanced-orientation.pdf}
 \\
 \includegraphics[width=\linewidth]{images/app-usability-questions-app-informedness-freedom.pdf}
@@ -341,7 +341,7 @@ Changing perspective from the potential problems induced to the potential benefi
 Thus, the app generally seems to achieve the goal of improving users' awareness of upcoming traffic lights without feeling obligated to follow the speed advisory. With the chosen speedometer approach, users confirm that they generally feel free to decide whether or not to follow the speed recommendation. Displaying a route and the speed recommendation as an orientation aid during the journey is also perceived as valuable.
 
 \begin{figure}[t]
-\caption{Negative feedback given in survey.}\label{fig:app-negative-feedback}
+\caption{Negative feedback given in the survey. Survey responses are grouped by similar aspects that were criticized. Each part of the horizontal bars represents one user and is color-coded with the given SUS as in \Cref{fig:route-personalization} and \Cref{fig:route-fit-bike-paths}.}\label{fig:app-negative-feedback}
 \includegraphics[width=\linewidth]{images/app-feedback-negative.pdf}
 \end{figure}
 
@@ -356,7 +356,7 @@ A further aspect that 5 users reported is an occasional mismatching of traffic l
 The negative feedback collected mainly relates to the speed advisory coverage and accuracy. Thus, further investigation may be needed to identify why predictions sometimes did not work as intended. The routing functionality and occasional traffic light mismatches are also key improvement areas. There is also a clear demand for an auditive speed advisory. The usability and understandability of some user interface elements could be enhanced, while further work is required on battery impact, app responsiveness, user interface simplicity, or app crashes. Many of these aspects were addressed as part of active development throughout the testing period.
 
 \begin{figure}[t]
-\caption{Positive feedback given in survey.}\label{fig:app-positive-feedback}
+\caption{Positive feedback given in survey. Survey responses are grouped by similar aspects that were criticized. Each part of the horizontal bars represents one user and is color-coded with the given SUS as in \Cref{fig:route-personalization} and \Cref{fig:route-fit-bike-paths}.}\label{fig:app-positive-feedback}
 \includegraphics[width=\linewidth]{images/app-feedback-positive.pdf}
 \end{figure}
 
@@ -371,7 +371,7 @@ Comparing negative and positive feedback, negatives are expected to be more prev
 After studying user opinions on the overall usability and the perceived impacts, we now focus on the objective insights from trajectory data. Before studying the impacts on driving speed and stop (time) reduction, we investigate the recorded user interface interactions during rides. This analysis aims to understand more precisely how often and at what speed users tap on the display to determine whether interaction during rides could be a safety concern.
 
 \begin{figure}[t]
-\caption{Recorded interaction with the smartphone's screen while in the ride view.}\label{fig:app-user-interaction}
+\caption{Recorded interaction with the smartphone's screen while in the ride view. Each dot represents one tap on the smartphone's screen that was detected during the ride. In the center scatterplot, each tap is colored by the corresponding user ID. On the right, each tap is color-coded by the measured GNSS speed at the time the tap occurred.}\label{fig:app-user-interaction}
 \includegraphics[width=\linewidth]{images/app-user-interaction.pdf}
 \end{figure}
 
@@ -382,7 +382,7 @@ Two other interaction hotspots are seen in the bottom region within the speedome
 Besides the third hotspot on the top right, which corresponds to users ending their rides by pressing the finish button, a vertical line artifact can be seen in the center of the screen. Since this artifact relates to only one user, it is unlikely to represent actual finger taps on the screen. A more plausible explanation could be the presence of a smartphone mount that might have inadvertently interacted with the screen.
 
 \begin{figure}[t]
-\caption{Taps on the screen by currently driven speed and time of entering/leaving the view.}\label{fig:app-user-interaction-speed}
+\caption{Measured speed and time at which taps were recorded. In the left chart, we see how fast users were going when they actively interacted with the screen. In the right charts, we see at which time, after starting or before ending, the track taps were recorded. Time in between is omitted.}\label{fig:app-user-interaction-speed}
 \includegraphics[width=\linewidth]{images/app-user-interaction-speed.pdf}
 \end{figure}
 
@@ -395,7 +395,7 @@ As seen in \Cref{fig:app-user-interaction-speed}, most user interactions happen 
 Our final evaluation focuses on the direct impacts of the speed advisory on cyclist behavior. However, there are a few key challenges that we need to overcome before we can measure these impacts. As there may be road sections with and without traffic lights, the first key challenge in this investigation is extracting traffic light approaches from the trajectory data. 
 
 \begin{figure}[t]
-\caption{Measured adherence to the speed advisory and activation distance.}\label{fig:impacts-adherence-activation-distance}
+\caption{Measured adherence to the speed advisory and activation distance. In the left chart, the two colorized regions depict how many traffic light approaches were classified as "adaption" (>50\% adherence) and "no adaption" (<50\% adherence). The right chart depicts which activation distances were achieved on the collected rides in Hamburg. The peak at zero meters indicates "jumping" around the traffic light's position due to GNSS inaccuracies.}\label{fig:impacts-adherence-activation-distance}
 \includegraphics[width=\linewidth]{images/impacts-adherence-activation-distance.pdf}
 \end{figure}
 
@@ -412,7 +412,7 @@ The adherence factor is calculated from the traveled distance during the approac
 After the described preprocessing, our final evaluation dataset contains 1962 traffic light approaches with complete coverage of at least 150m before and 50m after the traffic light: 842 approaches without advisory (baseline), 638 without adaption, and 482 with adaption to the speed advisory.
 
 \begin{figure}[t]
-\caption{Measured speed advisory impact on traffic light approach speed.}\label{fig:impacts-approach-speed}
+\caption{Measured speed advisory impact on traffic light approach speed. The vertical dashed line indicates the position at which the GNSS trajectory passed the traffic light. Traffic light approaches shorter than the displayed range are omitted. The diagram highlights a slight decrease in speed across all cases (violet) compared to without GLOSA (gray). Highlighted is also the effect when separating with and without adherence to the green phase for >50\% of the approach's distance.}\label{fig:impacts-approach-speed}
 \includegraphics[width=\linewidth]{images/impacts-approach-speed.pdf}
 \end{figure}
 
@@ -433,7 +433,7 @@ Otherwise, we adopt all model parameters with an air density of 1.247 kg/m$^3$, 
 Based on the model, cycling without GLOSA toward traffic lights (150m before to 50m after) results in median spending of 42.07 kJ (IQR: 25.38 kJ) along the 200m. Compared to this baseline, cycling with GLOSA results in a 1.4\% decrease in energy expenditure at 41.47 kJ (IQR: 29.62 kJ). Split into the two classes, the difference becomes more apparent. Without adherence to the speed advisory, users save 5.5\% in energy, with a median energy expenditure of 39.74 kJ (IQR: 29.72 kJ). With adherence, the higher average approach speed increases median energy expenditure by 3.3\% to 43.46 kJ (IQR: 31.46 kJ). As seen with the speed measurements, cases with adherence and without adherence may cancel each other out. With high adherence, users tend to accelerate more and spend 3.3\% more energy to catch the green phase. The higher passing speed, and thus, less needed acceleration after the traffic light, does not compensate for this effect. On the other hand, without adherence, users tend to roll out, saving 5.5\% of energy.
 
 \begin{figure}[t]
-\caption{Distribution of speeds on traffic light approach depending on the adherence level.}\label{fig:impacts-approach-speed-heatmap}
+\caption{Distribution of speeds on traffic light approach depending on the adherence level. In this heatmap, all approaches spanning the depicted range (150m before to 50m after) are overlayed on top of each other. A pronounced dent in the distribution at zero meters distance means more users stopped at the traffic light. The heatmap on the bottom right shows that the dent is reduced in cases with adherence to the speed advisory.}\label{fig:impacts-approach-speed-heatmap}
 \includegraphics[width=\linewidth]{images/impacts-approach-speed-heatmap.pdf}
 \end{figure}
 
@@ -444,7 +444,7 @@ We can count the stops by approaches that contain at least one speed below 1 km/
 If users stopped, the stop time was not substantially different. Without GLOSA, the median stop time was 18.53s (IQR: 25.51s). With GLOSA, the stop time was slightly higher at 19.99s (IQR: 26.50s), with no substantial difference between cases with adherence (19.97s, IQR: 18.51s) and cases without adherence (20.00s, IQR: 30.99s). Thus, even though users may roll out earlier in low-adherence cases, the median stop time is not noticeably decreased.
 
 \begin{figure}[t]
-\caption{Example approach in which the user did not adapt to the speed advisory.}\label{fig:example-trajectory-not-adapted}
+\caption{Extracted approach in which the user did not adapt to the speed advisory. The combined diagram highlights the GNSS trajectory of the user on a satellite image (right) and whether the measured GNSS speed aligned with the speed advisory displayed at each point (left). Each vertical line in the left diagram represents one traffic light that is passed. On top of the diagram, the current predicted state of the traffic light is shown with circles. The diagram focuses on one specific approach of the trajectory that is related to the traffic light highlighted in pink on the satellite image.}\label{fig:example-trajectory-not-adapted}
 \includegraphics[width=\linewidth]{images/example-trajectory-not-adapted.pdf}
 \end{figure}
 
