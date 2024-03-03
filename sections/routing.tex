@@ -300,7 +300,7 @@ To mitigate this problem, GNSS drift at an intersection is detected as follows: 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/rerouting-strategy.pdf}
-\caption{Schema of the rerouting procedure using a triggering threshold of 50 meters from the route.}
+\caption{Schema of the rerouting procedure using a triggering threshold of 50 meters from the route. In this illustration, it is also depicted that the rerouting algorithm aims to identify already passed waypoints. This avoids unnecessary backtracking. Intended deviations from the route may take some time to trigger a rerouting with this approach.}
 \label{fig:rerouting-strategy}
 \end{figure}
 
@@ -322,7 +322,7 @@ Another option was snapping the user's location to the route geometry and follow
   \includegraphics[width=\linewidth]{images/rerouting-strategy-2.pdf}  \\
 \end{tabular}
 }
-\caption{Schematic comparison of the initial and final rerouting algorithms.}
+\caption{Illustration of the initial (a) and final (b) rerouting algorithm. In example (a), the route is calculated back to the starting waypoint. In example (b), our modified calculation procedure, which determines the next waypoint by virtual lines drawn between the waypoints, is shown. Blue dashed lines highlight the snapping to these virtual lines.}
 \label{fig:rerouting-strategy-comparison}
 \end{figure}
 
@@ -351,7 +351,7 @@ After we compare the routing accuracy to a hand-drawn ground truth and traffic l
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-map.pdf}
-\caption{Mapping of path types.}
+\caption{Comparison of paths in OpenStreetMap (a) and DRN (b). The DRN paths were mapped using \Cref{tab:tag-mapping} into the OpenStreetMap format. Unclassified paths are highlighted in red.}
 \label{fig:routing-drn-osm-map}
 \end{figure}
 
@@ -364,7 +364,7 @@ The structural differences are highlighted in \Cref{fig:routing-drn-osm-map}. He
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-map-surfaces.pdf} 
-\caption{Mapping of surface types.}
+\caption{Comparison of surface types in OpenStreetMap (a) and DRN (b). The DRN surface types were mapped using \Cref{tab:tag-mapping} into surface types available in the OpenStreetMap specification. Unclassified surfaces are highlighted in red.}
 \label{fig:routing-drn-osm-map-surfaces}
 \end{figure}
 
@@ -379,7 +379,7 @@ To measure the alignment of generated bike routes with actual cycling infrastruc
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-hand-drawn-ground-truth.pdf}
-\caption{Best-fit routes for each routing provider in relation to the hand-drawn ground truth.}
+\caption{Comparison of the bike routes generated with different providers and our six hand-drawn bike paths (red crosses). Highlighted are the closest fits for each provider seen in \Cref{tab:accuracy-comparison}. A close look at one intersection (b) shows significant differences between other providers' routes and the actual bike paths. DRN follows these bike paths more closely.}
 \label{fig:routing-hand-drawn-ground-truth}
 \end{figure}
 
