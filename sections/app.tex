@@ -76,7 +76,7 @@ For electric bicycles, Tal et al. (2016) \cite{tal_vehicular-communications-base
 \resizebox{\linewidth}{!}{%
 \input{images/related-work-stops.pgf}
 }
-\caption{Reported stop time/rate savings in GLOSA studies.}
+\caption{Reported stop time/rate savings in GLOSA studies. Whenever multiple reported stop time/rate savings were found, the range is depicted with a dashed line.}
 \label{fig:related-work-stops}
 \end{figure}
 
@@ -115,7 +115,7 @@ The presented final application is intended as a companion for daily bike rides,
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/graph-based-speed-recommendation.pdf}
-\caption{Simple speed recommendation algorithm used in initial tests.}
+\caption{Illustration of our initial speed recommendation algorithm and user interface (top right). The vertical axis indicates the (estimated) distance a user has to travel to the traffic light. The diagonal lines indicate estimated speeds to arrive at a given time in the prediction. The current speed is highlighted in blue. The closest speed, i.e., the speed that is recommended, is highlighted with a green line.}
 \label{fig:graph-based-speed-recommendation}
 \end{figure}
 
@@ -140,7 +140,7 @@ Overall, although some issues with our target speed approach can be attributed t
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/multi-lane-view.pdf}
-\caption{Multi-lane matching and preliminary implementation of multi-lane speed recommendation.}
+\caption{Illustration of the developed multi-lane matching approach. Dashed lines indicate the bearing threshold applied from the current user location. Arrows at each traffic light indicate the lane direction of this traffic light. Traffic lights marked with green check marks fall within the bearing range and are matched. On the right, we see the prototype that was implemented to test this feature.}
 \label{fig:multi-lane-view}
 \end{figure}
 
@@ -159,7 +159,7 @@ The designed speedometer visualization aims to integrate the strengths and mitig
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/speedometer-adaptions.pdf}
-\caption{Final speed recommendation concept and adaption mechanisms for varying prediction quality.}
+\caption{Implemented final speed recommendation user interface: the speedometer visualization. Three screenshots highlight how the user interface reacts to changing prediction qualities.}
 \label{fig:speedometer-adaptions}
 \end{figure}
 
@@ -178,7 +178,7 @@ In conclusion, three identified visualization methods have been investigated and
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/camera-controller.pdf}
-\caption{Dynamic camera adaption in different scenarios.}
+\caption{Four screenshots of automatic camera movement to highlight the upcoming traffic light (1, 3, 4) and turns (1, 2). Green segments of the route highlight a part with prediction, as explained in \Cref{fig:routing-process-quality-mapping}. Other traffic lights than the selected one are not displayed.}
 \label{fig:camera-controller}
 \end{figure}
 
@@ -193,7 +193,7 @@ In addition to the camera controller, the prediction availability is also mapped
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-process-quality-mapping.pdf}
-\caption{Visualization of traffic light groups and prediction quality along the calculated route.}
+\caption{Illustration of the route generation process. The left image shows the initial state with the basic calculated bike route. In the center, the traffic lights are added through out matching. In the final step, the app accessed the current prediction quality for each traffic light and colorized the route with its "green wave" part.}
 \label{fig:routing-process-quality-mapping}
 \end{figure}
 
@@ -206,14 +206,14 @@ In summary, the smartphone application not only displays a bare route geometry a
 Now that we have looked at many details of the speed recommendation, it is vital to take another look at the overall picture. In this way, we thoroughly understand how all the designed components from the four discussed chapters work together to create the final bike-GLOSA system. We will also briefly go over additional components for traffic prediction, geocoding, and map layers that are used to provide convenience features for pathfinding.
 
 \begin{figure}[!b]
-\caption{Final application infrastructure.}\label{fig:architecture}
+\caption{Final application infrastructure. The data flow diagram highlights which parts of our service infrastructure are required for each part of the smartphone app. Each service is color-coded to distinguish external, prediction, routing, monitoring, and tracking services. The blue lines indicate a typical interaction flow to perform a ride with the developed app.}\label{fig:architecture}
 \includegraphics[width=\linewidth]{images/architecture.pdf}
 \end{figure}
 
 The main application flow is divided into three views, as seen in \Cref{fig:architecture}. The home view, serving as an entry point after opening the app, is intended to display the current data availability upfront. Users are directly informed about potential data outages with the information fetched from the prediction service monitoring. These can occur spontaneously, as seen in \Cref{ch:prediction}. A modification of the routing profile is also possible in the home view.
 
 \begin{figure}[t]
-\caption{The final mobile application distributed to users.}\label{fig:app}
+\caption{Snapshot of the user interface that was developed and given to the users in Hamburg in early 2023. Black arrows highlight key paths for navigation through the app's views. The entry point after opening the app is given through the home view in the second left column.}\label{fig:app}
 \includegraphics[width=\linewidth]{images/app.png}
 \end{figure}
 
@@ -250,7 +250,7 @@ The core of our quantitative evaluation focuses on the impact of speed advisorie
 \subsection{Collected Data}
 
 \begin{figure}[!b]
-\caption{Collected ratings, tracks, and completed survey answers over time.}\label{fig:app-usage-over-time}
+\caption{Collected ratings, tracks, and completed survey answers over time. Ratings and tracks are colorized by the user IDs. Each cross-mark in the top chart represents one rating that was given in the app after a completed ride. Vertical lines indicate the release of new beta versions as part of the active development. The survey was published later than the first beta version, as shown by the first responses after May 2023. Survey responses were not associated with specific user IDs to correspond with our privacy policy.}\label{fig:app-usage-over-time}
 \includegraphics[width=\linewidth]{images/app-usage-over-time.pdf}
 \end{figure}
 
@@ -263,7 +263,7 @@ Visible in \Cref{fig:app-usage-over-time} is that the frequency of rides has not
 After a track was driven, users could give their opinion on the ride, from 1 to 5. As shown in \Cref{fig:app-usage-over-time}, various ratings were given. Some users kept actively reusing the app after their initial tests, as seen by the repeated 5-grade ratings by the same user IDs. In general, there seem to be a few highly engaged users with the IDs \#305ee0 (201 tracks), \#3494b0 (150 tracks), \#ff00f0 (91 tracks), and \#0a9580 (59 tracks). The remaining 122 user IDs have collected fewer tracks, including 35 user IDs that only uploaded one track. The median number of tracks per user lies at 3.5 (IQR: 8.75), indicating a high diversity in users but also a low rate of users sticking to the app. Potential reasons will be investigated later based on the collected user opinions.
 
 \begin{figure}[t]
-\caption{Spatial coverage of recorded tracks and collected surveys by postal areas.}\label{fig:app-spatial-distribution}
+\caption{Spatial coverage of recorded tracks and collected surveys. Each dot represents one postal area of Hamburg. Please note that we cannot show all tracks here to conform with our privacy policy.}\label{fig:app-spatial-distribution}
 \includegraphics[width=\linewidth]{images/app-spatial-distribution.pdf}
 \end{figure}
 
@@ -280,7 +280,7 @@ All survey respondents considered themselves experienced cyclists -- none select
 Based on the survey answers, a noticeable number of respondents strongly advocate for cycling and only utilize a car whenever no other option is present. Three respondents stated they avoid a car in any situation. Thus, many users who responded to our survey are already highly engaged in bike riding: 26 users use their bike daily, 12 users occasionally during the week, and two users sometimes on a monthly basis. These aspects will be considered when interpreting individual feedback, but also give insights into the representativeness of the collected tracks.
 
 \begin{figure}[!b]
-\caption{Route fit for bike paths and planning intuitiveness.}\label{fig:route-fit-bike-paths}
+\caption{Survey responses for the route's fit to bike paths and route planning intuitiveness. Each part of one bar represents one user and is color-coded with the user's given SUS. Gray parts are users who did not complete all necessary SUS questions.}\label{fig:route-fit-bike-paths}
 \includegraphics[width=\linewidth]{images/app-usability-questions-route-fit-bike-paths.pdf}
 \\
 \includegraphics[width=\linewidth]{images/app-usability-questions-route-planning-intuitiveness.pdf}
@@ -295,7 +295,7 @@ A crucial part of the conducted survey is the SUS, consisting of ten standardize
 Our achieved SUS does not reach 80.4, which could be accomplished by Krause et al. (2012) \cite{krause_traffic_2012}. However, the study of Krause et al. (2012) \cite{krause_traffic_2012} is also less comparable to our results, as it was conducted in a simulator environment with relatively favorable conditions and an isolated evaluation of the speed advisory. As the system's overall usability determines the SUS, many different aspects of the app have likely influenced the result.
 
 \begin{figure}[t]
-\caption{Route personalization preferences and adaptation.}\label{fig:route-personalization}
+\caption{Survey answers regarding route personalization preferences and adaptation. The bar parts are color-coded with each user's SUS. Gray parts indicate missing responses to a part of the SUS questions.}\label{fig:route-personalization}
 \includegraphics[width=\linewidth]{images/app-usability-questions-route-personalization.pdf}
 \\
 \includegraphics[width=\linewidth]{images/app-usability-questions-route-personalization-adaptation.pdf}
@@ -310,7 +310,7 @@ Route personalization is key for most users, especially those who ranked a low S
 Finally, we asked users whether they would prefer routing on the road instead of the bike path. This question is essential, as the developed bike routing and traffic light matching are designed to prefer a bike path whenever possible. Some users responded that they would prefer an on-road route, while a similarly large number of users opposed this idea, leading to an overall neutral evaluation of this question. The SUS distribution indicates that this aspect has only played a minor role in the overall usability.
 
 \begin{figure}[t]
-\caption{Speed advisory satisfaction, reliability, and utility.}\label{fig:speed-recommendations-satisfaction}
+\caption{Survey responses for Speed advisory satisfaction, reliability, and utility.}\label{fig:speed-recommendations-satisfaction}
 \includegraphics[width=\linewidth]{images/app-usability-questions-speed-recommendations-satisfaction.pdf}
 \\
 \includegraphics[width=\linewidth]{images/app-usability-questions-speed-recommendations-reliability.pdf}
