@@ -423,7 +423,7 @@ Google Maps & Hausdorff distance (m) & 216.4 & 8.7 & 19.3 & 26.3 & 52.6 & 16.7 \
 \bottomrule
 \end{tabular}
 }
-\caption{Measured deviations from actual bike infrastructure. DRN and OpenStreetMap results (Hausdorff distance and mean distance) were reproduced from \cite{lorenz_2022}}%
+\caption{Measured deviations from actual bike infrastructure, given through our hand-drawn paths. DRN and OpenStreetMap results (Hausdorff distance and mean distance) were reproduced from \cite{lorenz_2022}.}%
 \label{tab:accuracy-comparison}%
 \end{table}
 
@@ -436,7 +436,7 @@ The best fits are highlighted in \Cref{fig:routing-hand-drawn-ground-truth}. In 
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-convergence-process.pdf}
-\caption{Visualization of routing convergence depending on the number of waypoints interpolated along the desired trajectory.}
+\caption{Visualization of the convergence of bike routes onto a desired trajectory, by the number of waypoints a user would have to specify. The desired trajectories are given through our hand-drawn bike path routes. Dark blue routes highlight the initial planned route with just two or three waypoints. The given waypoints are highlighted in the bottom right in the same color coding.}
 \label{fig:routing-convergence-process}
 \end{figure}
 
@@ -453,7 +453,7 @@ This first study already gives us some initial insights into the accuracy of the
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-drn.pdf}
-\caption{DRN 2023 traffic light matching ground truth.}
+\caption{Our ground truth for training and evaluation of our traffic light matching models on the 2023 DRN dataset. Dark blue lines highlight randomly generated routes along which matching (green) traffic light geometries were selected. Red traffic light geometries were never selected to match a route.}
 \label{fig:matching-ground-truth-drn}
 \end{figure}
 
@@ -466,7 +466,7 @@ The DRN traffic light matching ground truth was developed according to the rules
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-lane-alignment.pdf}
-\caption{Comparison of traffic light geometry alignment with DRN and OpenStreetMap routes.}
+\caption{Comparison of traffic light geometry alignment with DRN and OpenStreetMap routes. The closer traffic light geometries (referenced as lanes in this diagram) are to the route, the better. In this example, only the matching traffic lights from our three ground truth datasets are compared to the route. The OSM 2022 and 2023 datasets were created in \Cref{ch:matching}.}
 \label{fig:routing-lane-alignment}
 \end{figure}
 
@@ -474,8 +474,8 @@ Comparing the selected traffic lights to their assigned route geometries, the DR
 
 More matching traffic light geometries reside directly over the DRN route, compared to the distribution of distances between route and traffic light geometries in OpenStreetMap, which is much more evened out. Although the discrepancy between traffic light geometries and the generated bike routes is substantially lower, the maximum distance distribution indicates that a perfect overlap is still not given. A more advanced matching strategy than a simple proximity-based lookup is still required for these examples with imperfect alignments. Nonetheless, the measured alignment represents a substantial improvement over the OpenStreetMap approach. 
 
-\begin{table}[b]
-\caption{Retrained model thresholds on the new routing.}
+\begin{table}[t]
+\caption{Refitted thresholds of the algorithmic traffic light matching model on the new routing, compared to our two previous models. Differences in the thresholds may indicate that the models handle matching on the different datasets more strictly or less strictly. A detailed explanation of the threshold IDs is given in \Cref{tab:hyperparameter-space}}
 \resizebox{\linewidth}{!}{\begin{tabular}{@{}llllllllll@{}}
 \toprule
   \textbf{Ground Truth} & $t_{\text{dist}}$ & $t_{\text{bear}}$ & $t_{\text{bear\_sum}}$ & $t_{\text{inv}}$ & $t_{\text{len}}$ & $t_{\text{len\_sum}}$ & $t_{\text{road\_side}}$ &  $t_{\text{perfect\_m.}}$ & $t_{\text{overlap}}$ \\
@@ -490,8 +490,8 @@ More matching traffic light geometries reside directly over the DRN route, compa
 
 In the next experiment, we assess whether this improvement positively impacts the matching accuracy. First, we retrain the algorithmic matching model on the newly created ground truth. The hyperparameter configuration identified through hyperparameter optimization is compared to that of the OpenStreetMap models in \Cref{tab:hyperparameter-tuning-results-drn}. Notably, the optimization tool applied stricter thresholds than those employed in OpenStreetMap. These stricter thresholds result in quicker dismissal of traffic light geometries that do not align well with the route.
 
-\begin{table}[t]
-\caption{Model scores after retraining on DRN compared to preliminary results.}
+\begin{table}[b]
+\caption{Achieved model scores after retraining on DRN compared to preliminary results from \Cref{ch:matching}. Cross-validation scores on unseen data are also highlighted.}
 \begin{tabular}{@{}lllllllll@{}}
 \toprule
   \textbf{Model} & \textbf{Benchmark} & \textbf{Trained on} & \textbf{TP} & \textbf{FP} & \textbf{FN} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
@@ -502,10 +502,10 @@ In the next experiment, we assess whether this improvement positively impacts th
   \midrule
   Algorithmic & OSM 2023 & OSM 2022 & 615 & 159 & 143 & 79\% & 81\% & 80.3\% \\
   Algorithmic & OSM 2023 & OSM 2023 & 637 & 136 & 121 & 82\% & 84\% & 83.2\% \\
-  ML          & OSM 2023 & OSM 2022 & 614 & 52 & 144 & 92\% & 81\% & \textbf{86.2}\% \\
+  ML          & OSM 2023 & OSM 2022 & 614 & 52 & 144 & 92\% & 81\% & 86.2\% \\
   \midrule
   Algorithmic & DRN 2023 & DRN 2023 & 655 & 95 & 83 & 87\% & 89\% & 88.0\% \\
-  ML          & DRN 2023 & DRN 2023 & 676 & 24 & 62 & 97\% & 92\% & \textbf{94.0}\% \\
+  ML          & DRN 2023 & DRN 2023 & 676 & 24 & 62 & 97\% & 92\% & 94.0\% \\
 \bottomrule
 \end{tabular}
 \label{tab:model-scores-drn}
@@ -523,7 +523,7 @@ The measurable improvement in routing accuracy is evident in the enhanced strict
 \centering 
 \includegraphics[width=\linewidth]{images/matching-constellations-osm-vs-drn.pdf} \\
 \includegraphics[width=\linewidth]{images/matching-route-errors-osm-vs-drn.pdf}
-\caption{Tagged routing errors and constellations between traffic light geometries and routes in DRN relative to the OpenStreetMap results.}
+\caption{Tagged routing errors and constellations between traffic light geometries and routes in DRN compared to the OpenStreetMap results. The chart above indicates how closely traffic light geometries tend to align with the route and in which kind of constellation. In the bottom chart, we see the quantities of specific routing errors that were also marked during the ground truth generation process. Incorrect matchings are highlighted on the right, indicating potential for future model improvements.}
 \label{fig:matching-constellations-osm-vs-drn}
 \end{figure}
 
@@ -543,7 +543,7 @@ A detailed case study analyzing 72 random routes by Max Lorenz \cite{lorenz_2022
 Continuous routing on the road & 0 & 10 \\
 Routing through buildings or stairs & 0 & 2 \\
 Intersection crossing using car lanes & 0 & 8 \\
-Use of sidewalks on incorrect roadside & 1 & 4 \\
+Use of sidewalks on the incorrect roadside& 1 & 4 \\
 Missing permission for one-way streets & 0 & 1 \\
 Routing through other impassable obstacles & 0 & 2 \\
 Failure to consider turning restrictions & 0 & 1 \\
@@ -551,7 +551,7 @@ Skipping or crossing additional signals & 1 & 3 \\
 Generally problematic road crossings & 1 & 4 \\
 \hline
 \end{tabular}
-\caption{Observed error cases among an arbitrary sample of 72 routes. Source: \cite{lorenz_2022}}%
+\caption{Observed error cases among an arbitrary sample of 72 routes. The generated routes were compared against reference material (satellite images) by Max Lorenz. Source: \cite{lorenz_2022}}%
 \label{tab:error-cases-max-lorenz}%
 \end{table}
 
@@ -562,18 +562,18 @@ In conclusion, the DRN routes closely align with bicycle infrastructure and exhi
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-reroutes-distribution.pdf}
-\caption{Reroutes triggered during user rides.}
+\caption{Reroutes triggered during user rides. The left chart shows how often reroutes were triggered per track. The right chart shows after which distance from the start or end of the track reroutings were triggered. Data in between 4 kilometers from the start or end is omitted. Tracks shorter than 4 kilometers are also omitted to avoid skewing the charts.}
 \label{fig:routing-reroutes-distribution}
 \end{figure}
 
-Finally, we assess the alignment of the DRN network with user journeys and examine how well the route-based estimated distance to the traffic light matches the distance to be covered compared to the direct straight-line distance. Based on 1327 user tracks recorded during the Beta period in 2023, covering a total distance of 6716.03 km, rerouting was triggered 7030 times, with reroutings occurring every 1.39 km in the median. In 20.27\% of journeys, no rerouting was triggered. As seen in \Cref{fig:routing-reroutes-distribution}, reroutes are more frequently triggered directly after the ride has started or shortly before the ride is finished.
+Finally, we assess the alignment of the DRN network with user journeys and examine how well the route-based estimated distance to the traffic light matches the distance to be covered compared to the direct straight-line distance. Based on 1327 user tracks recorded during the Beta period in 2023, covering a total distance of 6716.03 km, rerouting was triggered 7030 times, with reroutings occurring every 1.39 km in the median. In 20.27\% of journeys, no rerouting was triggered. As seen in \Cref{fig:routing-reroutes-distribution}, reroutes are more frequently triggered directly after the ride has started or shortly before the ride is finished. 
 
 By overlaying the GNSS trajectories of users onto both routing networks, we can determine whether the actual positions align more closely with the OpenStreetMap network or the DRN network. It is important to note again that GNSS positions naturally vary around the actual position. However, considering the mass of tracks, we should observe a discernible trend, assuming GNSS approximates a normal distribution around the actual position and systematic effects like GNSS drift are negligible in the variety of tracks.
 
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-mapmatching-distance.pdf}
-\caption{Alignment of user trajectories with DRN and OpenStreetMap paths.}
+\caption{Alignment of user trajectories with DRN and OpenStreetMap paths. The red dots represent GNSS samples recorded by our users throughout the test period 2023.}
 \label{fig:routing-mapmatching-distance}
 \end{figure}
 
@@ -586,7 +586,7 @@ The results reveal two half-normal distributions: DRN positions at a median dist
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-gnss-mapmatching-distribution.pdf}
-\caption{Distance of each GNSS sample in user trajectories when map-matched onto DRN and OpenStreetMap networks.}
+\caption{Distance of each GNSS sample in user trajectories when map-matched onto DRN and OpenStreetMap networks. GNSS samples close to zero on the x-axis indicate a recorded position that is perfectly aligned with the route.}
 \label{fig:routing-gnss-mapmatching-distribution}
 \end{figure}
 
@@ -597,7 +597,7 @@ Aggregating the measured differences in \Cref{fig:routing-distance-distribution}
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-distance-distribution.pdf}
-\caption{Under- and overestimation of distance-to-signal estimation approaches compared to the actual distance traveled, as extrapolated through the actual GNSS trajectory.}
+\caption{Under- and overestimation of the actual distance to the traffic light, depending on the approach taken. Samples left from zero on the x-axis indicate an underestimation of the actual distance that will be traveled. Samples right from zero on the x-axis show an overestimation, i.e., when the GNSS track travels less distance to the traffic light after the estimation point.}
 \label{fig:routing-distance-distribution}
 \end{figure}
 
@@ -610,7 +610,7 @@ A view of the over- and underestimation in relation to the actual traffic light 
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-distance-scatter.pdf}
-\caption{Under- and overestimation depending on the actual distance traveled toward the traffic light, as extrapolated through the actual GNSS trajectory.}
+\caption{Heatmap of all tracks recorded by our users, and whether the distance to the traffic light was over- or underestimated at each GNSS point. Horizontal lines indicate a stable estimation throughout the approach. Lines located at zero on the y-axis indicate an accurate estimate.}
 \label{fig:routing-distance-scatter}
 \end{figure}
 
@@ -627,11 +627,11 @@ As presented in \Cref{fig:routing-distance-comparison}, routes generated with DR
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-distance-comparison.pdf}
-\caption{Route length and segment length comparison between routing providers.}
+\caption{Route length and segment length comparison between routing providers and our approach. Diagonal lines demarcate where both are equal. In the top four charts, we see if DRN bike routes are longer (top left) or shorter (bottom left) than with other providers. In the bottom four charts, we see the median segment length of each route. Bottom-left cases indicate where the DRN route has shorter segment lengths and is, therefore, more detailed.}
 \label{fig:routing-distance-comparison}
 \end{figure}
 
-The \texttt{Driving} profile of Bing Maps performs substantially worse, with a median route length of 4734 meters (IQR: 4224m), compared to the \texttt{Walking} profile, which seems to produce much shorter routes at a median of 3755 meters (IQR: 3759m). Although Bing Maps produces the shortest routes with the \texttt{Walking} profile, it must be considered here that we cannot verify whether the used shortcuts are accessible to cyclists. Furthermore, the route segment length in Bing Maps is also worse, with a median of 110.21 meters (\texttt{Driving}, IQR: 37.99m) or 87.57 meters (\texttt{Walking}, IQR: 45.57m), respectively. These results suggest that the depiction of road bends and intersection traversals is also less optimal, potentially negatively impacting a traffic light matching that depends on the turn shape's geometrical details. 
+The \texttt{Driving} profile of Bing Maps performs substantially worse, with a median route length of 4734 meters (IQR: 4224m), compared to the \texttt{Walking} profile, which seems to produce much shorter routes at a median of 3755 meters (IQR: 3759m). Although Bing Maps produces the shortest routes with the \texttt{Walking} profile, it must be considered here that we cannot verify whether the shortcuts used are accessible to cyclists. Furthermore, the route segment length in Bing Maps is also worse, with a median of 110.21 meters (\texttt{Driving}, IQR: 37.99m) or 87.57 meters (\texttt{Walking}, IQR: 45.57m), respectively. These results suggest that the depiction of road bends and intersection traversals is also less optimal, potentially negatively impacting a traffic light matching that depends on the turn shape's geometrical details. 
 
 Although detours have been detected in \Cref{sec:routing-alignment} with Google Maps, they may be less prevalent than our initial case study suggested. However, they still seem to exist. The bike routes from Google Maps are 1.4\% longer than DRN, residing at a median of 4114 meters (IQR: 3703m). Google Maps' segment length is comparable to OpenStreetMap, with a median segment length of 40.61m (IQR: 15.63m). Thus, considering overall route length, Google Maps takes place three after DRN and OpenStreetMap. However, DRN is clearly the best option regarding the detailedness of path geometries.
 
