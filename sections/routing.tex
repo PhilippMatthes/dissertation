@@ -113,14 +113,14 @@ An area where the geometric discrepancy becomes problematic is the boundary betw
 
 Our final routing foundation will be established once metadata and geometric structures are harmonized. This foundation will enable routing within Hamburg using the DRN dataset and beyond its borders on OpenStreetMap.
 
+\subsubsection{Metadata Harmonization}
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn.pdf}
 \caption{An overview of the DRN dataset and its bike path types, as of December 23, 2023. Seen here is also the border of the authoritative routing foundation. The top six path types and surface types by the number of path segments are highlighted by different colors. The number of path segments is also given in the legend.}
 \label{fig:drn-map}
 \end{figure}
-
-\subsubsection{Metadata Harmonization}\label{sec:maxlorenz1}
 
 A zoomed-out perspective on the DRN dataset is given in \Cref{fig:drn-map}. The dataset can be downloaded as CSV, GeoJSON, or GML. These formats are typical for geodata but require additional processing to translate into the specialized \texttt{.osm} format, in which path geometries are given with specific OpenStreetMap attributes. The \texttt{.osm} format allows routing engines to understand bike surface properties and weigh them accordingly through bike-tailored routing profiles.  
 
@@ -130,7 +130,7 @@ Thus, to establish a conversion process from DRN to the \texttt{.osm} format, no
     \item Direction of travel (49813 segments bidirectional and 47606 segments unidirectional)
     \item Time restrictions (32 segments affected)
     \item Temporary paths such as pop-up lanes or detours (83 segments affected)
-    \item If a segment is associated with a specific velo route or designated bike tours (Freizeitroute)
+    \item If a segment is associated with a specific velo route or bike tours (Freizeitroute)
     \item Level (96237 flat, 1121 across bridges, 186 through tunnels)
     \item Obstacles (456 impassable, 52 can be circumvented, e.g., via footpath)
     \item The type of bike path and its surface, as illustrated in \Cref{fig:drn-map}
@@ -183,13 +183,11 @@ The challenge here is that no one-to-one match exists between all DRN properties
 
 The final mapping highlighted in \Cref{tab:tag-mapping} includes the bike path's surface, level, direction, and type. In cases where the bike path's properties cannot be directly mapped to a suitable OpenStreetMap tag, the path is tagged with \texttt{highway=tertiary}. This fallback corresponds to established mapping practices in Germany. The result is an inferred set of tags for each path in the OpenStreetMap format, completing the metadata harmonization process.
 
-\subsubsection{Geometric Harmonization}\label{sec:maxlorenz2}
+\subsubsection{Geometric Harmonization}
 
 After the conversion of metadata, the second step is geometric harmonization. However, before we can merge both datasets, two issues still need further attention: detours resulting from duplicated nodes in the graph and detours because the road cannot be crossed. 
 
 Each path in the DRN dataset starts and ends in a node, which must be transformed into OpenStreetMap nodes that connect the individual paths to a graph structure\footnote{\url{https://wiki.openstreetmap.org/wiki/Node}}. To ease this process, the DRN dataset provides node IDs for each path's start and end points. Thus, two OpenStreetMap nodes need to be generated for each DRN path based on the start and end coordinates given in the line geometry. 
-
-Since multiple DRN paths may be connected to a single OpenStreetMap node, the same node is generated multiple times during dataset processing. Theoretically, this should not be a problem since the node ID should avoid duplicates. In practice, however, sometimes there are nodes for which multiple different coordinates are found in the dataset, presumably due to floating point inaccuracies of a preceding geographic projection step during dataset publishing. As highlighted in \Cref{fig:node-merging}, this leads to the issue of duplicated OpenStreetMap nodes in the proximity of a few centimeters that are not correctly connected.
 
 \begin{figure}[t]
 \centering
@@ -198,13 +196,13 @@ Since multiple DRN paths may be connected to a single OpenStreetMap node, the sa
 \label{fig:node-merging}
 \end{figure}
 
+Since multiple DRN paths may be connected to a single OpenStreetMap node, the same node is generated multiple times during dataset processing. Theoretically, this should not be a problem since the node ID should avoid duplicates. In practice, however, sometimes there are nodes for which multiple different coordinates are found in the dataset, presumably due to floating point inaccuracies of a preceding geographic projection step during dataset publishing. As highlighted in \Cref{fig:node-merging}, this leads to the issue of duplicated OpenStreetMap nodes in the proximity of a few centimeters that are not correctly connected.
+
 The developed solution involves merging all found coordinates for a specific node ID into a center point. Let $C_k = \{c_{k_1} = (lat_{k_1}, lng_{k_1}), \text{...} , c_{k_n} = (lat_{k_n}, lng_{k_n})\}$ be the collected coordinates for each node $k$. Then, the center point $\text{Center}_{\text{k}}$ is calculated as the mean of all coordinates for that node ID:
 
 \begin{equation}\text{Center}_{\text{k}} = \left(\frac{\sum_{i=1}^{|C_k|} \text{{lat}}_{k_i}}{|C_k|}, \frac{\sum_{i=1}^{|C_k|} \text{{lng}}_{k_i}}{|C_k|}\right)\end{equation}
 
 This method assumes small distances between the coordinates that are not noticeably affected by the curved WGS84 projection system. The maximum relocation distance between all $\text{Center}_{\text{k}}$ and $c \in C_k$ was calculated as 8.3 centimeters using the haversine formula. Based on this preliminary validation, no further points are falsely connected. Thus, this first issue could be resolved without further challenges or manual processing.
-
-The second issue in the DRN dataset requiring additional processing is non-crossable roads, as highlighted in \Cref{fig:oneway-travel-fix}. Since bike paths on both roadsides are captured as individual geometries in the DRN dataset, there may be long road segments with bike paths running in parallel. However, without interconnections between the roadsides, the route cannot also cross the road. Sometimes, this represents a problem since side roads attached to the opposite roadside can only be reached by long detours. This is a lesser problem with OpenStreetMap since it often captures roads as a singular path running in the center of all lanes.\footnote{We can also learn something about OpenStreetMap here. Avoiding detours due to missing interconnections between both sides of the bike paths, as seen with DRN, may also be one additional reason why OpenStreetMap often maps the bike route onto the car lanes. Without the mapping onto the center of the road, the OpenStreetMap route may have to take a longer path.}
 
 \begin{figure}[t]
 \centering
@@ -212,6 +210,8 @@ The second issue in the DRN dataset requiring additional processing is non-cross
 \caption{Example of a detour (left) that can be fixed by enabling opposite-direction one-way travel on foot (right), compared to OpenStreetMap route (blue). In the right example, the route traverses the road further upstream, applying a walking speed when traveling in the opposite direction. The OpenStreetMap route is calculated in the center of the road and thus does not have this problem. Source: \cite{lorenz_2022}}
 \label{fig:oneway-travel-fix}
 \end{figure}
+
+The second issue in the DRN dataset requiring additional processing is non-crossable roads, as highlighted in \Cref{fig:oneway-travel-fix}. Since bike paths on both roadsides are captured as individual geometries in the DRN dataset, there may be long road segments with bike paths running in parallel. However, without interconnections between the roadsides, the route cannot also cross the road. Sometimes, this represents a problem since side roads attached to the opposite roadside can only be reached by long detours. This is a lesser problem with OpenStreetMap since it often captures roads as a singular path running in the center of all lanes.\footnote{We can also learn something about OpenStreetMap here. Avoiding detours due to missing interconnections between both sides of the bike paths, as seen with DRN, may also be one additional reason why OpenStreetMap often maps the bike route onto the car lanes. Without the mapping onto the center of the road, the OpenStreetMap route may have to take a longer path.}
 
 One explored solution is the introduction of "virtual" paths connecting the roadsides. Using these paths, the route could traverse between roadsides and avoid detours. Although this concept may sound like a reasonable idea at first, the question is where to place these virtual paths. For example, one could place these paths in a fixed interval along a road between roadsides. However, there could always be a physical barrier between both roadsides, meaning that generated routes would guide users over impassable obstacles or potentially encourage dangerous maneuvers. Traversing a road at an arbitrary location may not always be safe or legal. Due to these reasons, the idea of inserting virtual paths was discarded.
 
@@ -238,6 +238,8 @@ So far, we have investigated how to establish a routing foundation based on the 
 
 \subsubsection{Automated Deployment}
 
+As a routing engine, we will choose the state-of-the-art solution GraphHopper that we have referenced in the related work section. GraphHopper is open-source and provides access to community-tested bike routing profiles that we will reuse for route personalization. In addition, GraphHopper is also compatible with various height data providers and implements inclination-sensitive routing profiles for cyclists. 
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/load-distribution-containerization-preheating.pdf}
@@ -245,13 +247,11 @@ So far, we have investigated how to establish a routing foundation based on the 
 \label{fig:multi-stage-continuous-deployment}
 \end{figure}
 
-As a routing engine, we will choose the state-of-the-art solution GraphHopper that we have referenced in the related work section. GraphHopper is open-source and provides access to community-tested bike routing profiles that we will reuse for route personalization. In addition, GraphHopper is also compatible with various height data providers and implements inclination-sensitive routing profiles for cyclists. 
-
 Using the \texttt{.osm} format, we can configure GraphHopper to load our DRN routing. Then, the GraphHopper service is packaged with the DRN routing data into a Docker image and deployed on our backend. Through the pipeline highlighted in \Cref{fig:multi-stage-continuous-deployment}, we configure a nightly Docker image build, including fetching and merging the current DRN data. An update executor on the deployment orchestrator machine notices the updated Docker image and replaces the currently deployed service using a rolling update, ensuring that the running services always work with the newest map materials. 
 
 We also had to perform some tweaks to our deployment to ensure that the routing service operates as intended. Since GraphHopper requires time to preprocess the routing network on the first startup, the container startup is not immediate after it is rolled out to one of the replicated worker machines. Thus, allowing direct access to the starting routing engine could result in client requests failing. Two measures are employed to circumvent this issue. First, Traefik\footnote{\url{https://traefik.io/traefik/}} is utilized as a frontline proxy for the deployment and configured to direct only requests to healthy containers, as the NGINX\footnote{\url{https://nginx.org/en/}} proxy initially used had problems detecting healthy containers. A health check is implemented on the routing Docker container, allowing requests only once the container is started. Additionally, the Docker image is preheated further to accelerate the startup of each routing service container. Starting up GraphHopper during the build process and waiting for its routing API to become available makes the routing engine available faster after rollout.
 
-\subsubsection{Inclination-Sensitive and Personalizable Routing}\label{sec:maxlorenz3}
+\subsubsection{Inclination-Sensitive and Personalizable Routing}
 
 Since we converted the DRN routing network to the OSM format, we can also make use of existing field-tested routing profiles. To achieve this, GraphHopper provides different \texttt{vehicle}s with individual path weights depending on the road's properties. Each \texttt{vehicle} represents a different routing profile. Among these \texttt{vehicle}s are also various bike types such as \texttt{bike}, \texttt{bike2} (avoids inclines), \texttt{racingbike} or \texttt{mountainbike}. The routing API provides these profiles to select a specific behavior, such as avoiding unpaved sections with the \texttt{racingbike} profile. However, one challenge is selecting the best routing configuration for a user's needs.
 
@@ -327,10 +327,6 @@ The developed rerouting approach operates as illustrated in \Cref{fig:rerouting-
 
 A challenge in this approach is determining the appropriate distance threshold that strikes a balance between prompt rerouting and avoiding unnecessary recalculations. In initial tests conducted in Hamburg, a threshold of 20 meters was used. However, it proved too low, resulting in excessive unnecessary reroutings during field tests. Consequently, the threshold was increased to 50 meters, which yielded a satisfactory balance during our tests.
 
-Another challenge in this approach is identifying the waypoints visited to prevent rerouting back to the starting point. To address this issue, only the remaining waypoints are selected when rerouting is triggered. Initially, the rerouting process involved selecting the nearest waypoint to the user and recalculating the route using that waypoint as a reference. However, this method depicted in \Cref{fig:rerouting-strategy-comparison} on the left was only effective half of the time, assuming the user's location was closer to the upcoming waypoint than the previously visited waypoint. Consequently, this initial strategy often led to unnecessary backtracking.
-
-Another option was snapping the user's location to the route geometry and following that path to find the next waypoint. However, a challenge arose because the waypoints were not directly integrated into the route geometry data structure, which is returned from the routing framework. Although it is possible to align the waypoints with the route geometry for implementation, a simpler and faster approximation was employed in the app, consisting of three steps: (1) Drawing direct lines between waypoints to create a connected path roughly resembling the route. (2) Selecting the nearest line to the user's location. (3) Determining the waypoint at the end of this line as the next waypoint for recalculating the route. This approach assumes that the drawn lines approximately represent the general route structure. With the development of the rerouting approach, we finish our integration of the routing foundation.
-
 \begin{figure}[t]
 \centering
 \resizebox{\linewidth}{!}{%
@@ -344,6 +340,10 @@ Another option was snapping the user's location to the route geometry and follow
 \caption{Illustration of the initial (a) and final (b) rerouting algorithm. In example (a), the route is calculated back to the starting waypoint. In example (b), our modified calculation procedure, which determines the next waypoint by virtual lines drawn between the waypoints, is shown. Blue dashed lines highlight the snapping to these virtual lines.}
 \label{fig:rerouting-strategy-comparison}
 \end{figure}
+
+Another challenge in this approach is identifying the waypoints visited to prevent rerouting back to the starting point. To address this issue, only the remaining waypoints are selected when rerouting is triggered. Initially, the rerouting process involved selecting the nearest waypoint to the user and recalculating the route using that waypoint as a reference. However, this method depicted in \Cref{fig:rerouting-strategy-comparison} on the left was only effective half of the time, assuming the user's location was closer to the upcoming waypoint than the previously visited waypoint. Consequently, this initial strategy often led to unnecessary backtracking.
+
+Another option was snapping the user's location to the route geometry and following that path to find the next waypoint. However, a challenge arose because the waypoints were not directly integrated into the route geometry data structure, which is returned from the routing framework. Although it is possible to align the waypoints with the route geometry for implementation, a simpler and faster approximation was employed in the app, consisting of three steps: (1) Drawing direct lines between waypoints to create a connected path roughly resembling the route. (2) Selecting the nearest line to the user's location. (3) Determining the waypoint at the end of this line as the next waypoint for recalculating the route. This approach assumes that the drawn lines approximately represent the general route structure. With the development of the rerouting approach, we finish our integration of the routing foundation.
 
 \begin{Summary}[Summary of Methods]
 To provide accurate bike routing in Hamburg, we investigate the usage of an authoritative dataset for bike infrastructure, DRN. Based on Max Lorenz's concept \cite{lorenz_2022}, we prepare the DRN dataset for routing by translating the path descriptions given in the DRN dataset into the OpenStreetMap format. This allows our routing engine to assign different costs to each path segment depending on its properties, circumventing uncomfortable paths for more sensitive bike types like racing bikes. 
@@ -367,16 +367,16 @@ After we compare the routing accuracy to a hand-drawn ground truth and traffic l
 
 \subsection{Completeness}\label{sec:lorenz2}
 
+Based on an analysis conducted by Max Lorenz \cite{lorenz_2022}, the converted DRN path network encompasses roughly 7689 kilometers compared to OpenStreetMap, which covers approximately 10557 kilometers. The reported coverage for OpenStreetMap excludes paths inaccessible for cyclists, marked with \texttt{highway=motorway}, \texttt{highway=motorway\_line}, \texttt{highway=trunk\_link}, \texttt{access=private}, or \texttt{bi\allowbreak cycle=no}. Footpaths are also excluded unless bicycles are allowed with \texttt{bicycle=yes}. 
+
+The size difference is mainly due to additional accessory paths that are contained in OpenStreetMap but not on DRN. As a consequence, when Max Lorenz \cite{lorenz_2022} generated 10000 random routes throughout the city, the average distance that has to be traveled to the next available path segment varies slightly: 77.04 meters in DRN and 52.80 meters in OpenStreetMap. Even though the DRN network encompasses fewer paths, those captured are more detailed. The average path segment length in OpenStreetMap was measured at 102.39 meters compared to 79.16 meters in DRN.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-map.pdf}
 \caption{Comparison of paths in OpenStreetMap (a) and DRN (b). The DRN paths were mapped using \Cref{tab:tag-mapping} into the OpenStreetMap format. Unclassified paths are highlighted in red.}
 \label{fig:routing-drn-osm-map}
 \end{figure}
-
-Based on an analysis conducted by Max Lorenz \cite{lorenz_2022}, the converted DRN path network encompasses roughly 7689 kilometers compared to OpenStreetMap, which covers approximately 10557 kilometers. The reported coverage for OpenStreetMap excludes paths inaccessible for cyclists, marked with \texttt{highway=motorway}, \texttt{highway=motorway\_line}, \texttt{highway=trunk\_link}, \texttt{access=private}, or \texttt{bi\allowbreak cycle=no}. Footpaths are also excluded unless bicycles are allowed with \texttt{bicycle=yes}. 
-
-The size difference is mainly due to additional accessory paths that are contained in OpenStreetMap but not on DRN. As a consequence, when Max Lorenz \cite{lorenz_2022} generated 10000 random routes throughout the city, the average distance that has to be traveled to the next available path segment varies slightly: 77.04 meters in DRN and 52.80 meters in OpenStreetMap. Even though the DRN network encompasses fewer paths, those captured are more detailed. The average path segment length in OpenStreetMap was measured at 102.39 meters compared to 79.16 meters in DRN.
 
 The structural differences are highlighted in \Cref{fig:routing-drn-osm-map}. Here, OpenStreetMap provides more accessory paths and a higher diversity in path categories than in the mapped DRN network. It can also be seen that DRN tends not to capture ways through green spaces. As a result, one minor drawback is that routes with DRN can be generated until the border of a park area but not inside or throughout. The same applies to intermodal connections such as railroads and ferries, mapped as unclassified paths in the displayed example. DRN does not capture these connections.
 
@@ -452,14 +452,14 @@ As depicted in \Cref{fig:routing-hand-drawn-ground-truth}, four routing provider
 
 The best fits are highlighted in \Cref{fig:routing-hand-drawn-ground-truth}. In example (b), it can be seen that the DRN bike route aligns almost perfectly with the hand-drawn reference track. The OpenStreetMap route generated by GraphHopper tends to switch between the bike path and the center of the road -- a behavior seen before in \Cref{ch:matching} with this routing foundation. However, OpenStreetMap is still closer to the bike infrastructure than Google and Bing Maps routing profiles. In this case, choosing the \texttt{Walking} profile for Bing Maps seems to make no significant difference in whether the footpath is chosen.
 
+Both commercial providers, Bing Maps and Google Maps, produce a less detailed geometry in the given example. Minor bends are not captured. \Cref{tab:accuracy-comparison} shows that the observations from the case study also align with our numerical measurements. As DRN produces no detours in this sample and captures minor road bends contained in the reference material, its estimated path length aligns closely with the actual path length as represented by our hand-drawn trajectories. Except for \texttt{1\_Ost\_West}, on which OpenStreetMap achieves the best Hausdorff and mean distances, DRN performs substantially better in depicting bike infrastructure than all other routing foundations in the studied examples. Under the remaining routing foundations, OpenStreetMap seems to provide the generally most accurate depiction. Both \texttt{Walking} and \texttt{Driving} routing profiles for Bing Maps produce similar results.
+
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-convergence-process.pdf}
 \caption{Visualization of the convergence of bike routes onto a desired trajectory, by the number of waypoints a user would have to specify. The desired trajectories are given through our hand-drawn bike path routes. Dark blue routes highlight the initial planned route with just two or three waypoints. The given waypoints are highlighted in the bottom right in the same color coding.}
 \label{fig:routing-convergence-process}
 \end{figure}
-
-Both commercial providers, Bing Maps and Google Maps, produce a less detailed geometry in the given example. Minor bends are not captured. \Cref{tab:accuracy-comparison} shows that the observations from the case study also align with our numerical measurements. As DRN produces no detours in this sample and captures minor road bends contained in the reference material, its estimated path length aligns closely with the actual path length as represented by our hand-drawn trajectories. Except for \texttt{1\_Ost\_West}, on which OpenStreetMap achieves the best Hausdorff and mean distances, DRN performs substantially better in depicting bike infrastructure than all other routing foundations in the studied examples. Under the remaining routing foundations, OpenStreetMap seems to provide the generally most accurate depiction. Both \texttt{Walking} and \texttt{Driving} routing profiles for Bing Maps produce similar results.
 
 Based on the number of waypoints DRN required to achieve the best fit, it converges faster on the desired trajectory than the other routing foundations. As shown in \Cref{fig:routing-convergence-process}, only the first one or two routes providing two or three waypoints, respectively, deviate from the intended path in DRN. DRN requires four waypoints to snap to the desired paths in one example that is also challenging for other routing foundations, \texttt{3\_West\_Ost}.
 
@@ -469,16 +469,16 @@ This first study already gives us some initial insights into the accuracy of the
 
 \subsection{Alignment with Traffic Light Geometries} \label{sec:lorenz4}
 
+As discussed in \Cref{ch:matching}, georeferenced intersection topologies provide the foundation for traffic light matching in this work. Each intersection topology contains ingress, connection, and egress lane shapes for each traffic light. Since the traffic light geometries are designed to depict turn shapes at intersections as accurately as possible, they provide another option to evaluate the alignment of the developed routing network with a particular focus on intersections. A close alignment is desired to enhance the accuracy of traffic light matching.
+
+As only one or a few traffic lights may match a given bike route at an intersection, we cannot directly compare all traffic light geometries with the routing foundation. As we have seen in \Cref{ch:matching}, many traffic lights are never a good option in the presence of a better alternative aligning closer with the bike path. Thus, we first calculate bike routes with DRN and manually select fitting traffic light geometries. Afterward, we can compare the traffic light geometries to the corresponding route to measure their alignment. 
+
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-ground-truth-drn.pdf}
 \caption{Our ground truth for training and evaluation of our traffic light matching models on the 2023 DRN dataset. Dark blue lines highlight randomly generated routes along which matching (green) traffic light geometries were selected. Red traffic light geometries were never selected to match a route.}
 \label{fig:matching-ground-truth-drn}
 \end{figure}
-
-As discussed in \Cref{ch:matching}, georeferenced intersection topologies provide the foundation for traffic light matching in this work. Each intersection topology contains ingress, connection, and egress lane shapes for each traffic light. Since the traffic light geometries are designed to depict turn shapes at intersections as accurately as possible, they provide another option to evaluate the alignment of the developed routing network with a particular focus on intersections. A close alignment is desired to enhance the accuracy of traffic light matching.
-
-As only one or a few traffic lights may match a given bike route at an intersection, we cannot directly compare all traffic light geometries with the routing foundation. As we have seen in \Cref{ch:matching}, many traffic lights are never a good option in the presence of a better alternative aligning closer with the bike path. Thus, we first calculate bike routes with DRN and manually select fitting traffic light geometries. Afterward, we can compare the traffic light geometries to the corresponding route to measure their alignment. 
 
 The DRN traffic light matching ground truth was developed according to the rules and methods explained detailedly in \Cref{ch:matching}. The resulting mapping between generated DRN routes and traffic light geometries is depicted in \Cref{fig:matching-ground-truth-drn}. It contains 49 routes randomly distributed in Hamburg, for which 738 traffic light geometries out of 4964 in proximity (20m) to the route have been selected to match the route geometry. These 738 selections can be mapped to 535 distinct traffic lights that were assigned to at least one route. 78.5\% (420) of all traffic lights were assigned to only one route, indicating a high sample diversity.
 
@@ -552,8 +552,6 @@ A similar difference is observed in situations where the route turns but runs of
 
 An examination of routing errors, categorized into four classes during ground truth creation, reveals a significant enhancement. Instances without routing errors nearly tripled, rising from 23\% (241 out of 1035 constellations marked) in OpenStreetMap to 60\% (438 out of 731 constellations marked) in DRN. This improvement primarily stems from more accurate utilization of bike lanes and paths, reducing routing in the middle of the road. However, complete elimination of this scenario was not achieved. Moreover, routing on the wrong side of the street occurs less frequently.
 
-A detailed case study analyzing 72 random routes by Max Lorenz \cite{lorenz_2022} confirms these findings, as depicted in \Cref{tab:error-cases-max-lorenz}. This validation study further supports the notable improvement in routing quality, marked by fewer identified errors. Continuous routing on the bicycle path contributes significantly to this improvement, along with mitigated occurrences of less common errors such as routing through impassable obstacles, buildings, and stairs.
-
 \begin{table}[t]
 \centering
 \begin{tabular}{@{}lrr@{}}
@@ -573,6 +571,8 @@ Generally problematic road crossings & 1 & 4 \\
 \caption{Observed error cases among an arbitrary sample of 72 routes. The generated routes were compared against reference material (satellite images) by Max Lorenz. Source: \cite{lorenz_2022}}%
 \label{tab:error-cases-max-lorenz}%
 \end{table}
+
+A detailed case study analyzing 72 random routes by Max Lorenz \cite{lorenz_2022} confirms these findings, as depicted in \Cref{tab:error-cases-max-lorenz}. This validation study further supports the notable improvement in routing quality, marked by fewer identified errors. Continuous routing on the bicycle path contributes significantly to this improvement, along with mitigated occurrences of less common errors such as routing through impassable obstacles, buildings, and stairs.
 
 In conclusion, the DRN routes closely align with bicycle infrastructure and exhibit enhanced alignment with traffic light geometries compared to OpenStreetMap bicycle routes. The results suggest that this alignment improvement positively influences traffic light matching. Substantial reductions in routing error rates at intersections and fewer errors in examining entire route geometries further support the effectiveness of the proposed approach.
 
@@ -600,8 +600,6 @@ The results are plotted in \Cref{fig:routing-mapmatching-distance}, depicting tw
 
 To provide a more comprehensive comparison of all trajectories with the routing network, we perform an aggregated comparison using the GraphHopper map matching API\footnote{\url{https://docs.graphhopper.com/\#tag/Map-Matching-API}}, employing the method proposed by Newson and Krumm \cite{newson_hidden_2009} on both OpenStreetMap and DRN. Subsequently, we measure the distance from each GNSS point using the Vincenty estimator to the nearest map-matched segment.
 
-As seen in \Cref{fig:routing-gnss-mapmatching-distribution}, the results reveal two half-normal distributions: DRN positions at a median distance of 2.90m from the nearest path and OpenStreetMap positions at 4.41m. The dispersion in DRN is notably lower, with an interquartile range of 5.40m compared to 7.09m in OpenStreetMap. This underscores the more accurate and consistent representation of bicycle paths in DRN. Consequently, our proposed GNSS correction, facilitated through snapping onto the route, is likely less distorted with DRN routes.
-
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-gnss-mapmatching-distribution.pdf}
@@ -609,9 +607,9 @@ As seen in \Cref{fig:routing-gnss-mapmatching-distribution}, the results reveal 
 \label{fig:routing-gnss-mapmatching-distribution}
 \end{figure}
 
-To evaluate our approach for distance-to-signal estimation, we compare the distance estimated for each GNSS sample to the measured distance driven to the next traffic light. We calculate the distance by determining the position at which the GNSS trajectory will pass the matched upcoming traffic light. Then, we trace the GNSS trajectory back to the current position and measure the Vincenty distance along the backtracked path. GNSS samples not having an upcoming traffic light, e.g., at the end of a track, are not considered here. This method assumes that cases in which users preliminarily deviate from their intended path over the traffic light are sufficiently rare and that the correct traffic light is matched sufficiently often. The GNSS is also expected to scatter in a normal distribution, slightly increasing the measured ground truth distance over the actual traveled distance. Thus, gaussian noise in the measurement is intended.
+As seen in \Cref{fig:routing-gnss-mapmatching-distribution}, the results reveal two half-normal distributions: DRN positions at a median distance of 2.90m from the nearest path and OpenStreetMap positions at 4.41m. The dispersion in DRN is notably lower, with an interquartile range of 5.40m compared to 7.09m in OpenStreetMap. This underscores the more accurate and consistent representation of bicycle paths in DRN. Consequently, our proposed GNSS correction, facilitated through snapping onto the route, is likely less distorted with DRN routes.
 
-Aggregating the measured differences in \Cref{fig:routing-distance-distribution}, we can see that both methods for distance estimation, our route-based method and the direct distance from the current position, center around the zero-line that indicates a perfect distance estimation. In some cases, both methods over- or underestimate the distance to the next traffic light. However, it can also be seen that the direct distance estimation tends to underestimate the actual distance in noticeably more cases, as expected. Calculating the median of both distributions, the route-based distance estimation underestimates the distance by 0.53 meters for each GNSS sample, while the direct measurement underestimates the distance by 3.41 meters. A slight underestimation is expected here due to the GNSS scattering.
+To evaluate our approach for distance-to-signal estimation, we compare the distance estimated for each GNSS sample to the measured distance driven to the next traffic light. We calculate the distance by determining the position at which the GNSS trajectory will pass the matched upcoming traffic light. Then, we trace the GNSS trajectory back to the current position and measure the Vincenty distance along the backtracked path. GNSS samples not having an upcoming traffic light, e.g., at the end of a track, are not considered here. This method assumes that cases in which users preliminarily deviate from their intended path over the traffic light are sufficiently rare and that the correct traffic light is matched sufficiently often. The GNSS is also expected to scatter in a normal distribution, slightly increasing the measured ground truth distance over the actual traveled distance. Thus, gaussian noise in the measurement is expected.
 
 \begin{figure}[t]
 \centering 
@@ -620,11 +618,11 @@ Aggregating the measured differences in \Cref{fig:routing-distance-distribution}
 \label{fig:routing-distance-distribution}
 \end{figure}
 
+Aggregating the measured differences in \Cref{fig:routing-distance-distribution}, we can see that both methods for distance estimation, our route-based method and the direct distance from the current position, center around the zero-line that indicates a perfect distance estimation. In some cases, both methods over- or underestimate the distance to the next traffic light. However, it can also be seen that the direct distance estimation tends to underestimate the actual distance in noticeably more cases, as expected. Calculating the median of both distributions, the route-based distance estimation underestimates the distance by 0.53 meters for each GNSS sample, while the direct measurement underestimates the distance by 3.41 meters. A slight underestimation is expected here due to the GNSS scattering.
+
 A more noticeable difference arises when calculating the interquartile ranges of the distributions. In at least 25\% of cases, the direct distance underestimates the actual traffic light distance by at least 24.47 meters, while the route-based distance estimation only underestimates by at least 5.87 meters. On the other hand, an overestimation is quite rare with the direct distance approach. In at least 25\% of cases, the direct distance approach only overestimates by at least 0.33 meters, while the route-based approach overestimates at least 4.36 meters. Nonetheless, the skewness of the direct distance approach's distribution and the more extensive interquartile range clearly show that the route-based approach provides a more even and stable distance estimation.
 
 In the previous experiment, we considered every GNSS sample equally. However, distance estimation is likely more challenging when far from the traffic light due to the chance of additional road bends until the traffic light is reached. 
-
-A view of the over- and underestimation in relation to the actual traffic light distance, as depicted in \Cref{fig:routing-distance-scatter}, reveals among the expected noisiness that the direct distance estimation tends to underestimate more with increased distances to the traffic light, confirming initial expectations. While the route-based distance estimation tends to align around a perfect estimation even for higher distances, the direct distance approach tends to "bend down," supporting the hypothesis of a decreased accuracy with higher distances. 
 
 \begin{figure}[t]
 \centering 
@@ -632,6 +630,8 @@ A view of the over- and underestimation in relation to the actual traffic light 
 \caption{Heatmap of all tracks recorded by our users, and whether the distance to the traffic light was over- or underestimated at each GNSS point. Horizontal lines indicate a stable estimation throughout the approach. Lines located at zero on the y-axis indicate an accurate estimate.}
 \label{fig:routing-distance-scatter}
 \end{figure}
+
+A view of the over- and underestimation in relation to the actual traffic light distance, as depicted in \Cref{fig:routing-distance-scatter}, reveals among the expected noisiness that the direct distance estimation tends to underestimate more with increased distances to the traffic light, confirming initial expectations. While the route-based distance estimation tends to align around a perfect estimation even for higher distances, the direct distance approach tends to "bend down," supporting the hypothesis of a decreased accuracy with higher distances. 
 
 The black triangle on the lower left section of both plots indicates the area where the actual distance to the traffic light limits the underestimation. Other exciting patterns arise in the diagonal artifacts, which are visible with the route-based distance estimation approach. These lines likely indicate situations where users deviated using an orthogonally aligned side road from the route, considering the parallelity and similar running direction of these artifacts. With the direct-distance approach, the visible artifacts running from below toward the horizontal centerline indicate situations in which utilized ingress roads bend away from a straight line between the user and the traffic light, supporting the assumption that there are such situations in which road bends play a role for distance estimation.
 
@@ -641,14 +641,14 @@ So far, we have evaluated how our DRN bike routing foundation's accuracy, error-
 
 In theory, we could evaluate the route length based on a random and, thus, representative sample of routes throughout the city, as we have done in previous sections. However, another interesting property would be investigating the general route length driven by the application users. Assuming a sufficient diversity in the user trajectories, we will combine both evaluations by calculating routes between the start and end GNSS points of all recorded 1327 user trajectories. Routes are calculated using the same map providers and routing profiles as in \Cref{sec:routing-alignment}.
 
-As presented in \Cref{fig:routing-distance-comparison}, routes generated with DRN are minimally longer than OpenStreetMap routes. Measured by the median distance summed along all route segments using the Vincenty estimator, DRN routes are 4058 meters long (IQR: 4003m) compared to OpenStreetMap with 3907 meters (IQR: 3829m). Here, it needs to be considered that the segment length of DRN is also shorter at 25.93 meters (IQR: 6.76m) in relation to 36.57 meters (IQR: 10.62m) in OpenStreetMap. Thus, parts of this increased distance could also come from a more accurate depiction of road curviness. 
-
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/routing-distance-comparison.pdf}
 \caption{Route length and segment length comparison between routing providers and our approach. Diagonal lines demarcate where both are equal. In the top four charts, we see if DRN bike routes are longer (top left) or shorter (bottom right) than with other providers. In the bottom four charts, we see the median segment length of each route. Bottom-right cases indicate where the DRN route has shorter segment lengths and is, therefore, more detailed.}
 \label{fig:routing-distance-comparison}
 \end{figure}
+
+As presented in \Cref{fig:routing-distance-comparison}, routes generated with DRN are minimally longer than OpenStreetMap routes. Measured by the median distance summed along all route segments using the Vincenty estimator, DRN routes are 4058 meters long (IQR: 4003m) compared to OpenStreetMap with 3907 meters (IQR: 3829m). Here, it needs to be considered that the segment length of DRN is also shorter at 25.93 meters (IQR: 6.76m) in relation to 36.57 meters (IQR: 10.62m) in OpenStreetMap. Thus, parts of this increased distance could also come from a more accurate depiction of road curviness. 
 
 The \texttt{Driving} profile of Bing Maps performs substantially worse, with a median route length of 4734 meters (IQR: 4224m), compared to the \texttt{Walking} profile, which seems to produce much shorter routes at a median of 3755 meters (IQR: 3759m). Although Bing Maps produces the shortest routes with the \texttt{Walking} profile, it must be considered here that we cannot verify whether the shortcuts used are accessible to cyclists. Furthermore, the route segment length in Bing Maps is also worse, with a median of 110.21 meters (\texttt{Driving}, IQR: 37.99m) or 87.57 meters (\texttt{Walking}, IQR: 45.57m), respectively. These results suggest that the depiction of road bends and intersection traversals is also less optimal, potentially negatively impacting a traffic light matching that depends on the turn shape's geometrical details. 
 

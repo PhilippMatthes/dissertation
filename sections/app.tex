@@ -80,7 +80,7 @@ For electric bicycles, Tal et al. (2016) \cite{tal_vehicular-communications-base
 \label{fig:related-work-stops}
 \end{figure}
 
-The second investigated impact is the reduction in stop time or stop rate, primarily measured in simulations. Karoui et al. (2018) \cite{karoui_efficiency_2018}, Sharara et al. (2019) \cite{sharara_impact_2019}, and Xie et al. (2021) \cite{xie_dynamic_2021} report reductions of up to 100\% in favorable conditions, indicating a complete avoidance of stopping at intersections. However, most measurements are considerably lower, with a median of 54.21\% (IQR: 65.95\%). In reality, the actual time savings at stops are likely significantly lower. Suramardhana et al. (2014) \cite{suramardhana_driver-centric_2014} provide a data point for stop time reduction in a real-world setting, reporting a 23.9\% reduction when approaching a test track intersection in Korea.
+The second investigated impact is the reduction in stop time or stop rate, primarily measured in simulations. An overview of this aspect is seen in \Cref{fig:related-work-stops}. Karoui et al. (2018) \cite{karoui_efficiency_2018}, Sharara et al. (2019) \cite{sharara_impact_2019}, and Xie et al. (2021) \cite{xie_dynamic_2021} report reductions of up to 100\% in favorable conditions, indicating a complete avoidance of stopping at intersections. However, most measurements are considerably lower, with a median of 54.21\% (IQR: 65.95\%). In reality, the actual time savings at stops are likely significantly lower. Suramardhana et al. (2014) \cite{suramardhana_driver-centric_2014} provide a data point for stop time reduction in a real-world setting, reporting a 23.9\% reduction when approaching a test track intersection in Korea.
 
 A GLOSA system can lead to fewer stops by a median of 45.2\% (IQR: 30.25\%). However, the potential stop rate reduction also depends on the study environment. Xu et al. (2015) \cite{xu_bb_2015} presented the only identified study that measured this parameter in a real-world setting. In their small-scale study, the authors came to a stop reduction from 21 to 15 stops (28.6\%) when driving at night. For cyclists, Fickas et al. (2019) \cite{fickas_fast_2019} did not directly measure stop rates for cyclists but reported successful guidance of cyclists through green lights in most cases. Thus, the extent to which stops are reduced for cyclists in everyday rides remains largely unknown.
 
@@ -112,14 +112,14 @@ The presented final application is intended as a companion for daily bike rides,
 
 \subsection{Preliminary Approaches}
 
+Out of three user interface prototypes, one was selected for our deployment and test with users in Hamburg. Two user interfaces had been shown in preliminary experiments to be less appropriate and were thus not followed further: the target speed advisory and the multi-lane projection. We will briefly discuss the learnings from these approaches, as they have been crucial in shaping the final solution.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/graph-based-speed-recommendation.pdf}
 \caption{Illustration of our initial speed recommendation algorithm and user interface (top right). The vertical axis indicates the (estimated) distance a user has to travel to the traffic light. The diagonal lines indicate estimated speeds to arrive at a given time in the prediction. The current speed is highlighted in blue. The closest speed, i.e., the speed that is recommended, is highlighted with a green line.}
 \label{fig:graph-based-speed-recommendation}
 \end{figure}
-
-Out of three user interface prototypes, one was selected for our deployment and test with users in Hamburg. Two user interfaces had been shown in preliminary experiments to be less appropriate and were thus not followed further: the target speed advisory and the multi-lane projection. We will briefly discuss the learnings from these approaches, as they have been crucial in shaping the final solution.
 
 \Cref{fig:graph-based-speed-recommendation} illustrates our initial approach, the target speed advisory. This approach provides a text-based speed recommendation to the user, accompanied by a static color-coded scale indicating alignment with the green phase. An ideal speed is determined using a simple algorithm incorporating the estimated distance and the traffic light's prediction. Based on the estimated speeds to arrive at the start or end of each predicted green phase, the closest target speed is selected to minimize the required speed adjustment. The currently driven speed is recommended if no speed adjustment is required to arrive at green. An uncertainty padding is added to the predicted green phases to incorporate prediction uncertainties in the speed advisory. Finally, the speed advisory is clamped to realistic speeds.
 
@@ -137,14 +137,14 @@ Finally, there is the issue of prediction uncertainties. While Typaldos et al. (
 
 Overall, although some issues with our target speed approach can be attributed to the simplicity of our speed selection strategy and sensor processing, the main challenge lies in the limited explainability and the limited ability to capture user intentions concerning the context's complexity. In a nutshell, smartphones cannot model the real-world situation more adequately than the cyclist himself. Projection-based methods are an obvious choice here, as they externalize the speed decision to the user.
 
+In another preliminary test, we experimented with the multi-lane projection method. This method circumvents our speed choice modeling problem, as the user can flexibly choose between possible speeds. No speed advisory model is needed. Our approach involves displaying multiple parallel lanes for upcoming traffic lights, with the prediction projected onto these virtual lanes. The user's location and speed are rendered above these lanes, allowing the user to slow down or speed up to move the prediction underneath. As the intersection comes closer, the lane's end (stop line) moves toward the user. 
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/multi-lane-view.pdf}
 \caption{Illustration of the developed multi-lane matching approach. Dashed lines indicate the bearing threshold applied from the current user location. Arrows at each traffic light indicate the lane direction of this traffic light. Traffic lights marked with green check marks fall within the bearing range and are matched. On the right, we see the prototype that was implemented to test this feature.}
 \label{fig:multi-lane-view}
 \end{figure}
-
-In another preliminary test, we experimented with the multi-lane projection method. This method circumvents our speed choice modeling problem, as the user can flexibly choose between possible speeds. No speed advisory model is needed. Our approach involves displaying multiple parallel lanes for upcoming traffic lights, with the prediction projected onto these virtual lanes. The user's location and speed are rendered above these lanes, allowing the user to slow down or speed up to move the prediction underneath. As the intersection comes closer, the lane's end (stop line) moves toward the user. 
 
 We had to develop a multi-lane traffic light selection to implement this approach. Such a method was quickly established, looking up all traffic lights on intersections along the route that match the route's direction. This process is illustrated in \Cref{fig:multi-lane-view}. As not one but multiple traffic lights were selected, this simplified the traffic light matching process drastically. Thus, we initially found this method quite promising.
 
@@ -175,14 +175,14 @@ In conclusion, three identified visualization methods have been investigated and
 
 \subsection{Routing-Enhanced Speed Advisory}
 
+The integrated routing is utilized to enhance two aspects of the speed advisory. First, the traffic light for which a speed advisory is displayed can be shown along the route on the smartphone's display. The goal is to avoid confusion when a false traffic light is selected. Second, the route is utilized to convey for which parts of the planned trajectory a speed advisory will be given. This additional information is intended to help users plan routes with higher speed advisory coverage, as not all intersections are connected to the system. In addition, intersections not sending data are shown so that users understand why they may not receive a speed advisory at the moment, enhancing the overall explainability.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/camera-controller.pdf}
 \caption{Four screenshots of automatic camera movement to highlight the upcoming traffic light (1, 3, 4) and turns (1, 2). Green segments of the route highlight a part with prediction, as explained in \Cref{fig:routing-process-quality-mapping}. Other traffic lights than the selected one are not displayed.}
 \label{fig:camera-controller}
 \end{figure}
-
-The integrated routing is utilized to enhance two aspects of the speed advisory. First, the traffic light for which a speed advisory is displayed can be shown along the route on the smartphone's display. The goal is to avoid confusion when a false traffic light is selected. Second, the route is utilized to convey for which parts of the planned trajectory a speed advisory will be given. This additional information is intended to help users plan routes with higher speed advisory coverage, as not all intersections are connected to the system. In addition, intersections not sending data are shown so that users understand why they may not receive a speed advisory at the moment, enhancing the overall explainability.
 
 Displaying the upcoming traffic light on the map is trivial- no further consideration is needed here. However, the currently selected traffic light or next turn is often out of view when the camera strictly follows the user's position and heading at a fixed height. To improve this aspect of responsiveness and avoid users attempting to pan/zoom during bike rides, the map's camera is automatically adjusted to focus on traffic lights and close turns. This feature was adopted from Apple Maps, and as seen in \Cref{fig:camera-controller}, incorporates the route's curvature to orient the map's camera suitably.
 
@@ -279,13 +279,6 @@ All survey respondents considered themselves experienced cyclists -- none select
 
 Based on the survey answers, a noticeable number of respondents strongly advocate for cycling and only utilize a car whenever no other option is present. Three respondents stated they avoid a car in any situation. Thus, many users who responded to our survey are already highly engaged in bike riding: 26 users use their bike daily, 12 users occasionally during the week, and two users sometimes on a monthly basis. These aspects will be considered when interpreting individual feedback, but also give insights into the representativeness of the collected tracks.
 
-\begin{figure}[!b]
-\caption{Survey responses for the route's fit to bike paths and route planning intuitiveness. Each part of one bar represents one user and is color-coded with the user's given SUS. Gray parts are users who did not complete all necessary SUS questions.}\label{fig:route-fit-bike-paths}
-\includegraphics[width=\linewidth]{images/app-usability-questions-route-fit-bike-paths.pdf}
-\\
-\includegraphics[width=\linewidth]{images/app-usability-questions-route-planning-intuitiveness.pdf}
-\end{figure}
-
 \subsection{System Usability Scale and User Opinions}
 
 A crucial part of the conducted survey is the SUS, consisting of ten standardized questions. As the scale intended, these questions were minimally adjusted to fit the PrioBike app context by replacing "the system" with "the app." Finally, the questions were translated into German as closely as possible. As the SUS is intended to be comparable across different applications, it allows us to compare our score against related work. 
@@ -294,16 +287,23 @@ A crucial part of the conducted survey is the SUS, consisting of ten standardize
 
 Our achieved SUS does not reach 80.4, which could be accomplished by Krause et al. (2012) \cite{krause_traffic_2012}. However, the study of Krause et al. (2012) \cite{krause_traffic_2012} is also less comparable to our results, as it was conducted in a simulator environment with relatively favorable conditions and an isolated evaluation of the speed advisory. As the system's overall usability determines the SUS, many different aspects of the app have likely influenced the result.
 
+Specific questions were given for each app component to distinguish further which aspects of the app users experienced as improvable. We correlate the given ratings for each feature with the System Usability Score to find which components may have had a considerable negative impact.
+
+\begin{figure}[!b]
+\caption{Survey responses for the route's fit to bike paths and route planning intuitiveness. Each part of one bar represents one user and is color-coded with the user's given SUS. Gray parts are users who did not complete all necessary SUS questions.}\label{fig:route-fit-bike-paths}
+\includegraphics[width=\linewidth]{images/app-usability-questions-route-fit-bike-paths.pdf}
+\\
+\includegraphics[width=\linewidth]{images/app-usability-questions-route-planning-intuitiveness.pdf}
+\end{figure}
+
+\Cref{fig:route-fit-bike-paths} shows opinions given on the in-app bike routing in relation to each given SUS. Respondents for which no SUS could be calculated are highlighted in gray. While there is a less distinguished opinion on the route's fit with bike paths, improvement potentials can be seen with the routes' fit to usually taken paths. The route planning's intuitiveness and clarity have impacted the overall usability, as seen by the SUS distribution. However, one user reporting a low SUS liked the intuitiveness and clarity, together with the main group of high-SUS respondents. Overall, both route fit and planning intuitiveness are seen neutrally by users. Some users also incorporated the speed advisory coverage along routes into their route planning process.
+
 \begin{figure}[t]
 \caption{Survey answers regarding route personalization preferences and adaptation. The bar parts are color-coded with each user's SUS. Gray parts indicate missing responses to a part of the SUS questions.}\label{fig:route-personalization}
 \includegraphics[width=\linewidth]{images/app-usability-questions-route-personalization.pdf}
 \\
 \includegraphics[width=\linewidth]{images/app-usability-questions-route-personalization-adaptation.pdf}
 \end{figure}
-
-Specific questions were given for each app component to distinguish further which aspects of the app users experienced as improvable. We correlate the given ratings for each feature with the System Usability Score to find which components may have had a considerable negative impact.
-
-\Cref{fig:route-fit-bike-paths} shows opinions given on the in-app bike routing in relation to each given SUS. Respondents for which no SUS could be calculated are highlighted in gray. While there is a less distinguished opinion on the route's fit with bike paths, improvement potentials can be seen with the routes' fit to usually taken paths. The route planning's intuitiveness and clarity have impacted the overall usability, as seen by the SUS distribution. However, one user reporting a low SUS liked the intuitiveness and clarity, together with the main group of high-SUS respondents. Overall, both route fit and planning intuitiveness are seen neutrally by users. Some users also incorporated the speed advisory coverage along routes into their route planning process.
 
 Route personalization is key for most users, especially those who ranked a low SUS. This can be seen in \Cref{fig:route-personalization}. Two low-SUS users have felt a lack of meaningful adaption to the defined routing profile personalization. Meanwhile, other users described a good personalization or remained neutral. In general, the ability to personalize routes is weighted differently in its importance and also interpreted differently by users. The same is true for the displayed additional path meta information. Some users like this information for their path choice, while others do not see a demand for this kind of feature. 
 
@@ -411,12 +411,12 @@ The adherence factor is calculated from the traveled distance during the approac
 
 After the described preprocessing, our final evaluation dataset contains 1962 traffic light approaches with complete coverage of at least 150m before and 50m after the traffic light: 842 approaches without advisory (baseline), 638 without adaption, and 482 with adaption to the speed advisory.
 
+Based on our evaluation dataset, we first calculate the influence of the speed advisory on the user's speed while approaching the traffic light. For each meter from 150m before to 50m after the traffic light, we sample the driving speed from all approaches at this distance. As the device's sampling rate and the driven speed determine how often GNSS samples occur during the approach, meaning that faster speeds result in fewer samples along the approach, we perform a resampling to the 1m raster using linear interpolation between GNSS samples.
+
 \begin{figure}[t]
 \caption{Measured speed advisory impact on traffic light approach speed. The vertical dashed line indicates the position at which the GNSS trajectory passed the traffic light. Traffic light approaches shorter than the displayed range are omitted. The diagram highlights a slight decrease in speed across all cases (violet) compared to without GLOSA (gray). Highlighted is also the effect when separating with and without adherence to the green phase for >50\% of the approach's distance.}\label{fig:impacts-approach-speed}
 \includegraphics[width=\linewidth]{images/impacts-approach-speed.pdf}
 \end{figure}
-
-Based on our evaluation dataset, we first calculate the influence of the speed advisory on the user's speed while approaching the traffic light. For each meter from 150m before to 50m after the traffic light, we sample the driving speed from all approaches at this distance. As the device's sampling rate and the driven speed determine how often GNSS samples occur during the approach, meaning that faster speeds result in fewer samples along the approach, we perform a resampling to the 1m raster using linear interpolation between GNSS samples.
 
 As a result, we obtain the median and mean traffic light approach speed as displayed in \Cref{fig:impacts-approach-speed}, upon which a few key observations can be made. As expected, we can see the deceleration before and acceleration after the traffic lights, indicating that our track segmentation and alignment with traffic light positions were successful. Also, we can see that all types of approaches start close together and accelerate to a similar speed after the traffic light. However, a notable disparity becomes evident as the cyclist approaches closer to the traffic light. The effect of the speed advisory differs between "no adherence" and "adherence" cases.
 
@@ -489,14 +489,14 @@ Whenever we labeled that an adaption to the speed advisory had happened, the cha
 
 In addition to our previous results, the labeling study also shows that in 45.45\% (180 out of 396) cases where no adaption had happened, an adaption was also not meaningfully possible in the first place. Out of 915 cases, 7.32\% (67 cases) involved the disregard of a valid speed advisory, implying that users should have stopped but did not. These instances suggest deliberate red light violations or inaccuracies in the speed advisory or traffic light prediction.
 
+Before we conclude, we have to consider one more aspect of the previous measurements. In the previous measurements, we distinguished between cases with and without adherence to the green phase in the speed advisory. However, we also have to consider a few limitations of this approach. Something it does not consider is how the traffic light itself may have impacted the cyclist's behavior. This means that a green light itself may have motivated cyclists to accelerate, and a red light itself may have led to the earlier decrease in speed. These aspects may be overlayed onto our twofold impact. 
+
 \begin{figure}[!t]
 \caption{Distribution of colors on which the speedometer needle was positioned during the approach. This illustration also shows how much users adapt to a green phase after activation when they are currently in a red phase (left charts). In the right charts, it can be seen that users did adapt much less to a green phase after activation, which is the behavior we wanted to separate by our adherence metric. Approaches shorter than the displayed ranges are omitted here. Black indicates that there was no color, meaning the speed is outside the range of the prediction on the speedometer.}\label{fig:impact-adherence-discussion}
 \includegraphics[width=\linewidth]{images/impacts-activation-time.pdf} 
 \\
 \includegraphics[width=\linewidth]{images/impacts-activation-distance.pdf}
 \end{figure}
-
-Before we conclude, we have to consider one more aspect of the previous measurements. In the previous measurements, we distinguished between cases with and without adherence to the green phase in the speed advisory. However, we also have to consider a few limitations of this approach. Something it does not consider is how the traffic light itself may have impacted the cyclist's behavior. This means that a green light itself may have motivated cyclists to accelerate, and a red light itself may have led to the earlier decrease in speed. These aspects may be overlayed onto our twofold impact. 
 
 As seen in \Cref{fig:impact-adherence-discussion}, there may also be the case that cyclists occasionally already traveled at the right speed, not needing to adapt to the speed advisory. One potential solution for future works would be to employ a control group, by hiding a speed advisory occasionally from users. This control group could then be used to distinguish the speed advisory's impact from other context factors. Whether hiding speed advisories from users is a sensible thing to do remains another question to consider.
 

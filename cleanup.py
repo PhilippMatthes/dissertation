@@ -63,4 +63,14 @@ for root, dirs, files in os.walk('.'):
             filepath = os.path.join(root, filename)
             if os.path.getsize(filepath) > 1000 * 1000:
                 print(f'Image {filename} is bigger than 1MB ({os.path.getsize(filepath) / 1_000_000} MB).')
+
+# Find all \label s that are not used.
+labels = re.findall(r'\\label\{[^\}]+\}', latex_text)
+labels = [label[7:-1] for label in labels]
+labels = set(labels)
+print(f'Found {len(labels)} unique labels: {labels}')
+# Check how often the label is used.
+label_usage = {label: latex_text.count(label) for label in labels}
+unused_labels = [label for label, count in label_usage.items() if count == 1]
+print(f'Found {len(unused_labels)} unused labels: {unused_labels}')
         

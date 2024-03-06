@@ -400,6 +400,8 @@ In the error case that the denominator is zero, $\phi_{\text{overlap}}$ is also 
 
 The thresholds $t_{\text{overlap\_pct}}$, $t_{\text{perfect\_match}}$, and $t_{\text{road\_side}}$ can be used to tune the final result. In the case of $\phi_{\text{overlap}} < t_{\text{overlap\_pct}}$, both traffic lights are kept. This threshold allows for intentional small overlaps at complex intersections without filtering consecutive traffic lights out.
 
+The final filtering pipeline has several thresholds that must be carefully selected to optimize the final matching performance. Here, it is essential to consider that each filter influences the subsequent filters in the pipeline. This complexity means tuning the individual filters by hand is challenging and time-intensive. A solution to this problem is utilizing a hyperparameter tuning algorithm, which tries to understand the influence of each hyperparameter on a model and maximizes its score. This algorithm can run overnight, resulting in a proposed model configuration after a few hundred to thousand trials. 
+
 \begin{table}[!b]
 \caption{Summary of thresholds used in the algorithmic traffic light matching model. Also highlighted is the search space in which the hyperparameter tuning algorithm searches for good configurations.}
 \begin{tabular}{@{}lp{8cm}l@{}}
@@ -592,16 +594,16 @@ Two models were designed: the algorithmic model and the ML model. Each model was
 
 The specific model configurations are detailed in \Cref{tab:hyperparameter-tuning-results}. The hyperparameter tuning process selected similar values for the initial thresholds along the filter pipeline. Ignoring the parameters of the overlap matchers initially, notable differences are observed only in the chosen bearing threshold $t_{\text{bear}}$ and the length filter. While the 2023 model is less strict in filtering steeply angled lane geometries, the length filter is configured more strictly. This is not surprising, as the bearing and length filters pertain to similar properties between the route and the lane. The overlap matcher, which comes last in the filter pipeline, exhibits more pronounced differences between the two model variants. 
 
-\Cref{fig:hyperparameter-contourplot} provides more detailed insights into interpreting the hyperparameter tuning. The figure shows the direction in which the parameter configuration was estimated to improve the maximum F1 score. As a foundation, this plot was generated using the training history of the 2023 model.
-
-Several interesting conclusions can be drawn from the figure regarding the training and the general interpretation of a "good" match between a route and a traffic light geometry. First, a clear trend is observed with Threshold 5, which decides whether inversely oriented traffic light geometries should be chosen as a match. The tendency is clearly towards "no," aligning with Rule 6 in the dataset creation, stating that traffic light geometries should never be chosen against the direction of travel. 
-
 \begin{figure}[!t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-hpt-contour-topological-osm-updated.png}
 \caption{Contour plot of the hyperparameter tuner's threshold search space indicating its gradient measurements for F1 score optimization. On the top, we find the threshold IDs from \Cref{tab:hyperparameter-space}. On the left, the search space for each threshold is depicted. Red areas of the plot indicate configurations that are expected by the tuner to reward a higher F1 score.}
 \label{fig:hyperparameter-contourplot}
 \end{figure}
+
+\Cref{fig:hyperparameter-contourplot} provides more detailed insights into interpreting the hyperparameter tuning. The figure shows the direction in which the parameter configuration was estimated to improve the maximum F1 score. As a foundation, this plot was generated using the training history of the 2023 model.
+
+Several interesting conclusions can be drawn from the figure regarding the training and the general interpretation of a "good" match between a route and a traffic light geometry. First, a clear trend is observed with Threshold 5, which decides whether inversely oriented traffic light geometries should be chosen as a match. The tendency is clearly towards "no," aligning with Rule 6 in the dataset creation, stating that traffic light geometries should never be chosen against the direction of travel. 
 
 The hyperparameter model successfully reconstructed this relationship. Clear gradients are also noticeable at other thresholds. The loss gradients for the overlap thresholds T7 to T9 appear diffuse, aligning with the variability observed in these parameters in the final models. Overall, the hyperparameter tuning appears to have captured essential relationships effectively. At least, no better model could be manually found.
 
@@ -674,14 +676,14 @@ Further insights into user perception of the matching process will be explored i
 
 An alternative validation method was adopted. On March 21, 2023, four test rides with good prediction availability were conducted and filmed using a camera. The app calculated routes for these rides, and the final version of the matching algorithm automatically selected traffic lights. Subsequent video analysis confirmed the correct selection of 51 out of 56 passed traffic lights, resulting in an accuracy of 91.07\%. These measured results align with the ground truths, validating the effectiveness of the matching algorithm.
 
+Finally, we examine the response time of the final service using the ML matching method. This metric is crucial as users do not want to wait indefinitely for route calculation and matching. In the case of automatic route recalculation, the functionality of speed recommendation should be restored quickly.
+
 \begin{figure}[t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-performance-556-routes.pdf}
 \caption{Performance analysis of the developed traffic light matching service, which contains the ML model. Seen here is how the route length and number of traffic lights affect the processing time, with random routes through Hamburg.}
 \label{fig:matching-performance}
 \end{figure}
-
-Finally, we examine the response time of the final service using the ML matching method. This metric is crucial as users do not want to wait indefinitely for route calculation and matching. In the case of automatic route recalculation, the functionality of speed recommendation should be restored quickly.
 
 In \Cref{fig:matching-performance}, a measurement is presented based on 556 random routes on our deployment at TU Dresden. The load is distributed across four containers with the matching service, each located on a server at TU Dresden that runs 6 of 12 cores of an Intel Xeon Gold 6136 CPU running at 3.00 GHz. The measured time is deployment-dependent and influenced by the host system/network from which the measurement is taken. However, the exact number of milliseconds is not as crucial as the order of magnitude, its correlation with route length, and the number of traffic lights along the route.
 
