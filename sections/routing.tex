@@ -255,16 +255,32 @@ We also had to perform some tweaks to our deployment to ensure that the routing 
 
 When deployed, GraphHopper provides different \texttt{vehicle}s with individual path weights depending on the road's properties. Each \texttt{vehicle} represents a different routing profile. Among these \texttt{vehicle}s are also various bike types such as \texttt{bike}, \texttt{bike2} (avoids inclines), \texttt{racingbike} or \texttt{mountainbike}. The routing API provides these profiles to select a specific behavior, such as avoiding unpaved sections with the \texttt{racingbike} profile. However, one challenge is selecting the best routing configuration for a user's needs. 
 
-Initially, the idea existed to infer the best routing profile, or even a custom routing profile, based on the user's recorded trajectories. However, this idea was discarded in favor of a less complex and more robust approach, avoiding the danger of overemphasizing user data and providing inconsistent routes between multiple devices with the same configuration. Instead, users are given a menu as depicted in \Cref{fig:routing-profile-mapping} providing three options: bike type, route preference (fast, comfortable), and whether inclines should be avoided. Using these selections, a suitable routing profile is mapped. This allows two users to share and ride the same route without further issues.
+Initially, the idea existed to infer the best routing profile, or even a custom routing profile, based on the user's recorded trajectories. However, this idea was discarded in favor of a less complex and more robust approach, avoiding the danger of overemphasizing user data and providing inconsistent routes between multiple devices with the same configuration. Instead, users are given a menu as depicted in \Cref{tab:routing-profile-mapping} providing three options: bike type, route preference (fast, comfortable), and whether inclines should be avoided. Using these selections, a suitable routing profile is mapped. This allows two users to share and ride the same route without further issues.
 
 Here, a short routing option was also provided preliminarily, in addition to fast and comfortable routing. However, routes generated with this routing profile would frequently lead over the wrong roadside since both roadsides are captured independently in DRN. The ported DRN network is configured with walking speeds in the opposite allowed direction, assuming users have to dismount their bicycles to correspond to road laws. As a result, another issue with routing on the opposite roadside was that travel times increased significantly, which was reported as a bug by test users. Hence, the short routing profile was excluded from the available options. The other routing profiles do not have this problem since they also consider the travel time that significantly increases traveling in the opposite direction.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{images/routing-profile-mapping.pdf}
-\caption{Mapping of routing profiles for route personalization. On the left, we see the profile view that is presented in the smartphone app. Based on the user selection, a suitable GraphHopper routing profile is selected.}
-\label{fig:routing-profile-mapping}
-\end{figure}
+\begin{table}[htbp]
+    \centering
+    \caption{Mapping of GraphHopper routing profiles for route personalization.}
+    \begin{tabular}{lll}
+        \hline
+        \textbf{Selected Bike Type}& \textbf{Selected Preference Type}& \textbf{Selected Routing Profile}\\
+        \hline
+        \multirow{2}{*}{Mountain Bike} & Fast & mtbFastest \\
+        & Default & mtbDefault \\
+        \hline
+        \multirow{2}{*}{Racing Bike / Cargo Bike} & Fast & racingbikeFastest \\
+        & Default & racingbikeDefault \\
+        \hline
+        \multirow{2}{*}{N/A (Assuming Sport)} & Fast & bikeFastest \\
+        & Default & bikeDefault \\
+        \hline
+        \multirow{2}{*}{N/A} & Fast & bike2Fastest \\
+        & Default & bike2Default \\
+        \hline
+    \end{tabular}
+    \label{tab:routing-profile-mapping}
+\end{table}
 
 In case users do not specify a routing profile, a default routing profile (\texttt{bike2}) is selected that utilizes the \texttt{short\_fastest} weighting, which represents a compromise between the short and fast weightings. This routing profile also avoids inclines, incorporating height data into the route-finding process.
 
