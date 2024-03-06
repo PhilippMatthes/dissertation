@@ -173,7 +173,7 @@ Since the wait time diversity does not necessarily capture the amount of shift b
 
 \definecolor{good}{HTML}{00bb00}
 \definecolor{bad}{HTML}{ff0000}
-\begin{table}[!b]
+\begin{table}[t]
 \centering
 \def\arraystretch{1.5}
 \caption{Types of predictability mapped by our two metrics. This schema can be utilized to determine which kind of prediction algorithm may be suitable.}
@@ -224,6 +224,10 @@ To identify potentials where our availability could be improved, we examine the 
 
 The second part of the evaluation focuses on our study of traffic light predictability in Hamburg. Based on related work and our inquiry to Hamburg's authorities, we expect at least 90.7\% of traffic lights to be capable of traffic adaptiveness. By analyzing the predictability metrics throughout the week and their distributions across Hamburg, we cross-check this value and analyze how well Hamburg is generally suited for a GLOSA system.
 
+\subsection{Long-Term Data and Prediction Study}
+
+As seen in \Cref{tab:tld-number-of-things}, as of December 2023, the Traffic Lights Data system contains 19951 individual traffic lights distributed across 791 intersection nodes, based on their ID that contains the intersection number. The system's overall number of traffic lights gradually changes as new ones are added or outdated entries are removed. Compared to our inquiry that referenced 1731 signalized intersections in total, 45.7\% of Hamburg is supported in December 2023.
+
 \begin{table}[t]
     \centering
     \begin{tabular}{@{}lcccccccccr@{}}
@@ -241,11 +245,6 @@ The second part of the evaluation focuses on our study of traffic light predicta
     \caption{Number of individual traffic lights in the Traffic Lights Data platform as of December 4, 2023. Some traffic lights are marked for shared usage between multiple modes of transport, leading to overlaps in the numbers on the right side. The necessary metadata is provided by Hamburg authorities.}
     \label{tab:tld-number-of-things}
 \end{table}
-
-
-\subsection{Long-Term Data and Prediction Study}
-
-As seen in \Cref{tab:tld-number-of-things}, as of December 2023, the Traffic Lights Data system contains 19951 individual traffic lights distributed across 791 intersection nodes, based on their ID that contains the intersection number. The system's overall number of traffic lights gradually changes as new ones are added or outdated entries are removed. Compared to our inquiry that referenced 1731 signalized intersections in total, 45.7\% of Hamburg is supported in December 2023.
 
 Two minor errors in the metadata were identified during a preliminary examination of traffic lights. First, one of the traffic lights (132\_22) exhibited a duplicated \texttt{cycle\_second} data stream. Additionally, \texttt{laneType} "16371" was mistakenly assigned to traffic lights 240\_1 and 240\_2. These are not included in \Cref{tab:tld-number-of-things} as they cannot be accurately assigned. Both issues were traced back to human data input errors through communication with operators, and corrective measures could be initiated.
 
@@ -317,15 +316,15 @@ In the weekly progression illustrated in \Cref{fig:monitoring-7-days}, it become
 
 Upon identifying the root cause, the operators initiated appropriate fixes related to the traffic controllers' MQTT queues. Simultaneously, we created an additional exclusion list of intersection nodes, preliminarily exempting them from the prediction until the issue was resolved. This exclusion involved 584 intersections connected to three specific traffic controllers. Due to compliance concerns, the operators have not allowed us to disclose the specific traffic controllers affected; however, further information can be found in a technical report from 2020 \cite{neuner_leitfaden_2020}. 
 
-Looking at the number of discarded cycles, we derive further insights into whether isolated messages are lost or if observations from operational traffic lights consistently reach their destination. The analysis is depicted in \Cref{fig:monitoring-rejected-cycles} and started around August 1, 2023. After an extended period with invalid cycles, we see a substantial improvement around October 31 at 6:40 AM local time. The number of rejected cycles suddenly dropped to 0, with only sporadic peaks. This improvement indicates that another data issue in the Traffic Lights Data platform was addressed; however, we were not informed which specific modification was made. Before, 25 to 125 cycles were rejected every minute, indicating that the issue could have affected up to 200 connections throughout summer 2023, assuming a cycle length of 90 seconds. At the time of this fix, we had already given Hamburg guest access to our monitoring web tool, meaning it could have been one of the information sources involved in the fix.
-
-After identifying issues with the traffic controllers and falsely importing traffic lights in the data platform, we were also able to identify issues related to the network router installed at the platform operator's servers, which could not keep up with all messages. The corresponding router was replaced, further improving the data quality. The stability of the MQTT brokers directly connected with the traffic controllers was also optimized by scaling up the computational resources of the Observation-exporting virtual machines. As a result of these efforts, the original prediction availability from 2022 (80\% during the day) could be restored in February 2024, stabilizing the Traffic Lights Data system.
-
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{images/monitoring-rejected-cycles.pdf}
     \caption{Line chart depicting the number of cycles rejected due to out-of-order switching. The clear decline after October 31 at 6:40 AM local time indicates that parts of the traffic light data network infrastructure were fixed, decreasing the number of incomplete cycles.}\label{fig:monitoring-rejected-cycles}
 \end{figure}
+
+Looking at the number of discarded cycles, we derive further insights into whether isolated messages are lost or if observations from operational traffic lights consistently reach their destination. The analysis is depicted in \Cref{fig:monitoring-rejected-cycles} and started around August 1, 2023. After an extended period with invalid cycles, we see a substantial improvement around October 31 at 6:40 AM local time. The number of rejected cycles suddenly dropped to 0, with only sporadic peaks. This improvement indicates that another data issue in the Traffic Lights Data platform was addressed; however, we were not informed which specific modification was made. Before, 25 to 125 cycles were rejected every minute, indicating that the issue could have affected up to 200 connections throughout summer 2023, assuming a cycle length of 90 seconds. At the time of this fix, we had already given Hamburg guest access to our monitoring web tool, meaning it could have been one of the information sources involved in the fix.
+
+After identifying issues with the traffic controllers and falsely importing traffic lights in the data platform, we were also able to identify issues related to the network router installed at the platform operator's servers, which could not keep up with all messages. The corresponding router was replaced, further improving the data quality. The stability of the MQTT brokers directly connected with the traffic controllers was also optimized by scaling up the computational resources of the Observation-exporting virtual machines. As a result of these efforts, the original prediction availability from 2022 (80\% during the day) could be restored in February 2024, stabilizing the Traffic Lights Data system.
 
 \subsection{Study of Traffic Light Predictability in Hamburg}
 
