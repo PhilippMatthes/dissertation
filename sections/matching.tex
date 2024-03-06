@@ -420,8 +420,6 @@ T9 ($t_{\text{overlap\_pct}}$) & If two traffic lights overlap more relative to 
 \label{tab:hyperparameter-space}
 \end{table}
 
-The final filtering pipeline has several thresholds that must be carefully selected to optimize the final matching performance. Here, it is essential to consider that each filter influences the subsequent filters in the pipeline. This complexity means tuning the individual filters by hand is challenging and time-intensive. A solution to this problem is utilizing a hyperparameter tuning algorithm, which tries to understand the influence of each hyperparameter on a model and maximizes its score. This algorithm can run overnight, resulting in a proposed model configuration after a few hundred to thousand trials. 
-
 To prepare the model for hyperparameter tuning, search spaces for each hyperparameter must be defined. These search spaces are summarized in \Cref{tab:hyperparameter-space}. The Tree-Structured Parzen Estimator hyperparameter tuning algorithm \cite{ozaki_multiobjective_2020} is utilized to find a suitable configuration on the ground truth benchmark. The objective function given to the tuner algorithm is the F1 score. As a result, we obtain a tuned hypermodel that can be executed on route geometries, matching the suitable traffic lights as accurately as possible.
 
 \subsection{Machine Learning Filtering Approach}\label{sec:jeschor1}
