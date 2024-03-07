@@ -165,6 +165,9 @@
 
 \usepackage[sort=none,abbreviations]{glossaries-extra}
 \loadglsentries[main]{sections/glossary}
+% \usepackage{glossary-mcols}
+% \renewcommand{\glsmcols}{2}
+\setglossarystyle{index}
 
 \begin{document}
 \addtokomafont{disposition}{\rmfamily}
@@ -271,19 +274,19 @@ Based on the survey, users report a System Usability Scale of 73, with improvabl
 \nocite{wieland_2023}
 \nocite{pix_2024}
 
-% \input{sections/introduction.tex}
-% \input{sections/prediction.tex}
-% \input{sections/matching.tex}
-% \input{sections/routing.tex}
-% \input{sections/app.tex}
-% \input{sections/conclusions.tex}
+\input{sections/introduction.tex}
+\input{sections/prediction.tex}
+\input{sections/matching.tex}
+\input{sections/routing.tex}
+\input{sections/app.tex}
+\input{sections/conclusions.tex}
 
 \newpage
 
 \emergencystretch=10em
 
 \clearpage
-\printunsrtglossary[type=abbreviations,style=index]
+\printunsrtglossary[type=abbreviations]
 
 \chapter*{\bibname}
 \addcontentsline{toc}{chapter}{\bibname}
