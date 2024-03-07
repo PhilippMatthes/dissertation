@@ -162,12 +162,22 @@
 \setlength{\intextsep}{0.6cm}
 
 \usepackage{multirow}
-
 \usepackage[sort=none,abbreviations]{glossaries-extra}
 \loadglsentries[main]{sections/glossary}
 % \usepackage{glossary-mcols}
 % \renewcommand{\glsmcols}{2}
-\setglossarystyle{index}
+\newglossarystyle{dotglos}{%
+    \setglossarystyle{list}%
+    \renewcommand*{\glossentry}[2]{%
+        \item[\glsentryitem{##1}\glstarget{##1}{\glossentryname{##1}}]
+        \ifglshassymbol{##1}{[\glossentrysymbol{##1}]\quad}{}%
+        \dotfill\quad%
+        \glossentrydesc{##1}%
+        ##2%
+        \vspace{2mm}}%
+    \renewcommand*{\glsgroupskip}{}%
+}
+\setglossarystyle{dotglos}
 
 \begin{document}
 \addtokomafont{disposition}{\rmfamily}
@@ -285,8 +295,8 @@ Based on the survey, users report a System Usability Scale of 73, with improvabl
 
 \emergencystretch=10em
 
-\clearpage
-\printunsrtglossary[type=abbreviations]
+\renewcommand{\glsnamefont}[1]{\color{cidarkblue} \textbf{#1} \dotfill}
+\printunsrtglossary[type=abbreviations,title={Abbreviations}]
 
 \chapter*{\bibname}
 \addcontentsline{toc}{chapter}{\bibname}
