@@ -193,7 +193,7 @@ Since the wait time diversity does not necessarily capture the amount of shift b
 
 \definecolor{good}{HTML}{00bb00}
 \definecolor{bad}{HTML}{ff0000}
-\begin{table}[t]
+\begin{table}[!b]
 \centering
 \def\arraystretch{1.5}
 \caption{Types of predictability mapped by our two metrics. This schema can be utilized to determine which kind of prediction algorithm may be suitable.}
@@ -437,7 +437,7 @@ Thus, compared to the 90.7\% of traffic lights in Hamburg that should be able to
 
 Traffic light prediction provides many opportunities for future intelligent transport systems to enhance the efficiency and safety of traffic, overcoming issues like dilemma zones when approaching an intersection. In practice, however, traffic light prediction is hindered by two issues: obtaining the traffic light data and accounting for unpredictabilities in the switching. 
 
-Previous works mainly resorted to DSRC or cellular V2X to directly obtain traffic light timing information. These systems can use the residual time provided in SPaT messages, externalizing the prediction to the infrastructure provider and ensuring high interoperability between cities. However, as an alternative, we can also use a centralized data platform, making it widely available to all devices with access to the Internet. This solution seems more attractive from a smartphone application's viewpoint. In Hamburg, such a system is available through the Traffic Lights Data platform.
+Previous works mainly resorted to DSRC or cellular V2X to directly obtain traffic light timing information. These systems can use the residual green/red time provided in SPaT messages, externalizing the prediction to the infrastructure provider and ensuring high interoperability between cities. However, as an alternative, we can also use a centralized data platform, making it widely available to all devices with access to the Internet. This solution seems more attractive from a smartphone application's viewpoint. In Hamburg, such a system is available through the Traffic Lights Data platform.
 
 As the Traffic Lights Data platform does not provide traffic light predictions, we needed to interweave an external prediction algorithm based on the available real-time data. To achieve this, we looked for prediction algorithms that are accurate, scalable, and resilient to data outages. A probabilistic approach was identified and integrated based on the available data. To cope with data issues, we implemented a simple error detection that discards erroneous data and degrades the prediction availability in favor of generating fewer false predictions. 
 

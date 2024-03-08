@@ -16,7 +16,7 @@ Which specific parts have been contributed from the Master's thesis will be refe
 
 \section{Introduction}
 
-Accurately detecting upcoming traffic lights is crucial for many driving applications. It is a safety-critical functionality for (semi)autonomous driving systems and essential for bridging the gap between traffic light prediction and speed recommendation. So far, we have considered the traffic light prediction without its relationship to the traffic light's position along the user's trajectory. However, to provide a speed advisory, we must not only know about the predicted timing of the traffic light but also its position and whether it aligns with the predicted path. A georeferencing is required.
+Accurately detecting upcoming traffic lights is crucial for many driving applications. It is a safety-critical functionality for (semi)autonomous driving systems and essential for bridging the gap between traffic light prediction and speed recommendation in GLOSA applications. So far, we have considered the traffic light prediction without its relationship to the traffic light's position along the user's trajectory. However, to provide a speed advisory, we must not only know about the predicted timing of the traffic light but also its position and whether it aligns with the predicted path. A georeferencing is required.
 
 The concept of georeferencing intersections, initially abbreviated under Geometric Intersection Description (GID), was introduced relatively early in the USA in 2008 \cite{cicas-v}. To reference the position of traffic lights and the specific turns they serve, the turn lane shapes are represented as line geometries crossing the intersection. In this way, it is possible to distinguish between turn directions and find which traffic light will be relevant for the vehicle. Today, this information is represented in the internationally standardized MapData (MAP) format that was developed by the SAE\footnote{\url{https://www.sae.org/standards/content/j2735_202309/}} in coevolution with the Signal Phase and Timing (SPaT) message standard.
 
@@ -331,7 +331,7 @@ where $\text{dist}$ is calculated as the Euclidean distance and $n$ is the numbe
 
 \Cref{fig:sg-selection-bearing-filter-sum} gives an intuition for the final working principle of the bearing filter. In example (1), all the traffic light's geometry segments are sufficiently aligned to the route. Examples (2) and (3) depict cases where none of the segments are within the angular threshold $t_{\text{bear}}$. Example (4) highlights a case where the first 60\% of the traffic light geometry matches the route. In the illustration, $t_{\text{bear\_sum}}$ is assumed to be larger than 60\%, so the traffic light that curves away is filtered out. The higher this threshold is configured, the more aggressively the filter excludes inclined geometries.
 
-\textbf{\color{cidarkblue}Step 3 -- Length Filter:} With the previous two steps, we have two bearing thresholds ($t_{\text{bear}}$ and $t_{\text{bear\_sum}}$) in addition to the distance threshold $t_{\text{dist}}$. However, during the systematic testing of the thresholds, it quickly became apparent that they alone cannot sufficiently distinguish matching traffic lights from non-matching traffic lights. A key observation was made during the search for other characteristics that distinguish matching from non-matching traffic lights: Non-matching traffic light geometries often have a shorter projection onto the route relative to their original length. This feature is also related to the traffic light geometry's angular position to the route but incorporates the shape of the route in between projected traffic light geometry coordinates.
+\textbf{\color{cidarkblue}Step 3 -- Length Filter:} With the previous two steps, we have two bearing thresholds ($t_{\text{bear}}$ and $t_{\text{bear\_sum}}$) in addition to the distance threshold $t_{\text{dist}}$. However, during the systematic testing of the thresholds, it quickly became apparent that they alone cannot sufficiently distinguish matching traffic lights from non-matching traffic lights. A key observation was made during the search for other characteristics: Non-matching traffic light geometries often have a shorter projection onto the route relative to their original length. This feature is also related to the traffic light geometry's angular position to the route but incorporates the shape of the route in between projected traffic light geometry coordinates.
 
 To mathematically represent this intuition, a cumulative score $\phi_{\text{len}}$ is calculated similarly to the bearing filter and then subjected to a threshold $t_{\text{len\_sum}}$. The score $\phi_{\text{len}}$ quantifies the difference from 0 (no matching segments) to 1 (all segments matching), again weighted by the length of each segment. Example (3) shows that the length filter does not detect inversely aligned geometries well. However, since the bearing filter is assumed to handle this case, the length filter will likely not encounter such constellations.
 
@@ -597,7 +597,7 @@ The specific model configurations are detailed in \Cref{tab:hyperparameter-tunin
 \begin{figure}[!t]
 \centering 
 \includegraphics[width=\linewidth]{images/matching-hpt-contour-topological-osm-updated.png}
-\caption{Contour plot of the hyperparameter tuner's threshold search space indicating its gradient measurements for F1 score optimization. On the top, we find the threshold IDs from \Cref{tab:hyperparameter-space}. On the left, the search space for each threshold is depicted. Red areas of the plot indicate configurations that are expected by the tuner to reward a higher F1 score.}
+\caption{Algorithmic model: contour plot of the hyperparameter tuner's threshold search space indicating its gradient measurements for F1 score optimization. On the top, we find the threshold IDs from \Cref{tab:hyperparameter-space}. On the left, the search space for each threshold is depicted. Red areas of the plot indicate configurations that are expected by the tuner to reward a higher F1 score.}
 \label{fig:hyperparameter-contourplot}
 \end{figure}
 
@@ -612,7 +612,7 @@ The ML model was trained on the 2022 OSM dataset and is evaluated on both OSM gr
 \begin{figure}[!t]
 \centering 
 \includegraphics[width=\linewidth,bb=0 0 760 760]{images/decision-boundaries.pdf}
-\caption{Decision boundaries of the ML model's Yeo-Johnson-transformed non-categorical features. The seen shapes give further information where the ML model draws the boundary between a matching and non-matching traffic light geometry.}
+\caption{ML model: Decision boundaries of the Yeo-Johnson-transformed non-categorical features. The seen shapes give further information where the ML model draws the boundary between a matching and non-matching traffic light geometry.}
 \label{fig:ml-model-decision-boundaries}
 \end{figure}
 
@@ -626,7 +626,7 @@ Having explored the interpretability of the models, we next focus on the achieve
 
 \begin{table}[ht]
 \caption{Final model scores calculated on the OSM 2022 and OSM 2023 ground truth datasets. Highlighted are also the results of cross-validation on unseen data.}
-\begin{tabular}{@{}lllllllll@{}}
+\resizebox{\linewidth}{!}{\begin{tabular}{@{}lllllllll@{}}
 \toprule
 \textbf{Model} & \textbf{Trained on} & \textbf{Benchmark} & \textbf{TP} & \textbf{FP} & \textbf{FN} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
 \midrule
@@ -638,7 +638,7 @@ Algorithmic & OSM 2022 & OSM 2023 & 615 & 159 & 143 & 79\% & 81\% & 80.3\% \\
 Algorithmic & OSM 2023 & OSM 2023 & 637 & 136 & 121 & 82\% & 84\% & 83.2\% \\
 ML & OSM 2022 & OSM 2023 & 614 & 52 & 144 & 92\% & 81\% & 86.2\% \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \label{tab:model-scores}
 \end{table}
 

@@ -138,17 +138,13 @@ Thus, to establish a conversion process from DRN to the \texttt{.osm} format, no
     \item The segment's coordinates
 \end{itemize}
 
-These properties are utilized to infer a corresponding OpenStreetMap class, transforming the DRN dataset into the OpenStreetMap format. This approach of format harmonization lays the foundation for merging both datasets at the city border. Another benefit is that it allows us to reuse existing OpenStreetMap data loaders for routing engines without writing a custom plugin.
-
-The challenge here is that no one-to-one match exists between all DRN properties and OpenStreetMap properties. For example, DRN specifies three types for compacted surface: "befestigt - nicht genauer erkennbar", "befestigt - zu detailieren" and "Wassergebundene Decke". To resolve this problem, a mapping was developed that assumes the OpenStreetMap tags from the DRN specification. 
-
 \begin{table}[!t]
 \centering
 \caption{Full mapping of metadata from DRN to OSM. The OSM tags are given in the right four columns. The german name of the path type as contained in the DRN is highlighted in the left column. The bottom part of the table also shows the various surface mappings. The mapping is a modified version of the mapping developed in Max Lorenz's Diploma thesis \cite{lorenz_2022}.}\label{tab:tag-mapping}
 \resizebox{\linewidth}{!}{%
-\begin{tabular}{@{}p{5cm}p{3cm}p{3cm}p{3cm}p{5cm}@{}}
+\begin{tabular}{@{}p{5cm}p{3cm}p{3cm}p{3cm}p{4.9cm}@{}}
     \toprule
-    \textbf{Path Type in DRN} & \textbf{\texttt{highway}} & \textbf{\texttt{bicycle}} & \textbf{\texttt{foot}} & \textbf{Other OpenStreetMap Tags} \\
+    \textbf{Path Type in DRN} & \textbf{\texttt{highway}} & \textbf{\texttt{bicycle}} & \textbf{\texttt{foot}} & \textbf{Other OSM Tags} \\
     \midrule
     Aufgeweiteter Radaufstellstreifen & \texttt{\textbf{tertiary}} & -- & -- & -- \\
     Busfahrstreifen mit Radverkehr & \texttt{\textbf{service}} & \texttt{\textbf{share\_busway}} & -- & -- \\
@@ -166,9 +162,9 @@ The challenge here is that no one-to-one match exists between all DRN properties
     Kommunaltrasse & \texttt{\textbf{tertiary}} & \texttt{\textbf{share\_busway}} & -- & \texttt{cycleway=\textbf{share\_busway}} \\
     Kopenhagener Radweg & \texttt{\textbf{cycleway}} & \texttt{\textbf{designated}} & -- & -- \\
     Protected Bike Lane & \texttt{\textbf{cycleway}} & \texttt{\textbf{designated}} & -- & -- \\
-    Radfahrstreifen & \texttt{\textbf{tertiary}} & -- & -- & \texttt{cycleway:right=\textbf{lane}, cycleway:right:bicycle=\textbf{\allowbreak designated}} \\
+    Radfahrstreifen & \texttt{\textbf{tertiary}} & -- & -- & \texttt{cycleway:right=\textbf{lane}, cycleway:\allowbreak right:\allowbreak bicycle=\textbf{\allowbreak designated}} \\
     Radweg (mit Grünstreifen vom Gehweg getrennt) & \texttt{\textbf{path}} & \texttt{\textbf{designated}} & \texttt{\textbf{designated}} & \texttt{segregated=\textbf{yes}} \\
-    Schutzstreifen & \texttt{\textbf{tertiary}} & -- & -- & \texttt{cycleway:right=\textbf{lane}, cycleway:lane=\textbf{advisory}, cycleway:protection:\allowbreak right=\textbf{dashed\_line}} \\
+    Schutzstreifen & \texttt{\textbf{tertiary}} & -- & -- & \texttt{cycleway:right=\textbf{lane}, cycleway:\allowbreak lane=\textbf{advisory}, cycleway:\allowbreak protection:\allowbreak right=\textbf{dashed\_line}} \\
     Straße mit Mischverkehr ab 50 km/h & \texttt{\textbf{tertiary}} & -- & -- & -- \\
     Straße mit Mischverkehr bis 30 km/h & \texttt{\textbf{residential}} & -- & -- & -- \\
     Verkehrsberuhigter Bereich / Befahrbarer Wohnweg & \texttt{\textbf{living\_street}} & -- & -- & -- \\
@@ -180,6 +176,10 @@ The challenge here is that no one-to-one match exists between all DRN properties
 \end{tabular}
 }
 \end{table}
+
+These properties are utilized to infer a corresponding OpenStreetMap class, transforming the DRN dataset into the OpenStreetMap format. This approach of format harmonization lays the foundation for merging both datasets at the city border. Another benefit is that it allows us to reuse existing OpenStreetMap data loaders for routing engines without writing a custom plugin.
+
+The challenge here is that no one-to-one match exists between all DRN properties and OpenStreetMap properties. For example, DRN specifies three types for compacted surface: "befestigt - nicht genauer erkennbar", "befestigt - zu detailieren" and "Wassergebundene Decke". To resolve this problem, a mapping was developed that assumes the OpenStreetMap tags from the DRN specification. 
 
 The final mapping highlighted in \Cref{tab:tag-mapping} includes the bike path's surface, level, direction, and type. In cases where the bike path's properties cannot be directly mapped to a suitable OpenStreetMap tag, the path is tagged with \texttt{highway=tertiary}. This fallback corresponds to established mapping practices in Germany. The result is an inferred set of tags for each path in the OpenStreetMap format, completing the metadata harmonization process.
 
@@ -511,7 +511,7 @@ In the next experiment, we assess whether this improvement positively impacts th
 
 \begin{table}[b]
 \caption{Achieved model scores after retraining on DRN compared to preliminary results from \Cref{ch:matching}. Cross-validation scores on unseen data are also highlighted.}
-\begin{tabular}{@{}lllllllll@{}}
+\resizebox{\linewidth}{!}{\begin{tabular}{@{}lllllllll@{}}
 \toprule
   \textbf{Model} & \textbf{Benchmark} & \textbf{Trained on} & \textbf{TP} & \textbf{FP} & \textbf{FN} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
   \midrule
@@ -526,7 +526,7 @@ In the next experiment, we assess whether this improvement positively impacts th
   Algorithmic & DRN 2023 & DRN 2023 & 655 & 95 & 83 & 87\% & 89\% & 88.0\% \\
   ML          & DRN 2023 & DRN 2023 & 676 & 24 & 62 & 97\% & 92\% & 94.0\% \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \label{tab:model-scores-drn}
 \end{table}
 
@@ -555,8 +555,8 @@ An examination of routing errors, categorized into four classes during ground tr
 \begin{table}[t]
 \centering
 \begin{tabular}{@{}lrr@{}}
-\hline
-\textbf{Observed Error Cases} & \textbf{DRN} & \textbf{OSM} \\ \hline
+\toprule
+\textbf{Observed Error Cases} & \textbf{DRN} & \textbf{OSM} \\ \midrule
 Continuous routing on the road & 0 & 10 \\
 Routing through buildings or stairs & 0 & 2 \\
 Intersection crossing using car lanes & 0 & 8 \\
@@ -566,7 +566,7 @@ Routing through other impassable obstacles & 0 & 2 \\
 Failure to consider turning restrictions & 0 & 1 \\
 Skipping or crossing additional signals & 1 & 3 \\
 Generally problematic road crossings & 1 & 4 \\
-\hline
+\bottomrule
 \end{tabular}
 \caption{Observed error cases among an arbitrary sample of 72 routes. The generated routes were compared against reference material (satellite images) by Max Lorenz. Source: \cite{lorenz_2022}}%
 \label{tab:error-cases-max-lorenz}%
