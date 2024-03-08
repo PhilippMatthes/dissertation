@@ -1,8 +1,10 @@
 \documentclass[
   ngerman,english, % change to ngerman for german theses
-  BCOR=0mm,cdgeometry=two-side, % use two-side for booklike layouts
+  fontsize=12pt,cdgeometry=twoside, % use two-side for booklike layouts
   numbers=noenddot, % remove trailing dots in chapter/section/... enumeration
   cd=fullcolor,
+  open=right,
+  cleardoublespecialpage=true,
   headings=heavy,
   chapterpage=true,
   cdfont=off, % modify this to use the TUD font (Open Sans)
@@ -69,10 +71,6 @@
 \usepackage{float}
 \usepackage{pgf}
 
-% configure the name of your appendix
-\renewcommand\appendixtocname{Appendix}
-\renewcommand\appendixpagename{Appendix}
-
 % use \tocless before a chapter/section/... in the
 % appendix to hide it from the toc
 \newcommand{\nocontentsline}[3]{}
@@ -93,38 +91,6 @@
   filecolor=cidarkblue,
   citecolor=cidarkblue,      
   urlcolor=cidarkblue,
-}
-
-\usepackage{listings}
-\definecolor{background}{HTML}{F6F6FE}
-\usepackage[scaled=0.85]{beramono}
-\lstdefinelanguage{python}{
-    basicstyle=\ttfamily\footnotesize,
-    numbers=left,
-    numberstyle=\scriptsize,
-    stepnumber=1,
-    numbersep=8pt,
-    showstringspaces=false,
-    breaklines=true,
-    frame=lines,
-    backgroundcolor=\color{background},
-    literate=
-     *{0}{{{\color{cidarkblue}0}}}{1}
-      {1}{{{\color{cidarkblue}1}}}{1}
-      {2}{{{\color{cidarkblue}2}}}{1}
-      {3}{{{\color{cidarkblue}3}}}{1}
-      {4}{{{\color{cidarkblue}4}}}{1}
-      {5}{{{\color{cidarkblue}5}}}{1}
-      {6}{{{\color{cidarkblue}6}}}{1}
-      {7}{{{\color{cidarkblue}7}}}{1}
-      {8}{{{\color{cidarkblue}8}}}{1}
-      {9}{{{\color{cidarkblue}9}}}{1}
-      {:}{{{\color{cidarkblue}{:}}}}{1}
-      {,}{{{\color{cidarkblue}{,}}}}{1}
-      {\{}{{{\color{cidarkblue}{\{}}}}{1}
-      {\}}{{{\color{cidarkblue}{\}}}}}{1}
-      {[}{{{\color{cidarkblue}{[}}}}{1}
-      {]}{{{\color{cidarkblue}{]}}}}{1},
 }
 
 \usepackage{mdframed}
@@ -148,10 +114,6 @@
 }{%
     \end{mdframed}
 }
-
-% use this custom theorem for research questions
-\newtheorem{researchquestion}{Research Question}
-\crefname{researchquestion}{Research Question}{Research Questions}
 
 \renewcommand{\floatpagefraction}{1}
 \renewcommand{\textfraction}{0}
@@ -178,6 +140,12 @@
     \renewcommand*{\glsgroupskip}{}%
 }
 \setglossarystyle{dotglos}
+
+\pagestyle{scrheadings}
+\clearscrheadfoot
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\chead{\normalfont{\thechapter. \headmark}}
+\cfoot{\pagemark}
 
 \begin{document}
 \addtokomafont{disposition}{\rmfamily}
@@ -242,9 +210,8 @@
 \referee{Prof. Dr.-Ing. Christoph Sommer \and Prof. Dr.-Ing. habil. Monika Sester}
 \advisor{Dr.-Ing. Thomas Springer}
 \date{} % the date of submission
-\maketitle
 
-\newcommand\setcurrentname[1]{\def\@currentlabelname{#1}} % See https://tex.stackexchange.com/questions/569570/nameref-not-working-with-starred-sections
+\maketitle
 
 \sloppy
 
@@ -300,29 +267,32 @@ Based on the survey, users report a System Usability Scale of 73, with improvabl
 
 \chapter*{\bibname}
 \addcontentsline{toc}{chapter}{\bibname}
-\markright{Bibliography}
+\markboth{Bibliography}{Bibliography}
 
 \section*{Published Research Papers}
 This thesis is based on the following peer-reviewed research papers in which the author was the principal investigator:
 \printbibliography[heading=none,nottype=student,keyword={ownpaper,related}]
 The following study, although not directly pivotal for this work, inspired hyperparameter tuning of the machine learning model in \Cref{ch:matching}, as well as GNSS-related aspects of smartphone sensor handling in \Cref{ch:routing} and \Cref{ch:app}:
 \printbibliography[heading=none,notkeyword={student},keyword={ownpaper,notrelated}]
+\vfill
 \pagebreak
 
 \section*{Supervised Student Theses}
 The author of this thesis identified several topics for student theses and was involved as supervisor:
 \printbibliography[heading=none,keyword={student},notkeyword={ownpaper}]
+\vfill
 \pagebreak
 
 \section*{References}
 \printbibliography[heading=none,notkeyword={student},notkeyword={ownpaper,notrelated},notkeyword={ownpaper,related}]
+\vfill
 \pagebreak
 
 \newpage
 \addcontentsline{toc}{chapter}{Acknowledgements}
-\markright{Acknowledgements}
+\markboth{Acknowledgements}{Acknowledgements}
 
-\section*{Acknowledgements}\setcurrentname{Unnumbered Section}
+\section*{Acknowledgements}
 
 Map tiles for figures in this work use map data from CARTO, CyclOSM, Mapbox, and OpenStreetMap and their data sources. To learn more, visit \url{https://carto.com/basemaps}, \url{https://www.cyclosm.org/}, \url{https://www.mapbox.com/about/maps/}, and \url{https://www.openstreetmap.org/copyright}.
 
@@ -335,5 +305,6 @@ Digitales Radverkehrsnetz Hamburg (DRN) data was provided by the Free and Hansea
 Lichtsignalanlagen Hamburg data was provided by the Free and Hanseatic City of Hamburg, Landesbetrieb für Straßen, Brücken und Gewässer (LSBG), Data License Germany Version 2.0: \url{https://www.govdata.de/dl-de/by-2-0}. Dataset URL: \url{https://metaver.de/trefferanzeige?docuuid=C498DEED-985C-11D5-889E-000102B6A10E}
 
 This work is funded by the Federal Ministry for Digital and Transport (BMDV, FKZ: 16DKVM001B).
+\vfill
 
 \end{document}

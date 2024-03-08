@@ -147,9 +147,9 @@ The challenge here is that no one-to-one match exists between all DRN properties
 \caption{Full mapping of metadata from DRN to OSM. The OSM tags are given in the right four columns. The german name of the path type as contained in the DRN is highlighted in the left column. The bottom part of the table also shows the various surface mappings. The mapping is a modified version of the mapping developed in Max Lorenz's Diploma thesis \cite{lorenz_2022}.}\label{tab:tag-mapping}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{@{}p{5cm}p{3cm}p{3cm}p{3cm}p{5cm}@{}}
-    \hline
+    \toprule
     \textbf{Path Type in DRN} & \textbf{\texttt{highway}} & \textbf{\texttt{bicycle}} & \textbf{\texttt{foot}} & \textbf{Other OpenStreetMap Tags} \\
-    \hline
+    \midrule
     Aufgeweiteter Radaufstellstreifen & \texttt{\textbf{tertiary}} & -- & -- & -- \\
     Busfahrstreifen mit Radverkehr & \texttt{\textbf{service}} & \texttt{\textbf{share\_busway}} & -- & -- \\
     Fähre & -- & \texttt{\textbf{yes}} & -- & \texttt{route=\textbf{ferry}} \\
@@ -175,7 +175,7 @@ The challenge here is that no one-to-one match exists between all DRN properties
     Verkehrsberuhigter Geschäftsbereich & \texttt{\textbf{living\_street}} & -- & -- & -- \\
     Wege in Grünflächen & \texttt{\textbf{path}} & \texttt{\textbf{designated}} & \texttt{\textbf{designated}} & \texttt{segregated=\textbf{no}} \\
     Wirtschaftsweg & \texttt{\textbf{track}} & -- & -- & -- \\
-    \hline
+    \bottomrule
     \multicolumn{5}{@{}p{20cm}@{}}{\textbf{Surfaces}: befestigt - nicht genauer erkennbar $\rightarrow$ \texttt{\textbf{compacted}}, befestigt - zu detailieren $\rightarrow$ \texttt{\textbf{compacted}}, Wassergebundene Decke $\rightarrow$ \texttt{\textbf{compacted}}, unbefestigt $\rightarrow$ \texttt{\textbf{unpaved}}, Betonplatten $\rightarrow$ \texttt{\textbf{concrete:plates}}, Bituminöse Decke $\rightarrow$ \texttt{\textbf{asphalt}}, Holz $\rightarrow$ \texttt{\textbf{wood}}, Kunststein-Pflaster $\rightarrow$ \texttt{\textbf{paving\_stones}}, Metall $\rightarrow$ \texttt{\textbf{metal}}, Naturstein-Pflaster $\rightarrow$ \texttt{\textbf{cobblestone}}; \textbf{Obstacles}: Bahnübergang $\rightarrow$ \texttt{\textbf{railway=level\_crossing}}, Treppe $\rightarrow$ \texttt{\textbf{highway=steps}}, Fahrradroute $\rightarrow$ \texttt{\textbf{type=route, route=bicycle, network=lcn}}, Brücke $\rightarrow$ \texttt{\textbf{bridge=yes}}, Tunnel $\rightarrow$ \texttt{\textbf{tunnel=yes}}}. \\
 \end{tabular}
 }
