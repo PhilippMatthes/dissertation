@@ -140,6 +140,19 @@ We also measure the number of invalid cycles, referring to cycles that contain i
 
 The developed monitoring allows us to identify and report data failures to the platform operators based on discarded erroneous cycles, drops in the number of Observation messages, or a decreased prediction quality. Error patterns in the dropped messages allow us to provide more detailed information about the potential origins of data failures within the system's architecture.
 
+Here, the prediction quality is calculated as follows. 
+
+\begin{equation} 
+\text{Prediction Quality}(D, H) =  
+\sum_{i=0}^{|P|-1} 
+\left\{
+\begin{array}{ll}
+1 & \text{if } V[i] \neq P[i] \\
+0 & \text{otherwise}
+\end{array} 
+\right.
+\end{equation}
+
 For example, by viewing the prediction quality on a map, we can directly identify whether an outage is related to a specific traffic controller or associated with the complete city. If all city districts are affected, the problem is more likely to originate from the data pooling or load balancing components further along the information chain. Furthermore, we can study the time and duration of error patterns, giving us and the system's operators more clues about where to look for data issues. Finally, we deploy one additional monitoring instance at an external cloud provider to cross out issues from our TU Dresden deployment.
 
 \subsection{Predictability Metrics}
