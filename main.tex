@@ -1,15 +1,16 @@
 \documentclass[
   ngerman,english, % change to ngerman for german theses
-  fontsize=12pt,cdgeometry=twoside, % use two-side for booklike layouts
+  fontsize=12pt,twoside,BCOR=25mm, % use two-side for booklike layouts
   numbers=noenddot, % remove trailing dots in chapter/section/... enumeration
   cd=fullcolor,
   open=right,
-  cleardoublespecialpage=true,
   headings=heavy,
   chapterpage=true,
   cdfont=off, % modify this to use the TUD font (Open Sans)
   sfdefaults=false,
 ]{tudscrmanual}
+
+\usepackage{showframe}
 
 % use a custom serif font
 \usepackage[bitstream-charter]{mathdesign}
@@ -47,6 +48,13 @@
   \clearfield{note}%
 }
 \BiblatexSplitbibDefernumbersWarningOff
+
+\makeatletter
+\newcommand{\customlabel}[2]{%
+   \protected@write \@auxout {}{\string \newlabel {#1}{{#2}{\thepage}{#2}{#1}{}} }%
+   \hypertarget{#1}{#2}
+}
+\makeatother
 
 \usepackage{graphicx}
 \graphicspath{ {./} }
@@ -141,12 +149,6 @@
 }
 \setglossarystyle{dotglos}
 
-\pagestyle{scrheadings}
-\clearscrheadfoot
-\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
-\chead{\normalfont{\thechapter. \headmark}}
-\cfoot{\pagemark}
-
 \begin{document}
 \addtokomafont{disposition}{\rmfamily}
 \addtokomafont{title}{\rmfamily}
@@ -211,7 +213,7 @@
 \advisor{Dr.-Ing. Thomas Springer}
 \date{} % the date of submission
 
-\maketitle
+\maketitle[cdgeometry=symmetric]
 
 \sloppy
 
@@ -292,7 +294,7 @@ The author of this thesis identified several topics for student theses and was i
 \addcontentsline{toc}{chapter}{Acknowledgements}
 \markboth{Acknowledgements}{Acknowledgements}
 
-\section*{Acknowledgements}
+\chapter*{Acknowledgements}
 
 Map tiles for figures in this work use map data from CARTO, CyclOSM, Mapbox, and OpenStreetMap and their data sources. To learn more, visit \url{https://carto.com/basemaps}, \url{https://www.cyclosm.org/}, \url{https://www.mapbox.com/about/maps/}, and \url{https://www.openstreetmap.org/copyright}.
 
