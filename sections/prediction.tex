@@ -140,20 +140,27 @@ We also measure the number of invalid cycles, referring to cycles that contain i
 
 The developed monitoring allows us to identify and report data failures to the platform operators based on discarded erroneous cycles, drops in the number of Observation messages, or a decreased prediction quality. Error patterns in the dropped messages allow us to provide more detailed information about the potential origins of data failures within the system's architecture.
 
-Here, the prediction quality is calculated as follows. 
+Here, the prediction quality is calculated as follows. After creating a new prediction vector $P$, it is held for 120 seconds. Then, each second in the collected data vector $D$ is compared to the prediction $P$, calculating an accuracy score:
+
 
 \begin{equation} 
-\text{Prediction Quality}(D, H) =  
-\sum_{i=0}^{|P|-1} 
+\text{Prediction Quality}(D, P) = 
+\frac{
+\sum_{i=0}^{119} 
 \left\{
 \begin{array}{ll}
-1 & \text{if } V[i] \neq P[i] \\
+1 & \text{if } D[i] = P[i] \\
 0 & \text{otherwise}
 \end{array} 
 \right.
-\end{equation}
+}{
+120
+}
+\end{equation}\label{eq:predictionquality}
 
-For example, by viewing the prediction quality on a map, we can directly identify whether an outage is related to a specific traffic controller or associated with the complete city. If all city districts are affected, the problem is more likely to originate from the data pooling or load balancing components further along the information chain. Furthermore, we can study the time and duration of error patterns, giving us and the system's operators more clues about where to look for data issues. Finally, we deploy one additional monitoring instance at an external cloud provider to cross out issues from our TU Dresden deployment.
+Note that $D$ is not part of $P$, meaning the prediction is validated on unseen data. The calculated quality is then attached to the newly generated prediction, and the time when the quality was created is noted. If we have no real-time data, no quality is calculated. This means that, in the case of a data outage, the quality is not refreshed. After 10 minutes, when the quality cannot be refreshed, it is set to -1 to indicate that validation is no longer possible. Based on this information, we can also see when a data outage occurs or when the traffic light turns itself off.
+
+By viewing the prediction quality on a map, especially qualities mapped to -1, we can directly identify whether an outage is related to a specific traffic controller or associated with the complete city. If all city districts are affected, the problem is more likely to originate from the data pooling or load balancing components further along the information chain. Furthermore, we can study the time and duration of error patterns, giving us and the system's operators more clues about where to look for data issues. Finally, we deploy one additional monitoring instance at an external cloud provider to cross out issues from our TU Dresden deployment.
 
 \subsection{Predictability Metrics}
 
@@ -170,7 +177,7 @@ Based on the learnings from these methods, we approached the challenge with two 
 0 & \text{otherwise}
 \end{array} \right.\end{equation}
 
-The cycle discrepancy is zero in cases when colors perfectly align between cycles, and cycles have the same length. However, for example, if the green phase in one cycle appears and ends one second earlier than in the last cycle, the cycle discrepancy is calculated at two seconds. Thus, the more shift is seen between two cycles, the higher our cycle discrepancy. When a high discrepancy between two cycles is seen, this also indicates a high traffic adaptivity in the switching behavior.
+The cycle discrepancy is zero in cases when colors perfectly align between cycles, and cycles have the same length. However, for example, if the green phase in one cycle appears and ends one second earlier than in the last cycle, the cycle discrepancy is calculated at two seconds. Thus, the more shift is seen between two cycles, the higher our cycle discrepancy. When a high discrepancy between two cycles is seen, this also indicates a high traffic adaptivity in the switching behavior. Note also the similarity to \Cref{eq:predictionquality}, which is intentional.
 
 The cycle discrepancy assumes that green phases are aligned with the cycle length, meaning they appear at the same time every cycle. However, there may also be traffic lights where the waiting time between green phases is not aligned with the cycle timing. While the waiting time could be consistent and, thus, predictable, the cycle discrepancy would be high due to the misalignment. Hence, we designed a second metric that captures how many different wait times are seen. If all waiting times differ, this also indicates a high traffic adaptivity without being bound to the cycle length.
 
@@ -289,7 +296,7 @@ Although an increase in prediction availability can be seen around November 23, 
     \caption{A heatmap displaying the long-term development of prediction quality throughout 2023. The prediction quality was recorded in 10\% buckets for a more responsive analysis in our monitoring tool. In the best case, all predictions should be in the top 10\% bucket. Seen here is how data outages in late 2023 degraded the prediction quality.}\label{fig:monitoring-long-term-study}
 \end{figure}
 
-In addition to the prediction availability, we measured the prediction quality by continuously comparing the prediction with the actual incoming data. If every second in the prediction vector aligns with the currently running cycle, the prediction quality is calculated as 100\%. If no seconds align, this results in 0\% prediction quality. The running cycle is not yet incorporated into the prediction vector at the time of prediction quality calculation, ensuring that no running information sinks into the calculated prediction quality. In the current implementation of the prediction procedure, there is also a prediction quality of -1, generated when real-time data is no longer available to validate the prediction for an extended period. \Cref{fig:monitoring-long-term-study} shows the result of this recording, mapping it as a prediction with 0\% quality.
+In addition to the prediction availability, we also measured the prediction quality over a longer period. \Cref{fig:monitoring-long-term-study} shows this measurement, mapping prediction qualities of -1 that indicate data outages to the 0\% bucket. 
 
 Considering the 10\% buckets in which the prediction quality was monitored, the calculated median prediction quality resides at 85.78\% (IQR: 1.85\%). At first glance, examining the long-term trend reveals a similar pattern in prediction availability at 100\% quality compared to \Cref{fig:monitoring-availability}. For example, there was also a significant dip around July 11, 2023, due to the duplicated messages issue and a general decrease in availability throughout 2023. In addition, we can see in this diagram that fewer predictions fall within the intermediate 10\% to 90\% quality range. As the increased data outages in the summer of 2023 coincided with an increase in low-quality predictions, most predictions below 10\% are likely due to temporarily missing data. Thus, if interpreted as an accuracy metric, many predictions generated with consistent traffic light data likely have been precise to a few seconds.
 
