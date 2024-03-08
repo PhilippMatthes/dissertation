@@ -10,8 +10,6 @@
   sfdefaults=false,
 ]{tudscrmanual}
 
-\usepackage[a-1b]{pdfx}
-
 % use a custom serif font
 \usepackage[bitstream-charter]{mathdesign}
 
@@ -264,8 +262,40 @@ Based on the survey, users report a System Usability Scale of 73, with improvabl
 
 \emergencystretch=10em
 
-\renewcommand{\glsnamefont}[1]{\color{cidarkblue} \textbf{#1} \dotfill}
-\printunsrtglossary[type=abbreviations,title={Abbreviations}]
+\addcontentsline{toc}{chapter}{Acknowledgments}
+\markboth{Acknowledgments}{Acknowledgments}
+
+\chapter*{Acknowledgments}
+
+\subsubsection*{Special Thanks}
+
+Dr. Thomas Springer for his guidance and the opportunity to work on the PrioBike project. Dr. Philipp Grubitzsch and Stephan Dinter who helped me familiarize myself with the project and identify my first research questions. Prof. Christoph Sommer for his valuable feedback and his openness to supervise me as a doctoral student. Dr. Lucas Vogel who was a strong role model for me and always helped me with formal matters relating to my doctorate. Daniel Jeschor, Paul Pickhardt, Markus Wieland, Charles Krüger, and Florian Pix, who 
+
+Prof. Matthias Wählisch who helped me refine my scientific thinking and communication skills. 
+
+The priobike consortium who supported me with the test rides: Dr. Ute Ehlers, Kerstin Spahn
+Prof. Claus Brenner
+Prof. Matthias Wählisch
+Prof. Monika Sester
+Students
+Daniel, Paul, Markus, Charles, Florian
+Dr. Lucas Vogel
+Victoria
+
+\subsubsection*{Attribution for Datasets and Figures}
+
+Map tiles for figures in this work use map data from CARTO, CyclOSM, Mapbox, and OpenStreetMap and their data sources. To learn more, visit \url{https://carto.com/basemaps}, \url{https://www.cyclosm.org/}, \url{https://www.mapbox.com/about/maps/}, and \url{https://www.openstreetmap.org/copyright}.
+
+Screenshots of the developed mobile application use Google Material Icons. These icons are available under \url{https://fonts.google.com/icons} and were licensed under Apache License, Version 2.0: \url{https://www.apache.org/licenses/LICENSE-2.0.txt}.
+
+Traffic light and detector data was provided by the Free and Hanseatic City of Hamburg, Landesbetrieb für Straßen, Brücken und Gewässer (LSBG), Data License Germany Version 2.0: \url{https://www.govdata.de/dl-de/by-2-0}. Dataset URL: \url{https://metaver.de/trefferanzeige?docuuid=AB32CF78-389A-4579-9C5E-867EF31CA225}.
+
+Digitales Radverkehrsnetz Hamburg (DRN) data was provided by the Free and Hanseatic City of Hamburg, Behörde für Verkehr und Mobilitätswende (BVM), Data License Germany Version 2.0: \url{https://www.govdata.de/dl-de/by-2-0}. Dataset URL: \url{https://metaver.de/trefferanzeige?docuuid=EA847D9F-6403-4B75-BCDB-73F831F960C7}
+
+Lichtsignalanlagen Hamburg data was provided by the Free and Hanseatic City of Hamburg, Landesbetrieb für Straßen, Brücken und Gewässer (LSBG), Data License Germany Version 2.0: \url{https://www.govdata.de/dl-de/by-2-0}. Dataset URL: \url{https://metaver.de/trefferanzeige?docuuid=C498DEED-985C-11D5-889E-000102B6A10E}
+
+This work is funded by the Federal Ministry for Digital and Transport (BMDV, FKZ: 16DKVM001B).
+\vfill
 
 \chapter*{\bibname}
 \addcontentsline{toc}{chapter}{\bibname}
@@ -291,22 +321,7 @@ The author of this thesis identified several topics for student theses and was i
 \pagebreak
 
 \newpage
-\addcontentsline{toc}{chapter}{Acknowledgements}
-\markboth{Acknowledgements}{Acknowledgements}
-
-\chapter*{Acknowledgements}
-
-Map tiles for figures in this work use map data from CARTO, CyclOSM, Mapbox, and OpenStreetMap and their data sources. To learn more, visit \url{https://carto.com/basemaps}, \url{https://www.cyclosm.org/}, \url{https://www.mapbox.com/about/maps/}, and \url{https://www.openstreetmap.org/copyright}.
-
-Screenshots of the developed mobile application use Google Material Icons. These icons are available under \url{https://fonts.google.com/icons} and were licensed under Apache License, Version 2.0: \url{https://www.apache.org/licenses/LICENSE-2.0.txt}.
-
-Traffic light and detector data was provided by the Free and Hanseatic City of Hamburg, Landesbetrieb für Straßen, Brücken und Gewässer (LSBG), Data License Germany Version 2.0: \url{https://www.govdata.de/dl-de/by-2-0}. Dataset URL: \url{https://metaver.de/trefferanzeige?docuuid=AB32CF78-389A-4579-9C5E-867EF31CA225}.
-
-Digitales Radverkehrsnetz Hamburg (DRN) data was provided by the Free and Hanseatic City of Hamburg, Behörde für Verkehr und Mobilitätswende (BVM), Data License Germany Version 2.0: \url{https://www.govdata.de/dl-de/by-2-0}. Dataset URL: \url{https://metaver.de/trefferanzeige?docuuid=EA847D9F-6403-4B75-BCDB-73F831F960C7}
-
-Lichtsignalanlagen Hamburg data was provided by the Free and Hanseatic City of Hamburg, Landesbetrieb für Straßen, Brücken und Gewässer (LSBG), Data License Germany Version 2.0: \url{https://www.govdata.de/dl-de/by-2-0}. Dataset URL: \url{https://metaver.de/trefferanzeige?docuuid=C498DEED-985C-11D5-889E-000102B6A10E}
-
-This work is funded by the Federal Ministry for Digital and Transport (BMDV, FKZ: 16DKVM001B).
-\vfill
+\renewcommand{\glsnamefont}[1]{\color{cidarkblue} \textbf{#1} \dotfill}
+\printunsrtglossary[type=abbreviations,title={Abbreviations}]
 
 \end{document}
