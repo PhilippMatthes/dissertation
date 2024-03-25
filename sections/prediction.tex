@@ -106,7 +106,7 @@ One challenge of using the Traffic Lights Data platform for prediction and speed
 
 \begin{itemize}
     \item \textbf{(Primary) signal color}: the current traffic light color and the time when this color was switched. Among green, red, amber, and amber-red, there are also other specific states such as amber-flashing, green-flashing, or dark (light turned off). The color is given for the primary signal head and supplementary signals, such as green arrows.
-    \item \textbf{Signal program}: the current program ID running on the traffic light, with a timestamp when this program was switched.
+    \item \textbf{Signal program}: the current program ID running on the traffic light, with a time when this program was switched.
     \item \textbf{Cycle second}: a timestamp indicating that program recirculation has happened. With this timing information, the continuous stream of colors can be split into cycles, usually 90, 75, or 60 seconds long. This information is also given for traffic lights that do not strictly use a circulating program routine.
 \end{itemize}
 
