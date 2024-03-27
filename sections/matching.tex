@@ -186,7 +186,7 @@ The second approach is inspired by the map-matching procedure proposed by Newson
 \begin{figure}[t]
 \centering
 \resizebox{\linewidth}{!}{%
-\begin{tabular}{ccc}
+\begin{tabular}{@{}ccc@{}}
     \footnotesize{(1) Pad intersection bounding box} & 
     \footnotesize{(2) Generate graph structure} & 
     \footnotesize{(3) Find least costly path} \\
@@ -244,7 +244,7 @@ A positive learning of the graph-based approach is that the map-matching problem
 
 \begin{figure}[!b]
 \centering
-\begin{tabular}{ccc}
+\begin{tabular}{@{}ccc@{}}
     \footnotesize{(1) Preprocessing} & 
     \footnotesize{(2) Route calculation} & 
     \footnotesize{(3) Adjacency lookup} \\
@@ -279,7 +279,16 @@ Most importantly, it is crucial to consider the absolute location of the traffic
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/sg-matching-filters.pdf}
+\begin{tabular}{@{}cccc@{}}
+\footnotesize{(1) Proximity Filter} & 
+\footnotesize{(2) Bearing Filter} &
+\footnotesize{(3) Length Filter} &
+\footnotesize{(4) Overlap Filter} \\
+  \includegraphics[width=0.22\linewidth]{images/sg-matching-filters-1.png} &
+  \includegraphics[width=0.22\linewidth]{images/sg-matching-filters-2.png} &
+  \includegraphics[width=0.22\linewidth]{images/sg-matching-filters-3.png} &
+  \includegraphics[width=0.22\linewidth]{images/sg-matching-filters-4.png}\\
+\end{tabular}
 \caption{Filtering steps for matching with the algorithmic approach. The route highlighted in black is compared in four steps with the surrounding traffic light geometries. Red ones are filtered out, and green ones are kept. White lines illustrate the geometrical properties that are compared in each step.}
 \label{fig:sg-matching-filters}
 \end{figure}
@@ -321,7 +330,24 @@ where $\Psi_{\text{bear}_{i=1}} = 1$ means that the segment is angled similarly 
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/sg-selection-bearing-filter.pdf}
+\begin{tabular}{@{}cccc@{}}
+\includegraphics[width=0.22\linewidth]{images/sg-selection-bearing-filter-1.png} &
+\includegraphics[width=0.22\linewidth]{images/sg-selection-bearing-filter-2.png} &
+\includegraphics[width=0.22\linewidth]{images/sg-selection-bearing-filter-3.png} &
+\includegraphics[width=0.22\linewidth]{images/sg-selection-bearing-filter-4.png}\\
+\footnotesize{(1) Parallel aligned:} & 
+\footnotesize{(2) Cross aligned:} &
+\footnotesize{(3) Inverse aligned:} &
+\footnotesize{(4) Curve away:} \\
+\footnotesize{$\bar{\Delta}_{\text{bear}_{1}} = 10^{\circ} < t_{\text{bear}}$} & 
+\footnotesize{$\bar{\Delta}_{\text{bear}_{1}} = 85^{\circ} > t_{\text{bear}}$} &
+\footnotesize{$\bar{\Delta}_{\text{bear}_{1}} = 180^{\circ} > t_{\text{bear}}$} &
+\footnotesize{$\bar{\Delta}_{\text{bear}_{1}} = 2^{\circ} < t_{\text{bear}}$} \\
+\footnotesize{\textbf{\color{good}match}} & 
+\footnotesize{\textbf{\color{good}no match}} &
+\footnotesize{\textbf{\color{good}no match}} &
+\footnotesize{\textbf{\color{bad}match}} \\
+\end{tabular}
 \caption{Illustration of examples for bearing matching based on the traffic light geometry's first coordinate. Blue lines highlight the bearings that are taken as a reference to compare both geometries. The black arrow indicates the route geometry. A grey dot and associated line indicate the traffic light geometry. Example (4) highlights a weakness of the filter.}
 \label{fig:sg-selection-bearing-filter}
 \end{figure}
@@ -340,7 +366,24 @@ where $\text{dist}$ is calculated as the Euclidean distance and $n$ is the numbe
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/sg-selection-bearing-filter-sum.pdf}
+\begin{tabular}{@{}cccc@{}}
+\includegraphics[width=0.22\linewidth]{images/sg-selection-bearing-filter-sum-1.png} &
+\includegraphics[width=0.22\linewidth]{images/sg-selection-bearing-filter-sum-2.png} &
+\includegraphics[width=0.22\linewidth]{images/sg-selection-bearing-filter-sum-3.png} &
+\includegraphics[width=0.22\linewidth]{images/sg-selection-bearing-filter-sum-4.png}\\
+\footnotesize{(1) Parallel aligned:} & 
+\footnotesize{(2) Cross aligned:} &
+\footnotesize{(3) Inverse aligned:} &
+\footnotesize{(4) Curve away:} \\
+\footnotesize{$\phi_{\text{bear}} = 100\% > t_{\text{bear\_sum}}$} & 
+\footnotesize{$\phi_{\text{bear}} = 0\% < t_{\text{bear\_sum}}$} &
+\footnotesize{$\phi_{\text{bear}} = 0\% < t_{\text{bear\_sum}}$} &
+\footnotesize{$\phi_{\text{bear}} = 60\% < t_{\text{bear\_sum}}$} \\
+\footnotesize{\textbf{\color{good}match}} & 
+\footnotesize{\textbf{\color{good}no match}} &
+\footnotesize{\textbf{\color{good}no match}} &
+\footnotesize{\textbf{\color{good}no match}} \\
+\end{tabular}
 \caption{Illustrated examples for cumulative bearing matching. Blue lines highlight the segments for which a bearing matching is performed (each). Green parts of the traffic light geometry are considered matching. The cumulative score matches case (4) correctly, compared to \Cref{fig:sg-selection-bearing-filter}, as all segments are considered.}
 \label{fig:sg-selection-bearing-filter-sum}
 \end{figure}
@@ -385,7 +428,24 @@ This process is shown in \Cref{fig:sg-selection-length-filter-sum}. Here, $\phi_
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/sg-selection-length-filter-sum.pdf}
+\begin{tabular}{@{}cccc@{}}
+\includegraphics[width=0.22\linewidth]{images/sg-selection-length-filter-sum-1.png} &
+\includegraphics[width=0.22\linewidth]{images/sg-selection-length-filter-sum-2.png} &
+\includegraphics[width=0.22\linewidth]{images/sg-selection-length-filter-sum-3.png} &
+\includegraphics[width=0.22\linewidth]{images/sg-selection-length-filter-sum-4.png}\\
+\footnotesize{(1) Parallel aligned:} & 
+\footnotesize{(2) Cross aligned:} &
+\footnotesize{(3) Inverse aligned:} &
+\footnotesize{(4) Curve away:} \\
+\footnotesize{$\phi_{\text{len}} = 100\% > t_{\text{len\_sum}}$} & 
+\footnotesize{$\phi_{\text{len}} = 0\% < t_{\text{len\_sum}}$} &
+\footnotesize{$\phi_{\text{len}} = 75\% > t_{\text{len\_sum}}$} &
+\footnotesize{$\phi_{\text{len}} = 60\% < t_{\text{len\_sum}}$} \\
+\footnotesize{\textbf{\color{good}match}} & 
+\footnotesize{\textbf{\color{good}no match}} &
+\footnotesize{\textbf{\color{bad}match}} &
+\footnotesize{\textbf{\color{good}no match}} \\
+\end{tabular}
 \caption{Illustrated examples for cumulative length matching. The blue lines highlight the projection lines along which each segment of the traffic light geometry is projected onto the route. Red parts of the geometry shift in length too much, while green parts stay within the defined threshold. The given percentage illustrates what the final cumulative score may look like.}
 \label{fig:sg-selection-length-filter-sum}
 \end{figure}
@@ -416,9 +476,11 @@ In the error case that the denominator is zero, $\phi_{\text{overlap}}$ is also 
 
 The thresholds $t_{\text{overlap\_pct}}$, $t_{\text{perfect\_match}}$, and $t_{\text{road\_side}}$ can be used to tune the final result. In the case of $\phi_{\text{overlap}} < t_{\text{overlap\_pct}}$, both traffic lights are kept. This threshold allows for intentional small overlaps at complex intersections without filtering consecutive traffic lights out.
 
-The final filtering pipeline has several thresholds that must be carefully selected to optimize the final matching performance. Here, it is essential to consider that each filter influences the subsequent filters in the pipeline. This complexity means tuning the individual filters by hand is challenging and time-intensive. A solution to this problem is utilizing a hyperparameter tuning algorithm, which tries to understand the influence of each hyperparameter on a model and maximizes its score. This algorithm can run overnight, resulting in a proposed model configuration after a few hundred to thousand trials. 
+The final filtering pipeline has several thresholds that must be carefully selected to optimize the final matching performance. Here, it is essential to consider that each filter influences the subsequent filters in the pipeline. This complexity means tuning the individual filters by hand is challenging and time-intensive. A solution to this problem is utilizing a hyperparameter tuning algorithm, which tries to understand the influence of each hyperparameter on a model and maximizes its score. This algorithm can run overnight, resulting in a proposed model configuration after a few hundred to thousand trials.
 
-\begin{table}[!b]
+To prepare the model for hyperparameter tuning, search spaces for each hyperparameter must be defined. These search spaces are summarized in \Cref{tab:hyperparameter-space}. The Tree-Structured Parzen Estimator hyperparameter tuning algorithm \cite{ozaki_multiobjective_2020} is utilized to find a suitable configuration on the ground truth benchmark. The objective function given to the tuner algorithm is the F1 score. As a result, we obtain a tuned hypermodel that can be executed on route geometries, matching the suitable traffic lights as accurately as possible.
+
+\begin{table}[t]
 \caption{Summary of thresholds used in the algorithmic traffic light matching model. Also highlighted is the search space in which the hyperparameter tuning algorithm searches for good configurations.}
 \begin{tabular}{@{}lp{8cm}l@{}}
 \toprule
@@ -438,8 +500,6 @@ T9 ($t_{\text{overlap\_pct}}$) & If two traffic lights overlap more relative to 
 \label{tab:hyperparameter-space}
 \end{table}
 
-To prepare the model for hyperparameter tuning, search spaces for each hyperparameter must be defined. These search spaces are summarized in \Cref{tab:hyperparameter-space}. The Tree-Structured Parzen Estimator hyperparameter tuning algorithm \cite{ozaki_multiobjective_2020} is utilized to find a suitable configuration on the ground truth benchmark. The objective function given to the tuner algorithm is the F1 score. As a result, we obtain a tuned hypermodel that can be executed on route geometries, matching the suitable traffic lights as accurately as possible.
-
 \subsection{Machine Learning Filtering Approach}\label{sec:jeschor1}
 
 One identified problem of the algorithmic approach is that each threshold is defined globally and equally applied to all situations. However, not all intersections are crossed similarly by routes. Thus, the filtering pipeline would be applied too strictly in some situations, while the thresholds are not applied strictly enough in others. Here, an ML model can be useful to employ a more flexible and interlinked mapping of the geometric properties. After this opportunity was identified, such an ML model was investigated under supervision in Daniel Jeschor's Master thesis \cite{jeschor_2022}. The following concepts for the ML approach are based on this thesis.
@@ -448,9 +508,9 @@ Regarding the problem of deciding between "match" and "no match" for each traffi
 
 The ground truth itself would only be able to contain a few thousand unique samples at most, which speaks against the viability of applying more advanced deep learning models. Dataset augmentation through artificial distortion of the traffic light geometries was found not to be a purposeful option in preliminary experiments. A meaningful balance between marginally distorting the traffic light geometries and invalidating the labeling could not be identified. Furthermore, there would be the concern of scalability with larger models and a more complex feature processing pipeline. Thus, the decision was made to opt for a more conservative approach.
 
-\begin{figure}[t]
+\begin{figure}[!b]
 \centering
-\includegraphics[width=\linewidth]{images/sg-matching-ml-model.pdf}
+\includegraphics[width=\linewidth]{images/sg-matching-ml-model.png}
 \caption{Filtering steps for matching with the ML model. On the top left, we start with the route (black line) and the traffic lights (gray dots). The dashed lines show the 20m search corridor around the route. Afterward, the matching process on the right is executed, resulting in the final matches. Source: \cite{matthes2023geo}}
 \label{fig:sg-matching-ml-model}
 \end{figure}
