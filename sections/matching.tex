@@ -185,7 +185,16 @@ The second approach is inspired by the map-matching procedure proposed by Newson
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/sg-selection-graph-approach.pdf}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{ccc}
+    \footnotesize{(1) Pad intersection bounding box} & 
+    \footnotesize{(2) Generate graph structure} & 
+    \footnotesize{(3) Find least costly path} \\
+  \includegraphics[width=0.33\linewidth]{images/sg-selection-graph-approach-1.png} &
+  \includegraphics[width=0.33\linewidth]{images/sg-selection-graph-approach-2.png} &
+  \includegraphics[width=0.33\linewidth]{images/sg-selection-graph-approach-3.png} \\
+\end{tabular}
+}
 \caption{Illustration of steps for traffic light matching in the graph-based approach. The black arrow represents the route geometry, running over an intersection (gray rectangle). The locations and geometries of the traffic lights are also highlighted (circles with line shapes).}
 \label{fig:sg-selection-graph-approach}
 \end{figure}
@@ -233,9 +242,16 @@ Although the developed graph-based methods initially promised good results, they
 
 A positive learning of the graph-based approach is that the map-matching problem of Newson and Krumm (2009) \cite{newson_hidden_2009} is, in theory, very similar to the problem we are trying to solve. Another idea based on this approach would be to map-match the traffic light geometries onto the OSM road network, fusing both map sources and allowing for a direct traffic light lookup.
 
-\begin{figure}[t]
+\begin{figure}[!b]
 \centering
-\includegraphics[width=\linewidth]{images/sg-selection-map-matching-approach.pdf}
+\begin{tabular}{ccc}
+    \footnotesize{(1) Preprocessing} & 
+    \footnotesize{(2) Route calculation} & 
+    \footnotesize{(3) Adjacency lookup} \\
+  \includegraphics[width=0.3\linewidth]{images/sg-selection-map-matching-approach-1.png} &
+  \includegraphics[width=0.3\linewidth]{images/sg-selection-map-matching-approach-2.png} &
+  \includegraphics[width=0.3\linewidth]{images/sg-selection-map-matching-approach-3.png} \\
+\end{tabular}
 \caption{Steps for map-matching traffic lights onto the routing foundation. Arrows in the first step (1) represent the direction in which the traffic light geometries are map-matched. The traffic light geometry highlighted in green is matched to the route in the third step (3).}
 \label{fig:sg-selection-map-matching-approach}
 \end{figure}
