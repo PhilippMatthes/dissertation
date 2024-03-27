@@ -191,7 +191,7 @@ Each path in the DRN dataset starts and ends in a node, which must be transforme
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/node-merging.pdf}
+\includegraphics[width=\linewidth]{images/node-merging.png}
 \caption{Illustration of duplicated nodes (black circles) that lead to a detour in the route (red). On the right, the duplicated nodes (left) were merged (right) to avoid detours. Source: \cite{lorenz_2022}}
 \label{fig:node-merging}
 \end{figure}
@@ -206,7 +206,7 @@ This method assumes small distances between the coordinates that are not noticea
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/oneway-travel-fix.pdf}
+\includegraphics[width=\linewidth]{images/oneway-travel-fix.png}
 \caption{Example of a detour (left) that can be fixed by enabling opposite-direction one-way travel on foot (right), compared to OSM route (blue). In the right example, the route traverses the road further upstream, applying a walking speed when traveling in the opposite direction. The OSM route is calculated in the center of the road and thus does not have this problem. Source: \cite{lorenz_2022}}
 \label{fig:oneway-travel-fix}
 \end{figure}
@@ -222,7 +222,7 @@ Having addressed the issues of duplicated nodes and detours due to non-crossable
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{images/routing-drn-osm-border.pdf}
-\caption{Particularily difficult example of stitching around the DRN dataset's border. The example also shows our red helper points inserted into paths on the border to identify matching path geometries. On the right, the conflated result is seen. We can also see the smooth transition into OSM paths over the city border.}
+\caption{Particularily difficult example of stitching around the DRN dataset's border. The example also shows our red helper points inserted into paths on the border to identify matching path geometries. On the right, the merged result is seen. We can also see the smooth transition into OSM paths over the city border.}
 \label{fig:routing-drn-osm-border}
 \end{figure}
 
@@ -242,7 +242,7 @@ As a routing engine, we will choose the state-of-the-art solution GraphHopper th
 
 \begin{figure}[!b]
 \centering
-\includegraphics[width=\linewidth]{images/load-distribution-containerization-preheating.pdf}
+\includegraphics[width=\linewidth]{images/load-distribution-containerization-preheating.png}
 \caption{Process of deploying updates to the routing network in the mobile app. The flow diagram highlights the steps that are executed nightly or after updates to the routing engine. Docker images and the instantiated containers are highlighted in dark blue.}
 \label{fig:multi-stage-continuous-deployment}
 \end{figure}
@@ -299,7 +299,7 @@ Focusing further on the applications of the developed routing engine within our 
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/distance-to-signal-estimation.pdf}
+\includegraphics[width=\linewidth]{images/distance-to-signal-estimation.png}
 \caption{Illustration of our distance-to-signal estimation along the route curvature for speed recommendation. The dashed arrows highlight along which segments a linear distance is calculated to arrive at the aggregated distance estimate.}
 \label{fig:distance-to-signal-estimation}
 \end{figure}
@@ -320,7 +320,7 @@ The developed rerouting approach operates as illustrated in \Cref{fig:rerouting-
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\linewidth]{images/rerouting-strategy.pdf}
+\includegraphics[width=\linewidth]{images/rerouting-strategy.png}
 \caption{Schema of the rerouting procedure using a triggering threshold of 50 meters from the route. In this illustration, it is also depicted that the rerouting algorithm aims to identify already passed waypoints. This avoids unnecessary backtracking. Intended deviations from the route may take some time to trigger a rerouting with this approach.}
 \label{fig:rerouting-strategy}
 \end{figure}
@@ -333,8 +333,8 @@ A challenge in this approach is determining the appropriate distance threshold t
 \begin{tabular}{p{0.5\linewidth}p{0.5\linewidth}}
   \multicolumn{1}{c}{\small{(a) Rerouting via closest waypoint.}} &
   \multicolumn{1}{c}{\small{(b) Rerouting via virtual waypoint connection.}} \\
-  \includegraphics[width=\linewidth]{images/rerouting-strategy-1.pdf} &
-  \includegraphics[width=\linewidth]{images/rerouting-strategy-2.pdf}  \\
+  \includegraphics[width=\linewidth]{images/rerouting-strategy-1.png} &
+  \includegraphics[width=\linewidth]{images/rerouting-strategy-2.png}  \\
 \end{tabular}
 }
 \caption{Illustration of the initial (a) and final (b) rerouting algorithm. In example (a), the route is calculated back to the starting waypoint. In example (b), our modified calculation procedure, which determines the next waypoint by virtual lines drawn between the waypoints, is shown. Blue dashed lines highlight the snapping to these virtual lines.}

@@ -116,7 +116,7 @@ Out of three user interface prototypes, one was selected for our deployment and 
 
 \begin{figure}[!b]
 \centering
-\includegraphics[width=\linewidth]{images/graph-based-speed-recommendation.pdf}
+\includegraphics[width=\linewidth]{images/graph-based-speed-recommendation.png}
 \caption{Illustration of our initial speed recommendation algorithm and user interface (top right). The vertical axis indicates the (estimated) distance a user has to travel to the traffic light. The diagonal lines indicate estimated speeds to arrive at a given time in the prediction. The current speed is highlighted in blue. The closest speed, i.e., the speed that is recommended, is highlighted with a green line.}
 \label{fig:graph-based-speed-recommendation}
 \end{figure}
@@ -141,7 +141,7 @@ In another preliminary test, we experimented with the multi-lane projection meth
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/multi-lane-view.pdf}
+\includegraphics[width=\linewidth]{images/multi-lane-view.png}
 \caption{Illustration of the developed multi-lane matching approach. Dashed lines indicate the bearing threshold applied from the current user location. Arrows at each traffic light indicate the lane direction of this traffic light. Traffic lights marked with green check marks fall within the bearing range and are matched. On the right, we see the prototype that was implemented to test this feature.}
 \label{fig:multi-lane-view}
 \end{figure}
@@ -158,7 +158,19 @@ The designed speedometer visualization aims to integrate the strengths and mitig
 
 \begin{figure}[!b]
 \centering
-\includegraphics[width=\linewidth]{images/speedometer-adaptions.pdf}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{@{}ccc@{}}
+    \footnotesize{(1) Prediction with} & 
+    \footnotesize{(2) Prediction inbetween} & 
+    \footnotesize{(3) No prediction or prediction} \\
+    \footnotesize{100\% quality} & 
+    \footnotesize{50\% to 100\% quality} & 
+    \footnotesize{below 50\% quality} \\
+  \includegraphics[width=0.33\linewidth]{images/speedometer-adaptions-1.png} &
+  \includegraphics[width=0.33\linewidth]{images/speedometer-adaptions-2.png} &
+  \includegraphics[width=0.33\linewidth]{images/speedometer-adaptions-3.png} \\
+\end{tabular}
+}
 \caption{Implemented final speed recommendation user interface: the speedometer visualization. Three screenshots highlight how the user interface reacts to changing prediction qualities.}
 \label{fig:speedometer-adaptions}
 \end{figure}
@@ -179,7 +191,7 @@ The integrated routing is utilized to enhance two aspects of the speed advisory.
 
 \begin{figure}[!b]
 \centering
-\includegraphics[width=\linewidth]{images/camera-controller.pdf}
+\includegraphics[width=\linewidth]{images/camera-controller.png}
 \caption{Four screenshots of automatic camera movement to highlight the upcoming traffic light (1, 3, 4) and turns (1, 2). Green segments of the route highlight a part with prediction, as explained in \Cref{fig:routing-process-quality-mapping}. Other traffic lights than the selected one are not displayed.}
 \label{fig:camera-controller}
 \end{figure}
@@ -192,7 +204,7 @@ In addition to the camera controller, the prediction availability is also mapped
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/routing-process-quality-mapping.pdf}
+\includegraphics[width=\linewidth]{images/routing-process-quality-mapping.png}
 \caption{Illustration of the route generation process. The left image shows the initial state with the basic calculated bike route. In the center, the traffic lights are added through out matching. In the final step, the app accessed the current prediction quality for each traffic light and colorized the route with its "green wave" part.}
 \label{fig:routing-process-quality-mapping}
 \end{figure}
@@ -207,7 +219,7 @@ Now that we have looked at many details of the speed recommendation, it is vital
 
 \begin{figure}[!b]
 \caption{Final application infrastructure. The data flow diagram highlights which parts of our service infrastructure are required for each part of the smartphone app. Each service is color-coded to distinguish external, prediction, routing, monitoring, and tracking services. The blue lines indicate a typical interaction flow to perform a ride with the developed app.}\label{fig:architecture}
-\includegraphics[width=\linewidth]{images/architecture.pdf}
+\includegraphics[width=\linewidth]{images/architecture.png}
 \end{figure}
 
 The main application flow is divided into three views, as seen in \Cref{fig:architecture}. The home view, serving as an entry point after opening the app, is intended to display the current data availability upfront. Users are directly informed about potential data outages with the information fetched from the prediction service monitoring. These can occur spontaneously, as seen in \Cref{ch:prediction}. A modification of the routing profile is also possible in the home view.

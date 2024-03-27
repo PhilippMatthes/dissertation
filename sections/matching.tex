@@ -117,7 +117,7 @@ There are multiple options for creating examples for optimal selections of traff
 
 \begin{figure}[!b]
 \centering
-\includegraphics[width=\linewidth]{images/sg-selection-ground-truth.pdf}
+\includegraphics[width=\linewidth]{images/sg-selection-ground-truth.png}
 \caption{Ground truth creation process through the developed Route Composer web application. The app can be used to browse through randomly generated routes and nearby intersections. When clicked, the traffic light geometries change color to green, indicating that the traffic light has been selected as a match. The matches are persisted in the ground truth dataset. The buttons on top allow the user to jump to Google Maps, to clarify ambiguous situations with StreetView. Sources: \cite{matthes2022matching, matthes2023geo}}
 \label{fig:sg-selection-ground-truth}
 \end{figure}
@@ -155,7 +155,7 @@ The H3 approach emerged from the Movebis\footnote{\url{https://bmdv.bund.de/Shar
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/sg-selection-h3-approach.pdf}
+\includegraphics[width=\linewidth]{images/sg-selection-h3-approach.png}
 \caption{Illustration of the H3 approach: If H3 cells directly over the traffic light geometry are hit, the score increases. Neighboring cells decrease the score when hit. The total score is subjected to a threshold, determining whether the traffic light is counted as a match or not. The same scoring schema is applied to all traffic light geometries.}
 \label{fig:sg-selection-h3-approach}
 \end{figure}
@@ -476,9 +476,7 @@ In the error case that the denominator is zero, $\phi_{\text{overlap}}$ is also 
 
 The thresholds $t_{\text{overlap\_pct}}$, $t_{\text{perfect\_match}}$, and $t_{\text{road\_side}}$ can be used to tune the final result. In the case of $\phi_{\text{overlap}} < t_{\text{overlap\_pct}}$, both traffic lights are kept. This threshold allows for intentional small overlaps at complex intersections without filtering consecutive traffic lights out.
 
-The final filtering pipeline has several thresholds that must be carefully selected to optimize the final matching performance. Here, it is essential to consider that each filter influences the subsequent filters in the pipeline. This complexity means tuning the individual filters by hand is challenging and time-intensive. A solution to this problem is utilizing a hyperparameter tuning algorithm, which tries to understand the influence of each hyperparameter on a model and maximizes its score. This algorithm can run overnight, resulting in a proposed model configuration after a few hundred to thousand trials.
-
-To prepare the model for hyperparameter tuning, search spaces for each hyperparameter must be defined. These search spaces are summarized in \Cref{tab:hyperparameter-space}. The Tree-Structured Parzen Estimator hyperparameter tuning algorithm \cite{ozaki_multiobjective_2020} is utilized to find a suitable configuration on the ground truth benchmark. The objective function given to the tuner algorithm is the F1 score. As a result, we obtain a tuned hypermodel that can be executed on route geometries, matching the suitable traffic lights as accurately as possible.
+The final filtering pipeline has several thresholds that must be carefully selected to optimize the final matching performance. Here, it is essential to consider that each filter influences the subsequent filters in the pipeline. This complexity means tuning the individual filters by hand is challenging and time-intensive. A solution to this problem is utilizing a hyperparameter tuning algorithm, which tries to understand the influence of each hyperparameter on a model and maximizes its score. This algorithm can run overnight, resulting in a proposed model configuration after a few hundred to thousand trials. 
 
 \begin{table}[t]
 \caption{Summary of thresholds used in the algorithmic traffic light matching model. Also highlighted is the search space in which the hyperparameter tuning algorithm searches for good configurations.}
@@ -499,6 +497,10 @@ T9 ($t_{\text{overlap\_pct}}$) & If two traffic lights overlap more relative to 
 \end{tabular}
 \label{tab:hyperparameter-space}
 \end{table}
+
+To prepare the model for hyperparameter tuning, search spaces for each hyperparameter must be defined. These search spaces are summarized in \Cref{tab:hyperparameter-space}. The Tree-Structured Parzen Estimator hyperparameter tuning algorithm \cite{ozaki_multiobjective_2020} is utilized to find a suitable configuration on the ground truth benchmark. The objective function given to the tuner algorithm is the F1 score. As a result, we obtain a tuned hypermodel that can be executed on route geometries, matching the suitable traffic lights as accurately as possible.
+
+\vfill % TODO: Is this vfill still necessary?
 
 \subsection{Machine Learning Filtering Approach}\label{sec:jeschor1}
 
@@ -536,7 +538,7 @@ A feature scaling algorithm is employed to optimize the ML model's learning and 
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{images/sg-selection-overlap-cleanup.pdf}
+\includegraphics[width=\linewidth]{images/sg-selection-overlap-cleanup.png}
 \caption{Traffic light matching of the ML model without (left) and with (right) overlap cleanup. Without the overlap cleanup step, multiple matches (green) are found for the route (black), but only one is needed. Source: \cite{matthes2023geo}}
 \label{fig:sg-selection-overlap-cleanup}
 \end{figure}
