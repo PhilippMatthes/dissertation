@@ -2,7 +2,7 @@
 
 This work addressed four specific challenges in implementing a GLOSA system for cyclists: traffic light prediction, traffic light matching, accurate bike routing, and speed advisory. The following answers to our initial research questions can now be derived.
 
-\textbf{\color{cidarkblue}1. Which kinds of unreliabilities must be expected when working with a centralized traffic light data broker?} 
+\textbf{\color{cidarkblue}1. Which kinds of data unreliabilities must be expected when working with a centralized traffic light data broker?} 
 
 Centralized traffic light data platforms are attractive for smartphone applications but may require rigorous data quality assurance and monitoring. Looking at related works on traffic light data and prediction, we encountered a heterogeneous landscape of currently available systems and concepts under research. Among other options, centralized data infrastructures remain attractive for GLOSA smartphone applications. A centralized data infrastructure was also utilized in this work: Hamburg's Traffic Lights Data platform. By recording the traffic light states of multiple thousand traffic lights in parallel over MQTT streams, we established a data foundation for our prediction algorithm. However, our long-term study revealed significant challenges with data outages and errors. Investigations into recurring error patterns and a developed monitoring system were used to identify and resolve systematic issues in the data infrastructure. Particularly, individual traffic controllers, through which data was extracted, seemed to repeatedly cause failures in the data chain. These issues could be ultimately resolved, but only after long-term active collaboration with the platform operators.
 
@@ -10,7 +10,7 @@ Centralized traffic light data platforms are attractive for smartphone applicati
 
 Achieving a fully reliable and always available prediction is technically challenging, not only due to data errors. Adaptive traffic lights can also affect the prediction with more spontaneous switching behavior. Instead of a self-adaptive prediction approach, we reused a probabilistic prediction method from another work, which can differentiate between safe and unsafe areas of the prediction in the case of traffic-dependent switching. This method has already been shown in related works to be a good option for unstable and sometimes heavily delayed data and accurately represents the prediction's uncertainty areas without significant temporal fluctuation. Integrating this method demonstrated that it achieved good prediction quality at most traffic lights, while the prediction availability was often not optimal due to the aforementioned data issues.
 
-\textbf{\color{cidarkblue}3. To what extent does traffic-adaptivity pose a problem for traffic light prediction?} 
+\textbf{\color{cidarkblue}3. To what extent does traffic-adaptivity pose a problem for traffic light prediction in Hamburg?} 
 
 We were surprised by the accuracy of our prediction algorithm, as past works announced that a high number of traffic-adaptive signals also implies poor predictability. Especially in Hamburg, where most traffic lights have at least the capability to switch adaptively, we would have expected a worse performance. To further pursue this understanding and better comprehend which traffic-dependent switching patterns are reflected in the traffic light data, we conducted an extensive four-week study of predictability. The result was that remarkably few traffic lights switch adaptively to a problematic extent for the prediction. 
 
@@ -48,7 +48,7 @@ This aspect is relevant for snapping to correct the app's GNSS position and esti
 
 Further considerations may be needed to generalize our results to other authoritative routing datasets. The positive results regarding bike routing should motivate future work to implement a similar approach for other cities or regions. After all, the reusability of bike routing is not limited to GLOSA applications. However, it should also be noted that with the DRN dataset, a complete routable graph was already available, including normal roads with no bike paths. Developments of the approach used in this work would be necessary where completeness is not given.
 
-\textbf{\color{cidarkblue}9. What is the best user interface for providing speed advisories to cyclists?} 
+\textbf{\color{cidarkblue}9. What is the best user interface for providing sensible speed advisories to cyclists?} 
 
 In the final chapter, we dedicated ourselves to the overall integration of the approaches into the app and focused on the user interface of the speed recommendation. In previous works, a wide variety of user interfaces were found, primarily relying on the visual communication of the speed recommendation. The recommendation of a target speed, countdowns, and projective methods were most commonly used. Especially with the recommendation of a target speed, it turned out in a previous bike study that it is often not context-sensitive enough. 
 
