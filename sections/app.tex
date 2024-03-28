@@ -503,14 +503,16 @@ In addition to our previous results, the labeling study also shows that in 45.45
 
 Before we conclude, we have to consider one more aspect of the previous measurements. In the previous measurements, we distinguished between cases with and without adherence to the green phase in the speed advisory. However, we also have to consider a few limitations of this approach. Something it does not consider is how the traffic light itself may have impacted the cyclist's behavior. This means that a green light itself may have motivated cyclists to accelerate, and a red light itself may have led to the earlier decrease in speed. These aspects may be overlayed onto our twofold impact. 
 
-\begin{figure}[!t]
+\begin{figure}[!b]
 \caption{Distribution of colors on which the speedometer needle was positioned during the approach. This illustration also shows how much users adapt to a green phase after activation when they are currently in a red phase (left charts). In the right charts, it can be seen that users did adapt much less to a green phase after activation, which is the behavior we wanted to separate by our adherence metric. Approaches shorter than the displayed ranges are omitted here. Black indicates that there was no color, meaning the speed is outside the range of the prediction on the speedometer.}\label{fig:impact-adherence-discussion}
 \includegraphics[width=\linewidth]{images/impacts-activation-time.pdf} 
 \\
 \includegraphics[width=\linewidth]{images/impacts-activation-distance.pdf}
 \end{figure}
 
-As seen in \Cref{fig:impact-adherence-discussion}, there may also be the case that cyclists occasionally already traveled at the right speed, not needing to adapt to the speed advisory. One potential solution for future works would be to employ a control group, by hiding a speed advisory occasionally from users. This control group could then be used to distinguish the speed advisory's impact from other context factors. Whether hiding speed advisories from users is a sensible thing to do remains another question to consider.
+As seen in \Cref{fig:impact-adherence-discussion}, there may also be the case that cyclists occasionally already traveled at the right speed, not needing to adapt to the speed advisory. This can be seen in the left two figures where 
+
+One potential solution for future works would be to employ a control group, by hiding a speed advisory occasionally from users. This control group could then be used to distinguish the speed advisory's impact from other context factors. Whether hiding speed advisories from users is a sensible thing to do remains another question to consider.
 
 However, there are also many examples in which the speedometer needle was on red after activation of the speed advisory, and users then adjusted their speed to align with a predicted green phase. From this pattern, we can see that some form of adaptation happened. Interestingly, this adaption also happens gradually, which may have been caused by the general freedom of the users to follow the speed advisory. This can be seen in \Cref{fig:impact-adherence-discussion}, where no clear time at which users react to the speed advisory can be distinguished. Thus, we could not directly identify a specific time it takes users to process the app's recommendation and react to it.
 
