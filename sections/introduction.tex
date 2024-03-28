@@ -66,7 +66,7 @@ Apart from the general lack of focus on cyclists, the research domain surroundin
 \label{fig:outline}
 \end{figure}
 
-\textbf{\color{cidarkblue}Traffic Light Data for Prediction:} To provide a speed advisory for an upcoming traffic light, a prediction of the traffic light's switching behavior is required. Data from traffic lights all over the city must be collected and processed accordingly. Afterward, the collected data must be transformed into a traffic light prediction. Since a traffic light's switching behavior may depend highly on the current time and day and the detected traffic density, a reliable and accurate prediction is challenging. Furthermore, there may be data outages or errors in the streamed data, which reduce the quality and trustworthiness of the prediction. Highly accurate and trustworthy predictions are paramount for the overall effectiveness of the speed advisory.
+\textbf{\color{cidarkblue}Traffic Light Data for Prediction:} To provide a speed advisory for an upcoming traffic light, a prediction of the traffic light's switching behavior is required. This prediction depends on data from traffic lights all over the city that must be collected and processed accordingly. However, this data may be unreliable and contain errors, potentially leading to a false prediction. Errors in the data must be identified and, if possible, solved. Furthermore, there may be intersections at which traffic influences the switching behavior of the traffic lights, decreasing the predictability further. A key challenge is to identify these intersections and, in general, measure how predictable the traffic lights are to judge how suitable a city such as Hamburg is for the deployment of a GLOSA system.
 
 \textbf{\color{cidarkblue}Traffic Light Matching:} The next challenge is about displaying the prediction for the correct traffic light. With many potential route choices in a vast city such as Hamburg, an automated method to match traffic lights along the way is needed. It is necessary to select a few from thousands of traffic lights, turning the traffic light matching into a search for needles in the haystack. Which traffic lights should be matched depends highly on the user's planned turns and other factors like the type of transport mode. In our case, cyclist traffic lights should be preferred. Due to the often ambiguous choice of traffic lights at an intersection, the matching algorithm has to consider multiple variants and decide on the best traffic lights. Additionally, the matching must be quick and reasonable to provide a responsive mobile application.
 
@@ -76,9 +76,11 @@ Apart from the general lack of focus on cyclists, the research domain surroundin
 
 Each of the presented four challenges represents one step in the ladder, which needs to be taken to ultimately judge the purposefulness of GLOSA applications in motivating more cycling.
 
-\section{Contributions and Research Questions}
+\section{Contributions and Outline}
 
+Each chapter in this thesis is self-contained and follows one described challenge along the processing chain of a GLOSA system. As such, each chapter can also be read separately and makes its own contributions. The first key contribution is as follows.
 
+\textbf{\color{cidarkblue}Methods for Traffic Light Data Quality Assurance and Predictability Analysis:} In \Cref{ch:prediction}, we provide insights into obtaining traffic light data and which quality assurance measures are suitable to improve the stability and service quality of GLOSA applications. We integrate a monitoring solution into an existing data and prediction pipeline for Hamburg, studying prediction quality and availability over a long-term period. We find that traffic light data is often unreliable and identify systematic data errors in Hamburg's data pipeline. We show that data error robustness is an essential perk for prediction algorithms, which have previously mainly focused on obtaining the highest accuracy. With these insights, our work contributes to the general understanding which aspects are import
 
 \section{How to Read This Thesis}
 

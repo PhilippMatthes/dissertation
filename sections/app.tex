@@ -477,7 +477,7 @@ These are just two examples. To obtain a more comprehensive understanding of the
 
 During this process, 915 (78.5\%) of the visualizations had equal, and 200 (17.2\%) had unequal labelings. In these cases, it was not easy to distinguish whether an adaption had happened or would have been possible. Sometimes, such as in \Cref{fig:example-trajectory-not-adapted}, the suggested speed for catching the green phase fell below 10 km/h, rendering the target speed so minimal that users had no practical means of adhering to it. Therefore, while adaptation could have been possible in theory, its practicality in these cases was subject to debate. In the remaining 50 cases (4.3\%), only one person had labeled the visualization, meaning that a cross-checking was not possible. These cases were also excluded from further analysis.
 
-\begin{table}[t]
+\begin{table}[!b]
 \centering
 \resizebox{\linewidth}{!}{\begin{tabular}{@{}llr@{}}
 \toprule
@@ -503,18 +503,20 @@ In addition to our previous results, the labeling study also shows that in 45.45
 
 Before we conclude, we have to consider one more aspect of the previous measurements. In the previous measurements, we distinguished between cases with and without adherence to the green phase in the speed advisory. However, we also have to consider a few limitations of this approach. Something it does not consider is how the traffic light itself may have impacted the cyclist's behavior. This means that a green light itself may have motivated cyclists to accelerate, and a red light itself may have led to the earlier decrease in speed. These aspects may be overlayed onto our twofold impact. 
 
-\begin{figure}[!b]
+\begin{figure}[t]
 \caption{Distribution of colors on which the speedometer needle was positioned during the approach. This illustration also shows how much users adapt to a green phase after activation when they are currently in a red phase (left charts). In the right charts, it can be seen that users did adapt much less to a green phase after activation, which is the behavior we wanted to separate by our adherence metric. Approaches shorter than the displayed ranges are omitted here. Black indicates that there was no color, meaning the speed is outside the range of the prediction on the speedometer.}\label{fig:impact-adherence-discussion}
 \includegraphics[width=\linewidth]{images/impacts-activation-time.pdf} 
 \\
 \includegraphics[width=\linewidth]{images/impacts-activation-distance.pdf}
 \end{figure}
 
-As seen in \Cref{fig:impact-adherence-discussion}, there may also be the case that cyclists occasionally already traveled at the right speed, not needing to adapt to the speed advisory. This can be seen in the left two figures where shortly after activation, a larger proportion of cases 
+\Cref{fig:impact-adherence-discussion} highlights the distribution of colors over which the speedometer needle was positioned after activation of the speed advisory. In the left two figures, it can be seen that there were more cases where the speedometer needle was placed on green at the time of activation (leftmost part on the x-axis), compared to the two right figures in which a larger part of users started with the speedometer needle positioned over red. 
 
-One potential solution for future works would be to employ a control group, by hiding a speed advisory occasionally from users. This control group could then be used to distinguish the speed advisory's impact from other context factors. Whether hiding speed advisories from users is a sensible thing to do remains another question to consider.
+This shows that, through the separation in adherence and non-adherence, we have also separated cases in which cyclists already traveled at the right speed. In these cases it is hard to distinguish whether a true adaption, by keeping the initial speed intentionally to catch the green phase, has happened. In theory, it could also be that users ignored the speed advisory and simply kept going without a change in behavior. This effect has to be considered when interpreting our impact measurements. 
 
-However, there are also many examples in which the speedometer needle was on red after activation of the speed advisory, and users then adjusted their speed to align with a predicted green phase. From this pattern, we can see that some form of adaptation happened. Interestingly, this adaption also happens gradually, which may have been caused by the general freedom of the users to follow the speed advisory. This can be seen in \Cref{fig:impact-adherence-discussion}, where no clear time at which users react to the speed advisory can be distinguished. Thus, we could not directly identify a specific time it takes users to process the app's recommendation and react to it.
+To rule out measuring coincidentally passed green lights without a true adaption, one potential solution for future works would be to employ a control group by hiding a speed advisory occasionally from users. This control group could then be used to distinguish the speed advisory's impact from coincidental passes or even the influence of the traffic light's color itself on the user. Whether hiding speed advisories from users is a sensible thing to do remains another question to consider. In our case, we refrained from doing so, to not further decrease the speed advisory availability that would have impacted our usability measurement.
+
+However, there are also many examples in which the speedometer needle was on red after activation of the speed advisory, and users then seemed to adjust their speed to align with a predicted green phase. From this pattern, we can see that some form of adaptation happened. Interestingly, this adaption also happens gradually, which may have been caused by the general freedom of the users to follow the speed advisory. This can be seen in \Cref{fig:impact-adherence-discussion}, where no clear time at which users react to the speed advisory can be distinguished. Thus, we could not directly identify a specific time it takes users to process the app's recommendation and react to it.
 
 \begin{Summary}[Summary and Discussion of Results]
 By conducting a comprehensive, user-diverse, and long-term test of the developed GLOSA app in Hamburg, we have gained fundamental insights into the performance of a real-world GLOSA system for cyclists within an extensive urban context. These insights encompass both user opinions and quantifiable metrics regarding the measured impact on passing speed, stop rate, stop time, and estimated energy expenditure.
