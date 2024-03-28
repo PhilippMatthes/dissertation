@@ -86,6 +86,42 @@ Each chapter in this thesis is self-contained and follows one described challeng
 
 \textbf{\color{cidarkblue}Accurate Bike Routing Through Authoritative Datasets:} \Cref{ch:routing} focuses on ways to improve bike routing further, aiming to make the traffic light matching more accurate. We obtain an authoritative bike routing foundation for Hamburg, design an automated procedure to integrate the data for routing and compare it to existing routing foundations. We compare bike routes of different providers against hand-drawn bike paths on satellite images, traffic light positions, and user trajectories as a ground truth. In every case, we find that the authoritative routing foundation is more accurate than OpenStreetMap, indicating significant areas for improvement in the consistency and completeness of bike paths in the volunteered routing foundation. Furthermore, we test the possibility of estimating the distance to the traffic light via the route's geometry and compare it against a previous approach that takes the over-the-air distance. In a comparative study, we analyze how stable and accurate the two kinds of distance estimation are, benchmarked against the actual distance that is traveled along the user trajectory.
 
-\textbf{\color{cidarkblue}Usability and Impact Evaluation of a Bike-GLOSA App:} In \Cref{ch:app} we combine the developed components in a mobile application. We test multiple variants of user interfaces and propose a final solution that aims at high usability even in the presence of data outages or inaccurate predictions. We also propose 
+\textbf{\color{cidarkblue}Usability and Impact Evaluation of a Bike-GLOSA App:} In \Cref{ch:app} we combine the developed components in a mobile application. We test multiple variants of user interfaces and propose a final solution that aims at high usability even in the presence of data outages or inaccurate predictions. We propose using the route itself as a key solution to communicate to users where they can expect a good speed advisory. Through a long-term evaluation in which users could freely download and use our app during daily rides, we obtain telemetry that is used to conduct the first city-scale evaluation of a bike-GLOSA app's impact on cycling behavior. This study includes measurements of the traffic light passing speed, estimated energy savings, and stop rates. We also conduct a qualitative study through user questionnaires, which contributes to the understanding how bike-GLOSA is experienced by users during cycling in the real world. Through this twofold evaluation approach, we provide a comprehensive understanding of the real benefits and future challenges of GLOSA applications.
 
-At the end of this thesis, \Cref{ch:conclusions} summarizes the gained knowledge and main results for all individual challenges and gives an overarching outlook for future studies.
+The key research questions of this work are summarized in \Cref{tab:rqs}. At the end of this thesis, \Cref{ch:conclusions} summarizes the key findings and answers these research questions for each chapter.
+
+
+
+% To what extent can the findings regarding bike routing accuracy and reliability be generalized to other cities or regions with different routing datasets?
+% Evaluation of projective methods for speed advisory:
+
+% How do projective methods for speed advisory impact user behavior and decision-making, and what are the implications for reducing stops at traffic lights?
+% Exploring alternative interaction methods for speed advisories:
+
+% What are the usability and effectiveness of auditive speed advisory interfaces compared to visual interfaces, and how can these alternatives be optimized for cyclist safety and convenience?
+% Long-term effects of bike-GLOSA on cycling behavior:
+
+% What are the long-term effects of bike-GLOSA systems on cycling behavior, energy expenditure, and overall urban mobility patterns, and how can these systems be optimized to promote sustainable transportation?
+
+\begin{table}[b]
+\caption{Overview of research questions and key findings.}
+\begin{tabular}{@{}p{0.49\linewidth}p{0.49\linewidth}@{}}
+\toprule
+\textbf{Research Question} & \textbf{Key Findings} \\
+\midrule
+\multicolumn{2}{@{}l@{}}{\textbf{\Cref{ch:prediction} \nameref{ch:prediction}}} \\
+How can data quality assurance and monitoring processes be optimized to mitigate issues with data outages and errors in centralized traffic light data platforms? & \\
+How effective are probabilistic prediction methods in handling data errors and uncertainties, and what are the scalability implications for GLOSA systems? & \\
+What factors contribute to the accuracy of prediction algorithms in the context of traffic-adaptive signals, and how can these algorithms be optimized for improved performance? & \\
+\multicolumn{2}{@{}l@{}}{\textbf{\Cref{ch:matching} \nameref{ch:matching}}} \\
+What are the primary limitations of current traffic light matching methods, and how can these methods be improved to better cater to the needs of cyclists? & \\
+What are the advantages and limitations of route-based traffic light matching, and how can this approach be refined to enhance its accuracy and applicability? & \\
+\multicolumn{2}{@{}l@{}}{\textbf{\Cref{ch:routing} \nameref{ch:routing}}} \\
+How can authoritative bike routing datasets be integrated with existing mapping platforms to improve routing accuracy and consistency for cyclists? & \\
+What are the tangible benefits of employing authoritative bike routing datasets in GLOSA applications, particularly concerning traffic light matching and distance-to-signal estimation? & \\
+\multicolumn{2}{@{}l@{}}{\textbf{\Cref{ch:app} \nameref{ch:app}}} \\
+How do projective methods for speed advisory impact user behavior and decision-making, and what are the implications for reducing stops at traffic lights? & 
+\bottomrule
+\end{tabular}
+\label{tab:hyperparameter-space}
+\end{table}
