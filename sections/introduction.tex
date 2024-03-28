@@ -55,9 +55,7 @@ However, these studies are also far away from a large-scale application. In a mo
 
 In essence, this work aims to bridge the gap between GLOSA's current state -- primarily concentrated on motorized vehicles -- and its potential application to a complete city network, with a spotlight on cyclists. With this scope, there are some unique challenges that provide a potential knowledge gain.
 
-\section{Challenges}
-
-Apart from the general lack of focus on cyclists, the research domain surrounding GLOSA raises many research issues: regulation and financing, integration and technology assessment, and possible consequences for society. Thus, highly interdisciplinary questions are tied to the topic. Among these, this work focuses specifically on the technical implementation of bike-GLOSA and its assessment in a large-scale, real-world context. Within this focus, we find four specific challenges to address, as illustrated in \Cref{fig:outline}.
+\section{Challenges and Research Questions}
 
 \begin{figure}[t]
 \centering
@@ -66,13 +64,52 @@ Apart from the general lack of focus on cyclists, the research domain surroundin
 \label{fig:outline}
 \end{figure}
 
+Apart from the general lack of focus on cyclists, the research domain surrounding GLOSA raises many research issues: regulation and financing, integration and technology assessment, and possible consequences for society. Thus, highly interdisciplinary questions are tied to the topic. Among these, this work focuses specifically on the technical implementation of bike-GLOSA and its assessment in a large-scale, real-world context. Within this focus, we find four specific challenges to address, as illustrated in \Cref{fig:outline}.
+
 \textbf{\color{cidarkblue}Traffic Light Data for Prediction:} To provide a speed advisory for an upcoming traffic light, a prediction of the traffic light's switching behavior is required. This prediction depends on data from traffic lights all over the city that must be collected and processed accordingly. However, this data may be unreliable and contain errors, potentially leading to a false prediction. Errors in the data must be identified and, if possible, solved. Furthermore, there may be intersections at which traffic influences the switching behavior of the traffic lights, decreasing the predictability further. A key challenge is to identify these intersections and, in general, measure how predictable the traffic lights are to judge how suitable a city such as Hamburg is for the deployment of a GLOSA system.
+
+\begin{researchquestion}
+Which kinds of unreliabilities must be expected when working with a centralized traffic light data broker?
+\end{researchquestion}
+\begin{researchquestion}
+How can data quality assurance be leveraged to enhance reliability in centralized traffic light data platforms?
+\end{researchquestion}
+\begin{researchquestion}
+To what extent does traffic-adaptivity pose a problem for traffic light prediction?
+\end{researchquestion}
 
 \textbf{\color{cidarkblue}Traffic Light Matching:} The next challenge is about displaying the prediction for the correct traffic light. With many potential route choices in a vast city such as Hamburg, an automated method to match traffic lights along the way is needed. It is necessary to select a few from thousands of traffic lights, turning the traffic light matching into a search for needles in the haystack. Which traffic lights should be matched depends highly on the user's planned turns and other factors like the type of transport mode. In our case, cyclist traffic lights should be preferred. Due to the often ambiguous choice of traffic lights at an intersection, the matching algorithm has to consider multiple variants and decide on the best traffic lights. Additionally, the matching must be quick and reasonable to provide a responsive mobile application.
 
+\begin{researchquestion}
+Which advantages and disadvantages does route-based traffic light matching have compared to previous methods?
+\end{researchquestion}
+\begin{researchquestion}
+What is the best method to match traffic lights in advance to a user-generated bike route?
+\end{researchquestion}
+
 \textbf{\color{cidarkblue}Accurate Bike Routing:} To know which traffic lights will be along the way, this work will utilize a route-based approach. Users will select waypoints through the app, calculate a bike route based on these waypoints, and then travel along this route, as in other navigation apps. However, this also means the bike routes should follow bike paths as accurately as possible and be tailored to the user's needs, providing an accurate foundation for traffic light matching. The challenge is that existing routing foundations are designed as general-purpose maps focusing on motorists, meaning bike paths are often missing or tagged inconsistently. One key focus of this work is, thus, to find methods that allow a more accurate bike routing to enhance the overall in-app experience and provide a solid foundation for an accurate speed advisory.
 
+\begin{researchquestion}
+What is the best way to integrate an authoritative bike routing dataset into a routing engine?
+\end{researchquestion}
+\begin{researchquestion}
+Can we decrease routing errors and improve accuracy compared to existing routing foundations?
+\end{researchquestion}
+\begin{researchquestion}
+How much more or less accurate is distance-to-signal estimation via bike routes than the over-the-air distance?
+\end{researchquestion}
+
 \textbf{\color{cidarkblue}Speed Advisory:} The speed advisories generated by our app need to be tailored to the user's needs as well. Factors such as the road's inclination, surface quality, and bike type play a large role in selecting an optimal speed, not only when the traffic light switches to green. In some cases, users may not be able or willing to follow a speed recommendation. At the same time, potential distractions from traffic that could seriously endanger cyclists should be minimized. This brings the challenge that a good balance between displaying useful information to the user and avoiding unnecessary distractions is needed. All of these aspects need to be packaged into a mobile application, which can be distributed and directly used by people in Hamburg. Afterward, another challenge is measuring from the recorded telemetry which impacts the speed advisory had on cycling behavior. Accompanied by a user survey, the aim is to understand whether GLOSA aligns with user expectations and integrates seamlessly into their cycling routines.
+
+\begin{researchquestion}
+What is the best user interface for providing speed advisories to cyclists?
+\end{researchquestion}
+\begin{researchquestion}
+Which benefits or drawbacks do users perceive when including bike-GLOSA in their cycling routines?
+\end{researchquestion}
+\begin{researchquestion}
+Which measurable effect does bike-GLOSA have on cycling behavior?
+\end{researchquestion}
 
 Each of the presented four challenges represents one step in the ladder, which needs to be taken to ultimately judge the purposefulness of GLOSA applications in motivating more cycling.
 
@@ -88,37 +125,4 @@ Each chapter in this thesis is self-contained and follows one described challeng
 
 \textbf{\color{cidarkblue}Usability and Impact Evaluation of a Bike-GLOSA App:} In \Cref{ch:app} we combine the developed components in a mobile application. We test multiple variants of user interfaces and propose a final solution that aims at high usability even in the presence of data outages or inaccurate predictions. We propose using the route itself as a key solution to communicate to users where they can expect a good speed advisory. Through a long-term evaluation in which users could freely download and use our app during daily rides, we obtain telemetry that is used to conduct the first city-scale evaluation of a bike-GLOSA app's impact on cycling behavior. This study includes measurements of the traffic light passing speed, estimated energy savings, and stop rates. We also conduct a qualitative study through user questionnaires, which contributes to the understanding how bike-GLOSA is experienced by users during cycling in the real world. Through this twofold evaluation approach, we provide a comprehensive understanding of the real benefits and future challenges of GLOSA applications.
 
-The key research questions of this work are summarized in \Cref{tab:rqs}. At the end of this thesis, \Cref{ch:conclusions} summarizes the key findings and answers these research questions for each chapter.
-
-
-
-
-
-% What are the usability and effectiveness of auditive speed advisory interfaces compared to visual interfaces, and how can these alternatives be optimized for cyclist safety and convenience?
-% Long-term effects of bike-GLOSA on cycling behavior:
-
-% What are the long-term effects of bike-GLOSA systems on cycling behavior, energy expenditure, and overall urban mobility patterns, and how can these systems be optimized to promote sustainable transportation?
-
-\begin{table}[b]
-\caption{Overview of research questions and key findings.}
-\begin{tabular}{@{}p{0.49\linewidth}p{0.49\linewidth}@{}}
-\toprule
-\textbf{Research Question} & \textbf{Key Findings} \\
-\midrule
-\multicolumn{2}{@{}l@{}}{\textbf{\Cref{ch:prediction} \nameref{ch:prediction}}} \\
-How can data quality assurance and monitoring processes be optimized to mitigate issues with data outages and errors in centralized traffic light data platforms? & \\
-How effective are probabilistic prediction methods in handling data errors and uncertainties, and what are the scalability implications for GLOSA systems? & \\
-What factors contribute to the accuracy of prediction algorithms in the context of traffic-adaptive signals, and how can these algorithms be optimized for improved performance? & \\
-\multicolumn{2}{@{}l@{}}{\textbf{\Cref{ch:matching} \nameref{ch:matching}}} \\
-What are the primary limitations of current traffic light matching methods, and how can these methods be improved to better cater to the needs of cyclists? & \\
-What are the advantages and limitations of route-based traffic light matching, and how can this approach be refined to enhance its accuracy and applicability? & \\
-\multicolumn{2}{@{}l@{}}{\textbf{\Cref{ch:routing} \nameref{ch:routing}}} \\
-How can authoritative bike routing datasets be integrated with existing mapping platforms to improve routing accuracy and consistency for cyclists? & \\
-What are the tangible benefits of employing authoritative bike routing datasets in GLOSA applications, particularly concerning traffic light matching and distance-to-signal estimation? & \\
-\multicolumn{2}{@{}l@{}}{\textbf{\Cref{ch:app} \nameref{ch:app}}} \\
-How do projective methods for speed advisory impact user behavior and decision-making, and what are the implications for reducing stops at traffic lights? & \\
-
-\bottomrule
-\end{tabular}
-\label{tab:hyperparameter-space}
-\end{table}
+At the end of this thesis, \Cref{ch:conclusions} summarizes the key findings and answers these research questions for each chapter.
